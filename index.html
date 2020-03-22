@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Hello, Vegan!</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <script src="js/JIC.min.js" type="text/javascript"></script>
+</head>
+<body>
+
+  <div class="container">
+    <div class="jumbotron">
+      <p class="text-center">
+        <img src="images/i128x128.png" class="img-responsive" style="margin:0 auto;" alt="Responsive image">
+      </p>
+      <h1 class="text-center">Hello World!</h1>
+      <p class="text-center">
+        A simple hello could lead to a million things
+      </p>
+    </div>
+
+    <!-- Message input field -->
+    <div class="row justify-content-center">
+      <div class="col-sm-6 form-group">
+        <input type="text"
+        class="form-control input-lg"
+        id="emailInput"
+        placeholder="Enter your email here...">
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-sm-6 form-group">
+        <input type="text"
+        class="form-control input-lg"
+        id="helloMessageInput"
+        placeholder="Enter your Hello Message here...">
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <img id="preview" src="" />
+    </div>
+    <div class="row justify-content-center">
+      <input type="file" id="customFile" accept="image/*" style="display: none;" onChange="readURL(this)">
+      <p><label id="uploadLabel" for="customFile" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;">Upload Image</label></p>
+    </div>
+
+    <!-- Send button -->
+    <div class="row justify-content-center">
+      <div class="col-xs-12 form-group">
+        <button id="sendBtn" class="btn btn-success my-2 btn-default btn-block btn-lg" style="display: none;" onClick="upload()">
+          Send
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Place to show the latest message -->
+  <h2 class="text-center"></h2>
+  <h3 id="helloMessageOutput" class="text-center text-warning">
+    <span class="text-info"></span>
+  </h3>
+
+  <div class="progress md-progress" style="height: 20px">
+    <div id="progressBar" class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0%; height: 15px" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+  </div>
+  <hr>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-storage.js"></script>
+
+<script>
+var firebaseConfig = {
+  apiKey: "AIzaSyBg34hCq_jGHdj-HNWi2ZjfqhM2YgWq4ek",
+  authDomain: "pay-a-vegan.firebaseapp.com",
+  databaseURL: "https://pay-a-vegan.firebaseio.com",
+  projectId: "pay-a-vegan",
+  storageBucket: "pay-a-vegan.appspot.com",
+  messagingSenderId: "587888386485",
+  appId: "1:587888386485:web:3a81137924d19cbe2439fc",
+  measurementId: "G-MGJK6GF9YW"
+};
+firebase.initializeApp(firebaseConfig);
+var db = firebase.firestore();
+var storageRef = firebase.storage().ref();
+
+// DOM element shortcuts.
+var emailInput = document.getElementById('emailInput');
+var helloMessageInput = document.getElementById('helloMessageInput');
+var helloMessageOutput= document.getElementById('helloMessageOutput');
+var preview= document.getElementById('preview');
+var bar= document.getElementById('progressBar');
+var miniFile = '';
+
+function makeProgress(i){
+  bar.style.width = i+'%';
+  bar.innerText = i+'%';
+  bar.setAttribute('aria-valuenow', i);
+}
+
+function srcToFile(src, fileName, mimeType){
+  return (fetch(src)
+  .then(function(res){return res.arrayBuffer();})
+  .then(function(buf){return new File([buf], fileName, {type:mimeType});})
+);
+}
+
+function readURL(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    var filesize = ((input.files[0].size/1024)/1024).toFixed(4);
+    console.log(`Initial File : ${filesize} MB`);
+    reader.onload = function(e) {
+      var quality = 30;
+      var output_format = "image/png";
+      console.log("Quality >>" + quality);
+
+      console.log("process start...");
+      var time_start = new Date().getTime();
+
+      var img = new Image();
+      img.src = e.target.result;
+      img.onload = function() {
+        preview.src = jic.compress(img,quality,output_format).src;
+        srcToFile(
+          preview.src,
+          'mini.txt',
+          'jpg'
+        )
+        .then(function(file){
+          miniFile = file;
+          filesize = ((file.size/1024)/1024).toFixed(4);
+          console.log(`Finished compressing : ${filesize} MB`)
+        })
+
+        preview.onload = function(){
+          var image_width = preview.style.width,
+          image_height = preview.style.height;
+
+          if(image_width > image_height){
+            preview.style.width="320px";
+          }else{
+            preview.style.height="300px";
+          }
+          preview.style.display = "block";
+          document.getElementById('uploadLabel').style.display = "none";
+          document.getElementById('sendBtn').style.display = "block";
+        }
+        var duration = new Date().getTime() - time_start;
+
+        console.log('Processed in: ' + duration + 'ms');
+      }
+    }
+
+    reader.readAsDataURL(input.files[0]);
+  } else {
+    console.log("You must load an image first!");
+  }
+}
+
+function upload() {
+  if (emailInput.value.length == 0) {
+    helloMessageOutput.innerText = "Looks like you haven't provided an email";
+    return;
+  }
+  if (helloMessageInput.value.length == 0) {
+    helloMessage = 'No Hello... :(';
+  }
+  else {
+    helloMessage = helloMessageInput.value;
+  }
+
+  //var file = document.getElementById('preview').files[0];
+
+  var metadata = {
+    contentType: 'image/jpeg'
+  };
+
+  var uploadTask = storageRef.child('images/' + miniFile.name).put(miniFile, metadata);
+
+  // Listen for state changes, errors, and completion of the upload.
+  uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+    function(snapshot) {
+      // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+      var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      helloMessageOutput.innerText = `Uploading Receipt ...`;
+      console.log('Upload is ' + progress + '% done');
+      makeProgress(Math.round(progress));
+      switch (snapshot.state) {
+        case firebase.storage.TaskState.PAUSED: // or 'paused'
+        console.log('Upload is paused');
+        break;
+        case firebase.storage.TaskState.RUNNING: // or 'running'
+        console.log('Upload is running');
+        break;
+      }
+    }, function(error) {
+      // A full list of error codes is available at
+      // https://firebase.google.com/docs/storage/web/handle-errors
+      switch (error.code) {
+        case 'storage/unauthorized':
+        // User doesn't have permission to access the object
+        break;
+
+        case 'storage/canceled':
+        // User canceled the upload
+        break;
+
+        case 'storage/unknown':
+        // Unknown error occurred, inspect error.serverResponse
+        break;
+      }
+    }, function() {
+      // Upload completed successfully, now we can get the download URL
+      uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+        db.collection("receipts").add({
+          email: emailInput.value,
+          helloMessage: helloMessage,
+          fileURL: downloadURL
+        })
+        .then(function(docRef) {
+          console.log("Document written with ID: ", docRef.id);
+          helloMessageOutput.innerText = `File received with ID: ${docRef.id}`;
+        })
+        .catch(function(error) {
+          console.error("Error adding document: ", error);
+          helloMessageOutput.innerText = `Error adding document: ${error}`;
+        });
+      });
+    }
+  );
+}
+</script>
+</body>
+</html>
