@@ -1,3 +1,3 @@
 # Try me at 
 
-https://tong2984a.github.io/receipts/
+https://pay-a-vegan.github.io/receipts/
