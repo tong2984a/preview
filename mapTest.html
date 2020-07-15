@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <div id="map" style="width: 1000px; height: 500px;display: block;">this is the map</div>
+        <button style="padding: 30px 30px;" onclick="print()">print date</button>
+        <button style="padding: 30px 30px;" onclick="showPosition()">location</button>
+        <script>
+            var map;
+            var currentLocation = ['latitude', 'longitude'];
+
+            function error(err) {
+            console.warn(`ERROR(${err.code}): ${err.message}`);
+            };
+
+            var options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+            };
+
+            function getLocal() {
+                console.log("updating location");
+                navigator.geolocation.getCurrentPosition(updateLocation, error, options);
+                console.log("location get");
+                return true;
+            }
+
+            function updateLocation(position) {
+                currentLocation[0] = position.coords.latitude;
+                currentLocation[1] = position.coords.longitude;   
+                console.log("loaction updated");                        
+                console.log("latitude : " + currentLocation[0] + '\n' + "longitude : " + currentLocation[1]);
+                console.log(imgString);
+                addmarker();
+            }
+
+            async function showPosition() {
+                var good = await getLocal();
+
+            }
+
+            function addmarker() {
+                console.log("making marker");
+                var marker = new google.maps.Marker({
+                    position: {lat: currentLocation[0], lng: currentLocation[1]},
+                    map: map,
+                    title: 'here is me'
+                });            
+                var infowindow = new google.maps.InfoWindow({
+                    content: contentString
+                });
+                marker.addListener('click', function() {
+                infowindow.open(map, marker);
+                });
+            }
+
+            var restaurant = 'rest';
+            var dish = 'dish';
+            var image = '<img src="' + 'gs://pav-recipt.appspot.com/images/1594794597734.jpg' + '">';
+            var contentString = '<div>' +
+                restaurant +
+                '</div>' +
+                '<div>' +
+                dish +
+                '</div>' +
+                '<div>' +
+                image +
+                '</div>' ;
+
+            var imgString = '<img scr="' + image + '">'
+
+
+
+            function initMap() {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: 0, lng: 0},
+                    zoom: 3,
+                });
+            }
+            var times = 20200715;
+            function print() {
+                var dateTime = new Date();
+                var dateInFormat =  "oh";
+                console.log(dateTime.getUTCFullYear().toString());
+                console.log(dateTime.getUTCMonth().toString());
+                console.log(dateTime.getUTCDate().toString());
+                console.log(dateTime.getUTCHours().toString());
+                console.log(dateTime.getUTCMinutes().toString());
+                console.log(dateTime.getUTCSeconds());
+                console.log("Time" + dateTime);
+                console.log("Time formated" + dateInFormat);
+                var fname = dateTime + ".jpg";
+                console.log(fname);
+            }
+        </script>
+        <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEJpg61U3rDVLKE9A0MZ-1i7F1FezKpTQ
+        &libraries=visualization&callback=initMap">
+        </script>
+    </body>
+</html>
