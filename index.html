@@ -142,7 +142,7 @@ var firebaseConfig = {
   measurementId: "G-MGJK6GF9YW"
 };*/
 firebase.initializeApp(firebaseConfig);
-var db = firebase.firestore();
+const db = firebase.firestore();
 var storageRef = firebase.storage().ref();
 
 // DOM element shortcuts.
@@ -157,7 +157,8 @@ var dishInput = document.getElementById('dishInput');
 var restaurantInput = document.getElementById('restaurantInput');
 var locationInput = document.getElementById('locationInput');
 var map;
-var currentLocation = ['latitude', 'longitude'];
+// added in 16/7
+var currentLocation = [0, 0];
 var contentString = '<div>' +
                 restaurantInput.value +
                 '</div>' +
@@ -167,6 +168,7 @@ var contentString = '<div>' +
                 '<div>' +
                 preview.value +
                 '</div>' ;
+
 
 function makeProgress(i){
   bar.style.width = i+'%';
@@ -269,13 +271,20 @@ function initMap() {
     disableDoubleClickZoom: true,
     streetViewControl: false
   });
+  console.log('initializing map');
+  db.collection('receipts').get().then((snapshot) => {
+    snapshot.docs.forEach(doc => {
+      var locat = doc.data().location;
+      addMarker(locat);
+    });
+  });
 }
 
 //Ricardo: get the location of the restaurant
-function addMarker() {
+function addMarker(loc) {
     console.log("making marker");
     var marker = new google.maps.Marker({
-        position: {lat: currentLocation[0], lng: currentLocation[1]},
+        position: {lat: loc[0], lng: loc[1]},
         map: map,
         icon: 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png'
     });            
@@ -333,7 +342,6 @@ function setLocation(position) {
     currentLocation[1] = position.coords.longitude;  
     locationInput.value = currentLocation; 
     addCurrentMarker();
-    addMarker();
     map.setCenter(new google.maps.LatLng(currentLocation[0], currentLocation[1]));
     map.setZoom(18);
 }
@@ -352,6 +360,10 @@ function getLocationAddress(pos) {
       }
     }
   );
+}
+
+function re(){
+
 }
 
 function upload() {
@@ -419,9 +431,10 @@ function upload() {
           helloMessage: helloMessage,
           fileURL: downloadURL,
           //15/7 add 
-          dish: dishInput.value,
-          restaurant: restaurantInput.value,
-          location: locationInput.value
+          dish: dishInput.value,          
+          location: currentLocation,
+          restaurant: restaurantInput.value
+
         })
         .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id);
