@@ -50,10 +50,19 @@
       </div>
     </div>
     <!-- Ricardo: input location-->
-    <div id="map" style="width: 100%; height: 450px;display: none;"></div>
+    <div id="map" style="width: 100%; height: 80vh;display: none;"></div>
     <div class="row justify-content-center">
-      <input type="url" id="locationInput" <style="display: none;" >
-      <p><label id="locationLabel" for="locationInput" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;" onclick="getLocationURL()">Set Location</label></p>
+      <div class="col-sm-6 form-group">
+        <input type="url" id="locationInput" class="form-control input-lg" style="display: none;" >
+        <p><label id="locationLabel" for="locationInput" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;" herf="#map" onclick="getCurrentLocation()">Set Location</label></p>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-sm-6 form-group">
+        <input type="text" id="address" class="form-control input-lg" style="display: none;">
+        <p><label id="addressConfirm" for="address" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;display: none;">Confirm Address</label></p>
+      </div>
+
     </div>
     <div class="row justify-content-center">
       <div class="col-sm-6 form-group">
@@ -148,6 +157,16 @@ var dishInput = document.getElementById('dishInput');
 var restaurantInput = document.getElementById('restaurantInput');
 var locationInput = document.getElementById('locationInput');
 var map;
+var currentLocation = ['latitude', 'longitude'];
+var contentString = '<div>' +
+                restaurantInput.value +
+                '</div>' +
+                '<div>' +
+                dishInput.value +
+                '</div>' +
+                '<div>' +
+                preview.value +
+                '</div>' ;
 
 function makeProgress(i){
   bar.style.width = i+'%';
@@ -235,10 +254,11 @@ function ValidateEmail(mail) {
   return emailFormat.test(mail.value);
 }
 
+//create the map
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 0, lng: 0},
-    zoom: 3,
+    center: {lat: 22.3, lng: 114.2},
+    zoom: 12,
     styles: [{
       featureType: 'poi',
       stylers: [{ visibility: 'off' }]  // Turn off points of interest.
@@ -251,19 +271,87 @@ function initMap() {
   });
 }
 
-//Ricardo: get URL of the location of the restaurant
-function getLocationURL(restaurantInput) {
-  console.log("choose a location on map");
-  document.getElementById('map').style.display = "block";
-    console.log('Constructing the map');    
-    if(restaurantInput != null){
-      console.log('finding the restaurant you mentioned');
-    }else{
-      console.log('start at your location');
+//Ricardo: get the location of the restaurant
+function addMarker() {
+    console.log("making marker");
+    var marker = new google.maps.Marker({
+        position: {lat: currentLocation[0], lng: currentLocation[1]},
+        map: map,
+        icon: 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png'
+    });            
+    var infowindow = new google.maps.InfoWindow({
+        content: contentString
+    });
+    marker.addListener('click', function() {
+        infowindow.open(map, marker);
+    });
+}
+
+function addCurrentMarker() {
+    console.log("making Current marker");
+    var marker = new google.maps.Marker({
+        position: {lat: currentLocation[0], lng: currentLocation[1]},
+        map: map,
+        draggable: true,
+        title: 'here is me'
+    });            
+    marker.addListener('dragend', function() {
+        var markcoords = this.getPosition();
+        currentLocation[0] = markcoords.lat();
+        currentLocation[1] = markcoords.lng();
+        locationInput.value = currentLocation;
+        map.setCenter(new google.maps.LatLng(currentLocation[0], currentLocation[1]));
+        //the function below need to pay.
+        //getLocationAddress(markcoords);
+    });
+}
+
+function error(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+};
+
+var options = {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 0
+};
+
+function getCurrentLocation() {
+    console.log("updating location");
+    navigator.geolocation.getCurrentPosition(setLocation, error, options);
+    document.getElementById('map').style.display = 'block';
+    document.getElementById('locationInput').style.display = 'block';
+    document.getElementById('locationLabel').style.display = 'none';
+    document.getElementById('address').style.display = 'block';
+    document.getElementById('addressConfirm').style.display = 'block';
+    console.log("location get");
+    return true;
+}
+
+function setLocation(position) {
+    currentLocation[0] = position.coords.latitude;
+    currentLocation[1] = position.coords.longitude;  
+    locationInput.value = currentLocation; 
+    addCurrentMarker();
+    addMarker();
+    map.setCenter(new google.maps.LatLng(currentLocation[0], currentLocation[1]));
+    map.setZoom(18);
+}
+
+function getLocationAddress(pos) {
+  geocoder = new google.maps.Geocoder();
+  geocoder.geocode(
+    {
+      location: pos
     }
-  
-  //getLocation 
-  document.getElementById('locationInput').value = "This is url";
+    ,function (result, status){
+      if(status == google.maps.GeocoderStatus.OK){
+        document.getElementById('address').value = result[0].formatted_address;
+      }else{
+        console.log('connot format the address');
+      }
+    }
+  );
 }
 
 function upload() {

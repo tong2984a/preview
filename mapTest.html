@@ -2,9 +2,12 @@
 <html>
     <head></head>
     <body>
-        <div id="map" style="width: 1000px; height: 500px;display: block;">this is the map</div>
+        <div id="map" style="width: 1000px; height: 80vh;display: block;">this is the map</div>
         <button style="padding: 30px 30px;" onclick="print()">print date</button>
         <button style="padding: 30px 30px;" onclick="showPosition()">location</button>
+        <div>
+            p
+        </div>
         <script>
             var map;
             var currentLocation = ['latitude', 'longitude'];
@@ -45,19 +48,29 @@
                 var marker = new google.maps.Marker({
                     position: {lat: currentLocation[0], lng: currentLocation[1]},
                     map: map,
+                    draggable: true,
                     title: 'here is me'
                 });            
                 var infowindow = new google.maps.InfoWindow({
                     content: contentString
                 });
                 marker.addListener('click', function() {
-                infowindow.open(map, marker);
+                    infowindow.open(map, marker);
+                });
+                marker.addListener('dragend', function() {
+                    var markcoords = this.getPosition();
+                    console.log('lat:' + markcoords.lat() + ' lng: ' + markcoords.lng());
+                });
+                marker.addListener('drag', function() {
+                    var markcoordsmove = this.getPosition();
+                    console.log('lat:' + markcoords.lat() + ' lng: ' + markcoords.lng());
                 });
             }
 
+            var imageSrc = 'images/i128*128.png';
             var restaurant = 'rest';
             var dish = 'dish';
-            var image = '<img src="' + 'gs://pav-recipt.appspot.com/images/1594794597734.jpg' + '">';
+            var image = '<img src="' + imageSrc + '">';
             var contentString = '<div>' +
                 restaurant +
                 '</div>' +
