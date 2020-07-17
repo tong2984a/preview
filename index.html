@@ -50,19 +50,14 @@
       </div>
     </div>
     <!-- Ricardo: input location-->
-    <div id="map" style="width: 100%; height: 80vh;display: none;"></div>
+    <div id="map" style="width: 100%; height: 70vh; display: none;"></div>
     <div class="row justify-content-center">
       <div class="col-sm-6 form-group">
-        <input type="url" id="locationInput" class="form-control input-lg" style="display: none;" >
-        <p><label id="locationLabel" for="locationInput" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;" herf="#map" onclick="getCurrentLocation()">Set Location</label></p>
-      </div>
-    </div>
-    <div class="row justify-content-center">
-      <div class="col-sm-6 form-group">
+        <input type="url" id="locationInput" class="form-control input-lg" style="display: none;" >          
+        <p><label id="locationLabel" for="locationInput" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;" onclick="getCurrentLocation()">Set Location</label></p>      
         <input type="text" id="address" class="form-control input-lg" style="display: none;">
         <p><label id="addressConfirm" for="address" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;display: none;">Confirm Address</label></p>
       </div>
-
     </div>
     <div class="row justify-content-center">
       <div class="col-sm-6 form-group">
@@ -144,6 +139,7 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 var storageRef = firebase.storage().ref();
+var storage = firebase.storage();
 
 // DOM element shortcuts.
 var emailInput = document.getElementById('emailInput');
@@ -168,6 +164,8 @@ var contentString = '<div>' +
                 '<div>' +
                 preview.value +
                 '</div>' ;
+// added in 17/7
+var imageFileName;
 
 
 function makeProgress(i){
@@ -202,7 +200,7 @@ function readURL(input) {
         preview.src = jic.compress(img,quality,output_format).src;
         //15/7 fixing bug of same file name will caused replacing old image in firebase
         var dateTime = new Date();
-        var imageFileName = dateTime + ".jpg";
+        imageFileName = dateTime + ".jpg";
         srcToFile(
           preview.src,
           imageFileName,
@@ -274,23 +272,34 @@ function initMap() {
   console.log('initializing map');
   db.collection('receipts').get().then((snapshot) => {
     snapshot.docs.forEach(doc => {
-      var locat = doc.data().location;
-      addMarker(locat);
+      var restaurantData = doc.data();
+      addMarker(restaurantData);
     });
   });
 }
 
 //Ricardo: get the location of the restaurant
-function addMarker(loc) {
-    console.log("making marker");
+function addMarker(restaurant) {
+    console.log("making marker");      
+    var img = "<img src='" + restaurant.fileURL + "' style='width: 125px;'>"
+      console.log(img);
     var marker = new google.maps.Marker({
-        position: {lat: loc[0], lng: loc[1]},
+        position: {lat: restaurant.location[0], lng: restaurant.location[1]},
         map: map,
         icon: 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png'
     });            
     var infowindow = new google.maps.InfoWindow({
-        content: contentString
+        content: '<div><h6> Restaurant: ' +
+                restaurant.restaurant +
+                '</h6><h6> Dish: ' +
+                restaurant.dish +
+                '<h6></div>' +
+                '<div>' +
+                img +
+                '</div>'
     });
+
+ 
     marker.addListener('click', function() {
         infowindow.open(map, marker);
     });
@@ -331,8 +340,8 @@ function getCurrentLocation() {
     document.getElementById('map').style.display = 'block';
     document.getElementById('locationInput').style.display = 'block';
     document.getElementById('locationLabel').style.display = 'none';
-    document.getElementById('address').style.display = 'block';
-    document.getElementById('addressConfirm').style.display = 'block';
+    document.getElementById('address').style.display = 'none';
+    document.getElementById('addressConfirm').style.display = 'none';
     console.log("location get");
     return true;
 }
@@ -360,10 +369,6 @@ function getLocationAddress(pos) {
       }
     }
   );
-}
-
-function re(){
-
 }
 
 function upload() {
@@ -433,7 +438,9 @@ function upload() {
           //15/7 add 
           dish: dishInput.value,          
           location: currentLocation,
-          restaurant: restaurantInput.value
+          restaurant: restaurantInput.value,
+          //17/7 add
+          imageName: imageFileName
 
         })
         .then(function(docRef) {
