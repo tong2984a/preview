@@ -84,6 +84,36 @@
       </div>
     </div>
 
+    <!-- Ricardo tags-->
+    <div class="row justify-content-center" >
+      <div class="col-xs-12 btn-group-toggle" id="tags" style="display: none;">
+        <input type="checkbox" id="gluten-free" name="">
+        <label for="gluten-free">Gluten-free</label>
+        <input type="checkbox" id="egg-free" name="">
+        <label for="egg-free">Egg-free</label>
+        <br>
+        <input type="checkbox" id="dairy-free" name="">
+        <label for="dairy-free">Dairy-free</label>
+        <input type="checkbox" id="treenut-free" name="">
+        <label for="treenut-free">Treenut-free</label>
+        <br>
+        <input type="checkbox" id="peanut-free" name="">
+        <label for="peanut-free">Peanut-free</label>
+        <input type="checkbox" id="soy-free" name="">
+        <label for="soy-free">Soy-free</label>
+        <br>
+        <input type="checkbox" id="raw" name="">
+        <label for="raw">Raw</label>        
+        <input type="checkbox" id="vegan" name="">
+        <label for="vegan">Vegan</label>
+        <br>
+        <input type="checkbox" id="buddhist-friendly" name="">
+        <label for="buddhist-friendly">Buddhist-friendly</label>        
+        <input type="checkbox" id="all-natural" name="">
+        <label for="all-natural">All natural</label>
+      </div>
+    </div>
+
     <!-- Send button -->
     <div class="row justify-content-center">
       <div class="col-xs-12 form-group">
@@ -226,6 +256,7 @@ function readURL(input) {
           document.getElementById('sendBtn').style.display = "block";
           //Ricardo add re-upload button
           document.getElementById('reUploadBtn').style.display = "block";
+          document.getElementById('tags').style.display = "block";
         }
         var duration = new Date().getTime() - time_start;
 
@@ -281,15 +312,18 @@ function initMap() {
 //Ricardo: get the location of the restaurant
 function addMarker(restaurant) {
     console.log("making marker");      
-    var img = "<img src='" + restaurant.fileURL + "' style='width: 125px;'>"
-      console.log(img);
+    var img = "<img src='" + restaurant.fileURL + "' style='width: 125px;'>";
+    var tags = restaurant.tags;
+
     var marker = new google.maps.Marker({
         position: {lat: restaurant.location[0], lng: restaurant.location[1]},
         map: map,
         icon: 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png'
     });            
-    var infowindow = new google.maps.InfoWindow({
-        content: '<div><h6> Restaurant: ' +
+
+    marker.addListener('click', function() {
+      var infowindow = new google.maps.InfoWindow({
+        content:'<div><h6> Restaurant: ' +
                 restaurant.restaurant +
                 '</h6><h6> Dish: ' +
                 restaurant.dish +
@@ -297,11 +331,8 @@ function addMarker(restaurant) {
                 '<div>' +
                 img +
                 '</div>'
-    });
-
- 
-    marker.addListener('click', function() {
-        infowindow.open(map, marker);
+      });
+      infowindow.open(map, marker);
     });
 }
 
@@ -439,8 +470,21 @@ function upload() {
           dish: dishInput.value,          
           location: currentLocation,
           restaurant: restaurantInput.value,
-          //17/7 add
-          imageName: imageFileName
+          //17/7 add            
+          imageName: imageFileName,
+          tags: {
+            gluten_free: document.getElementById('gluten-free').checked, 
+            egg_free: document.getElementById('egg-free').checked, 
+            dairy_free: document.getElementById('dairy-free').checked, 
+            treenut_free: document.getElementById('treenut-free').checked, 
+            peanut_free: document.getElementById('peanut-free').checked, 
+            soy_free: document.getElementById('soy-free').checked, 
+            raw: document.getElementById('raw').checked, 
+            vegan: document.getElementById('vegan').checked, 
+            buddhist_friendly: document.getElementById('buddhist-friendly').checked, 
+            all_natural: document.getElementById('all-natural').checked 
+          }
+
 
         })
         .then(function(docRef) {
@@ -460,6 +504,12 @@ function upload() {
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEJpg61U3rDVLKE9A0MZ-1i7F1FezKpTQ
         &libraries=visualization&callback=initMap">
+        /*Maybe need to change to yours maps to makes it work, change the src above to 
+          https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap
+          and replace the "YOUR_API_KEY" by an enabled google maps API key.
+          The guide lines can be found in the link below.
+          https://developers.google.com/maps/documentation/javascript/get-api-key
+        */
 </script>
 </body>
 </html>

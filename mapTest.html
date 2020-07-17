@@ -6,9 +6,40 @@
         <button style="padding: 30px 30px;" onclick="print()">print date</button>
         <button style="padding: 30px 30px;" onclick="showPosition()">location</button>
         <div>
-            p
+            
         </div>
+        <input type="checkbox" id="gluten-free" name="">
+        <label for="gluten-free">Gluten-free</label>
+        <input type="checkbox" id="egg-free" name="">
+        <label for="egg-free">Egg-free</label>
+        <br>
+        <input type="checkbox" id="dairy-free" name="">
+        <label for="dairy-free">Dairy-free</label>
+        <input type="checkbox" id="treenut-free" name="">
+        <label for="treenut-free">Treenut-free</label>
+        <br>
+        <input type="checkbox" id="peanut-free" name="">
+        <label for="peanut-free">Peanut-free</label>
+        <input type="checkbox" id="soy-free" name="">
+        <label for="soy-free">Soy-free</label>
+        <br>
+        <input type="checkbox" id="raw" name="">
+        <label for="raw">Raw</label>        
+        <input type="checkbox" id="vegan" name="">
+        <label for="vegan">Vegan</label>
+        <br>
+        <input type="checkbox" id="buddhist-friendly" name="">
+        <label for="buddhist-friendly">Buddhist-friendly</label>        
+        <input type="checkbox" id="all-natural" name="">
+        <label for="all-natural">All natural</label>
+        <button type="submit" onclick="printValue()"> submit</button>
+
         <script>
+            function printValue() {
+                var clicked = document.getElementById('egg-free').checked;
+                console.log(clicked);
+            }
+
             var map;
             var currentLocation = ['latitude', 'longitude'];
 
