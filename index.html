@@ -184,7 +184,7 @@ var restaurantInput = document.getElementById('restaurantInput');
 var locationInput = document.getElementById('locationInput');
 var map;
 // added in 16/7
-var currentLocation = [0, 0];
+var currentLocation = [22.3, 114.16];
 var contentString = '<div>' +
                 restaurantInput.value +
                 '</div>' +
@@ -357,6 +357,10 @@ function addCurrentMarker() {
 
 function error(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
+    locationInput.value = currentLocation; 
+    addCurrentMarker();
+    map.setCenter(new google.maps.LatLng(currentLocation[0], currentLocation[1]));
+    map.setZoom(18);
 };
 
 var options = {
@@ -378,6 +382,7 @@ function getCurrentLocation() {
 }
 
 function setLocation(position) {
+  console.log("location set");
     currentLocation[0] = position.coords.latitude;
     currentLocation[1] = position.coords.longitude;  
     locationInput.value = currentLocation; 
