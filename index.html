@@ -14,7 +14,9 @@
   <div class="container">
     <div class="jumbotron">
       <p class="text-center">
-        <img src="images/i128x128.png" class="img-responsive" style="margin:0 auto;" alt="Responsive image">
+        <a href="main.html">
+          <img src="images/i128x128.png" class="img-responsive" style="margin:0 auto;" alt="Responsive image">                
+        </a>
       </p>
       <h1 class="text-center">Hello World!</h1>
       <p class="text-center">
@@ -56,6 +58,7 @@
         <input type="url" id="locationInput" class="form-control input-lg" style="display: none;" >          
         <p><label id="locationLabel" for="locationInput" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;" onclick="getCurrentLocation()">Set Location</label></p>      
         <input type="text" id="address" class="form-control input-lg" style="display: none;">
+        <p id="instruction" style="display: none;">Please drag the red pin to the place you want to choose</p>
         <p><label id="addressConfirm" for="address" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;display: none;">Confirm Address</label></p>
       </div>
     </div>
@@ -122,6 +125,21 @@
         </button>
       </div>
     </div>
+
+    <!-- Add another dish button -->
+    <div class="row justify-content-center">
+      <div class="col-xs-12 form-group">
+        <button id="addBtn" class="btn btn-success my-2 btn-default btn-block btn-lg" style="display: none;" onClick="refreshMap()">
+          Add another dish
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <a href="main.html">
+      <label id="back" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;">Back to Main</label>
+    </a>
   </div>
 
   <hr>
@@ -146,7 +164,20 @@
 
 <script>
 //Ricardo: testing
-var firebaseConfig = {
+
+//Ricardo: current
+const firebaseConfig = {
+                apiKey: "AIzaSyCSVVuOWRkUqETWCJ_lvkVViCn3kJ0sW20",
+                authDomain: "evernote-95214.firebaseapp.com",
+                databaseURL: "https://evernote-95214.firebaseio.com",
+                projectId: "evernote-95214",
+                storageBucket: "evernote-95214.appspot.com",
+                messagingSenderId: "570103698695",
+                appId: "1:570103698695:web:e82b8eacc896e8ccbd21a2",
+                measurementId: "G-YLS51K3GQZ"
+            };
+
+/*const firebaseConfig = {
     apiKey: "AIzaSyAbxF9mc46KksOqqJmS3oOwjjDsW2cy8_k",
     authDomain: "pav-recipt.firebaseapp.com",
     databaseURL: "https://pav-recipt.firebaseio.com",
@@ -155,7 +186,7 @@ var firebaseConfig = {
     messagingSenderId: "677673489684",
     appId: "1:677673489684:web:e61952268b8d6c45fdde01",
     measurementId: "G-PCXD5E1428"
-  };
+  };*/
 /*var firebaseConfig = {
   apiKey: "AIzaSyBg34hCq_jGHdj-HNWi2ZjfqhM2YgWq4ek",
   authDomain: "pay-a-vegan.firebaseapp.com",
@@ -196,7 +227,21 @@ var contentString = '<div>' +
                 '</div>' ;
 // added in 17/7
 var imageFileName;
-
+// added in 20/7
+var isGlutenFree;
+var isEggFree;
+var isDairyFree;
+var isTreenutFree;
+var isPeanutFree;
+var isSoyFree;
+var isRaw;
+var isVegan;
+var isBuddhistFriendly;
+var isAllNatural;
+var referenceID;
+var tagList;
+// added in 23/7
+var imgURL;
 
 function makeProgress(i){
   bar.style.width = i+'%';
@@ -314,12 +359,19 @@ function addMarker(restaurant) {
     console.log("making marker");      
     var img = "<img src='" + restaurant.fileURL + "' style='width: 125px;'>";
     var tags = restaurant.tags;
-
+    var tagString = '';
+    var makeTagString = tags.forEach((tags) => {
+      if(tags.value == true){
+        tagString += '#' + tags.name + '  ';
+      };
+    });
+    console.log(tagString);
+    console.log(tagString);
     var marker = new google.maps.Marker({
         position: {lat: restaurant.location[0], lng: restaurant.location[1]},
         map: map,
         icon: 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png'
-    });            
+    });           
 
     marker.addListener('click', function() {
       var infowindow = new google.maps.InfoWindow({
@@ -330,7 +382,10 @@ function addMarker(restaurant) {
                 '<h6></div>' +
                 '<div>' +
                 img +
-                '</div>'
+                '</div>' +
+                '<div style="width: 150px;overflow: auto;"><h6>Tags : ' +
+                tagString +
+                '<h6></div>'
       });
       infowindow.open(map, marker);
     });
@@ -374,6 +429,7 @@ function getCurrentLocation() {
     navigator.geolocation.getCurrentPosition(setLocation, error, options);
     document.getElementById('map').style.display = 'block';
     document.getElementById('locationInput').style.display = 'block';
+    document.getElementById('instruction').style.display = 'block';
     document.getElementById('locationLabel').style.display = 'none';
     document.getElementById('address').style.display = 'none';
     document.getElementById('addressConfirm').style.display = 'none';
@@ -405,6 +461,53 @@ function getLocationAddress(pos) {
       }
     }
   );
+}
+  
+//helper function
+function addToList(tagName, id) {
+  console.log('add id' + id);            
+  db.collection('tagLists').doc(tagName).update({
+    docID: firebase.firestore.FieldValue.arrayUnion(id)
+  });
+}
+
+//refresh map function
+function refreshMap() {
+  var r = document.location.reload();
+}
+
+function newMarker() {
+  console.log("making marker");      
+    var img = "<img src='" + imgURL + "' style='width: 125px;'>";
+    var tagString = '';
+    var makeTagString = tagList.forEach((tagList) => {
+      if(tagList.value == true){
+        tagString += '#' + tagList.name + '  ';
+      };
+    });
+    var marker = new google.maps.Marker({
+        position: {lat: currentLocation[0], lng: currentLocation[1]},
+        map: map,
+        icon: 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png',
+        animation: google.maps.Animation.BOUNCE
+    });         
+
+    marker.addListener('click', function() {
+      var infowindow = new google.maps.InfoWindow({
+        content:'<div><h6> Restaurant: ' +
+                restaurantInput +
+                '</h6><h6> Dish: ' +
+                dishInput +
+                '<h6></div>' +
+                '<div>' +
+                img +
+                '</div>' +
+                '<div style="width: 150px;overflow: auto;"><h6>Tags : ' +
+                tagString +
+                '<h6></div>'
+      });
+      infowindow.open(map, marker);
+    });
 }
 
 function upload() {
@@ -470,39 +573,50 @@ function upload() {
         db.collection("receipts").add({
           email: emailInput.value,
           helloMessage: helloMessage,
-          fileURL: downloadURL,
+          fileURL: imgURL = downloadURL,
           //15/7 add 
           dish: dishInput.value,          
           location: currentLocation,
           restaurant: restaurantInput.value,
           //17/7 add            
           imageName: imageFileName,
-          tags: {
-            gluten_free: document.getElementById('gluten-free').checked, 
-            egg_free: document.getElementById('egg-free').checked, 
-            dairy_free: document.getElementById('dairy-free').checked, 
-            treenut_free: document.getElementById('treenut-free').checked, 
-            peanut_free: document.getElementById('peanut-free').checked, 
-            soy_free: document.getElementById('soy-free').checked, 
-            raw: document.getElementById('raw').checked, 
-            vegan: document.getElementById('vegan').checked, 
-            buddhist_friendly: document.getElementById('buddhist-friendly').checked, 
-            all_natural: document.getElementById('all-natural').checked 
-          }
-
-
+          tags: tagList = [
+            {name: 'gluten_free', value : isGlutenFree = document.getElementById('gluten-free').checked},
+            {name: 'egg_free', value : isEggFree = document.getElementById('egg-free').checked},
+            {name: 'dairy_free', value : isDairyFree = document.getElementById('dairy-free').checked},
+            {name: 'treenut_free', value : isTreenutFree = document.getElementById('treenut-free').checked},
+            {name: 'peanut_free', value : isPeanutFree = document.getElementById('peanut-free').checked},
+            {name: 'soy_free', value : isSoyFree = document.getElementById('soy-free').checked},
+            {name: 'raw', value : isRaw = document.getElementById('raw').checked},
+            {name: 'vegan', value : isVegan = document.getElementById('vegan').checked},
+            {name: 'buddhist_friendly', value : isBuddhistFriendly = document.getElementById('buddhist-friendly').checked},
+            {name: 'all_natural', value : isAllNatural = document.getElementById('all-natural').checked}
+          ]
         })
         .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id);
-          helloMessageOutput.innerText = `File received with ID: ${docRef.id}`;
+          helloMessageOutput.innerText = `File received with ID: ${docRef.id}`;       
+          tagList.forEach((item) => {
+            console.log("looking at ", item.name);
+            if(item.value == true){
+              db.collection("tagLists").doc(item.name).update({
+                  docID: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+              });              
+              console.log("added to ", item.name);
+            }
+          });
         })
         .catch(function(error) {
           console.error("Error adding document: ", error);
           helloMessageOutput.innerText = `Error adding document: ${error}`;
         });
+        console.log("refresh the map");
+        newMarker();
       });
     }
+    
   );
+    document.getElementById("addBtn").style.display = "block";
 }
 </script>
 <!-- make map -->

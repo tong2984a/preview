@@ -33,8 +33,109 @@
         <input type="checkbox" id="all-natural" name="">
         <label for="all-natural">All natural</label>
         <button type="submit" onclick="printValue()"> submit</button>
+        <button type="submit" onclick="initDatabase()"> add ID</button>
+        <button type="submit" onclick="addID1()"> add ID</button>
+        <button type="submit" onclick="addID2()"> add ID</button>
+
+        <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-storage.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-analytics.js"></script>
 
         <script>
+            const firebaseConfig = {
+                apiKey: "AIzaSyCSVVuOWRkUqETWCJ_lvkVViCn3kJ0sW20",
+                authDomain: "evernote-95214.firebaseapp.com",
+                databaseURL: "https://evernote-95214.firebaseio.com",
+                projectId: "evernote-95214",
+                storageBucket: "evernote-95214.appspot.com",
+                messagingSenderId: "570103698695",
+                appId: "1:570103698695:web:e82b8eacc896e8ccbd21a2",
+                measurementId: "G-YLS51K3GQZ"
+            };
+
+            firebase.initializeApp(firebaseConfig);
+            const db = firebase.firestore();
+            var storageRef = firebase.storage().ref();
+            var storage = firebase.storage();
+
+            var id = 'gftugvmjgvtcj';
+            var id1 = 'k39pjmfe82';
+            var id2 = 'nbsofpi90993';
+
+            function initDatabase() {
+                var ar = new Array();
+                var ef = db.collection('tagLists').doc('egg_free');
+                ef.set({
+                    docID: ar
+                });
+                var ef = db.collection('tagLists').doc('gluten_free');
+                ef.set({
+                    docID: ar
+                });
+                var ef = db.collection('tagLists').doc('dairy_free');
+                ef.set({
+                    docID: ar
+                });
+                var ef = db.collection('tagLists').doc('treenut_free');
+                ef.set({
+                    docID: ar
+                });
+                var ef = db.collection('tagLists').doc('peanut_free');
+                ef.set({
+                    docID: ar
+                });
+                var ef = db.collection('tagLists').doc('soy_free');
+                ef.set({
+                    docID: ar
+                });
+                var ef = db.collection('tagLists').doc('raw');
+                ef.set({
+                    docID: ar
+                });
+                var ef = db.collection('tagLists').doc('vegan');
+                ef.set({
+                    docID: ar
+                });
+                var ef = db.collection('tagLists').doc('buddhist_friendly');
+                ef.set({
+                    docID: ar
+                });
+                var ef = db.collection('tagLists').doc('all_natural');
+                ef.set({
+                    docID: ar
+                });
+            }
+
+            function addID() {
+                var ref = db.collection('tagLists').doc('eggFree');
+                ref.update({
+                    docID: firebase.firestore.FieldValue.arrayUnion(id)
+                });
+                console.log(id);
+            }
+            function addID1() {
+                var ref = db.collection('tagLists').doc('eggFree');
+                ref.update({
+                    docID: firebase.firestore.FieldValue.arrayUnion(id1)
+                });
+                console.log(id1);
+            }
+            function addID2() {
+                var ref = db.collection('tagLists').doc('eggFree');
+                ref.update({
+                    docID: firebase.firestore.FieldValue.arrayUnion(id2)
+                });
+                console.log(id2);
+            }
+            function addID3() {
+                var ref = db.collection('tagLists').doc('eggFree');
+                ref.update({
+                    docID: firebase.firestore.FieldValue.arrayUnion(id2)
+                });
+                console.log(id2);
+            }
+
             function printValue() {
                 var clicked = document.getElementById('egg-free').checked;
                 console.log(clicked);
