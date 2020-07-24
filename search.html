@@ -83,56 +83,76 @@
             //marker list
             let markers = [];
             let showing = [];
+            let newShowing = [];
+            let selected = [];
+            let selectedRegex = [];
 
             function btnClick(btn) {
                 var isClicked;
+                var tag;
                 switch(btn.id){
                     case "gluten_free":
                         isGlutenShown = !isGlutenShown;
                         isClicked = isGlutenShown;
+                        tag = /gluten_free/;
                         break;
                     case "egg_free":
                         isEggShown = !isEggShown;
                         isClicked = isEggShown;
+                        tag = /egg_free/;
                         break;
                     case "dairy_free":
                         isDairyShown = !isDairyShown;
                         isClicked = isDairyShown;
+                        tag = /dairy_free/;
                         break;
                     case "treenut_free":
                         isTreenutShown = !isTreenutShown;
                         isClicked = isTreenutShown;
+                        tag = /treenut_free/;
                         break;
                     case "peanut_free":
                         isPeanutShown = !isPeanutShown;
                         isClicked = isPeanutShown;
+                        tag = /peanut_free/;
                         break;
                     case "soy_free":
                         isSoyShown = !isSoyShown;
                         isClicked = isSoyShown;
+                        tag = /soy_free/;
                         break;
                     case "raw":
                         isRawShown = !isRawShown;
                         isClicked = isRawShown;
+                        tag = /raw/;
                         break;
                     case "vegan":
                         isVeganShown = !isVeganShown;
                         isClicked = isVeganShown;
+                        tag = /vegan/;
                         break;
                     case "buddhist_friendly":
                         isBuddhistFriendlyShown = !isBuddhistFriendlyShown;
                         isClicked = isBuddhistFriendlyShown;
+                        tag = /buddhist_friendly/;
                         break;
                     case "all_natural":
                         isAllNaturalShown = !isAllNaturalShown;
                         isClicked = isAllNaturalShown;
+                        tag = /all_natural/;
                         break;
                 }
                 if(isClicked) {
                     btn.style.backgroundColor = 'green';
-                    showList(btn.id);
+                    selected.push(btn.id);
+                    selectedRegex.push(tag);     
+                    filter(tag);
                 }else{
                     btn.style.backgroundColor = '#007bff';
+                    var i = selected.indexOf(btn.id);
+                    selected.splice(i, 1);
+                    selectedRegex.splice(i, 1);   
+                    deselect();
                 }
             }
 
@@ -157,7 +177,7 @@
                     addMarker(restaurantData);
                     });
                 }); 
-                console.log(markers);
+                console.log(showing);
             }
 
             function addMarker(restaurant) {      
@@ -173,6 +193,7 @@
                     position: {lat: restaurant.location[0], lng: restaurant.location[1]},
                     map: map,
                     icon: 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png',
+                    title: tagString,
                     animation: google.maps.Animation.DROP
                 });            
 
@@ -208,12 +229,55 @@
                         });
                     });
                 })
-                
-
             }
 
             function hideAllMarkers() {
                 markers.forEach(item => item.setVisible(false));
+            }
+
+            function showAllMarkers() {
+                markers.forEach(item => item.setVisible(true));
+            }
+
+            function filter(tag) {
+                console.log('filtering', tag);
+                hideAllMarkers();                              
+                    if(showing.length == 0){                    
+                        markers.forEach(item => {  
+                            if(tag.test(item.getTitle())){
+                                console.log(true);
+                                item.setVisible(true);                        
+                                showing.push(item);
+                            }
+                        })
+                        console.log(showing.length);
+                    }else{
+                        showing.forEach(item => {
+                            if(tag.test(item.getTitle())){                            
+                                console.log(true);        
+                                item.setVisible(true);                        
+                                newShowing.push(item);
+                            }
+                        })
+                        showing = newShowing;
+                        newShowing = [];
+                    }
+                console.log(selected);
+                console.log(selectedRegex);
+            }
+
+            function deselect() {
+                console.log(selected);
+                console.log(selectedRegex);
+                showing = [];
+                if(selectedRegex.length != 0){
+                    selectedRegex.forEach(item => {
+                    filter(item);
+                    });  
+                }else{
+                    showAllMarkers();
+                }                
+
             }
 
         </script>
