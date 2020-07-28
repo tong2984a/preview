@@ -48,7 +48,8 @@
         <input type="text"
         class="form-control input-lg"
         id="restaurantInput"
-        placeholder="What is the name of the restaurnt?">
+        placeholder="What is the name of the restaurnt?"
+        onchange="searchRestaurant(this.value)">
       </div>
     </div>
     <!-- Ricardo: input location-->
@@ -243,6 +244,25 @@ var tagList;
 // added in 23/7
 var imgURL;
 
+var request = {
+    query: restaurantInput.value,
+    fields: ['name', 'formatted_address', 'geometry'],
+  };
+var service;
+
+
+function searchRestaurant(input) {
+  console.log('searching ', input);
+  service.findPlaceFromQuery(request, function(results, status) {
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+      for (var i = 0; i < results.length; i++) {
+        createMarker(results[i]);
+      }
+      map.setCenter(results[0].geometry.location);
+    }
+  });
+}
+
 function makeProgress(i){
   bar.style.width = i+'%';
   bar.innerText = i+'%';
@@ -352,6 +372,7 @@ function initMap() {
       addMarker(restaurantData);
     });
   });
+  service = new google.maps.places.PlacesService(map);
 }
 
 //Ricardo: get the location of the restaurant
@@ -622,7 +643,7 @@ function upload() {
 <!-- make map -->
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEJpg61U3rDVLKE9A0MZ-1i7F1FezKpTQ
-        &libraries=visualization&callback=initMap">
+        &libraries=visualization,places&callback=initMap">
         /*Maybe need to change to yours maps to makes it work, change the src above to 
           https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap
           and replace the "YOUR_API_KEY" by an enabled google maps API key.
