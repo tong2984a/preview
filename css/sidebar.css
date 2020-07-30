@@ -1,0 +1,45 @@
+#sidebar {
+    z-index: 1000;
+    position: absolute;
+    width: 0;
+    height: 70vh;
+    margin-left: -175px;
+    overflow-y: auto;
+    background: rgb(83, 231, 219);
+}
+
+#sidebar-wrapper {
+    padding-left: 0;
+}
+
+#sidebar-wrapper.open {
+    padding-left: 175px;
+}
+
+#sidebar-wrapper.open #sidebar{
+    z-index: 1000;
+    padding-left: 0px;
+    width: 175px;
+    display: block;
+}
+
+#toggle-btn {
+    z-index: 500;
+    background-color: rgb(83, 231, 219);
+    color: black;
+    position: absolute;
+    height: 40px;
+    width: 40px;
+}
+
+#mapSection {
+    width: auto; 
+    height: 70vh; 
+    margin-bottom: 75px;
+}
+
+#map {
+  width: auto; 
+  height: 70vh; 
+  margin-bottom: 75px;
+}

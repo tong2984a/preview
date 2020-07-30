@@ -33,13 +33,17 @@
         placeholder="Enter your email here...">
       </div>
     </div>
-    <!-- Ricardo: input dish -->
+
+    <!-- Ricardo: input location-->
+    <div id="map" style="width: 100%; height: 70vh; display: none;"></div>
     <div class="row justify-content-center">
-      <div class="col-sm-6 form-group">
-        <input type="text"
-        class="form-control input-lg"
-        id="dishInput"
-        placeholder="What is the name of the dish?">
+      <div class="col-sm-6 form-group">        
+        <p id="instruction" style="display: none;">Please drag the red pin to the place you want to choose</p>
+        <input type="url" id="locationInput" class="form-control input-lg" style="display: none;" >          
+        <p><label id="locationLabel" for="locationInput" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;" onclick="getCurrentLocation()">Set Location</label></p>      
+        <input type="text" id="address" class="form-control input-lg" style="display: none;">
+
+        <p><label id="addressConfirm" for="address" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;display: none;">Confirm Address</label></p>
       </div>
     </div>
     <!-- Ricardo: input restaurant -->
@@ -49,20 +53,19 @@
         class="form-control input-lg"
         id="restaurantInput"
         placeholder="What is the name of the restaurnt?"
-        onchange="searchRestaurant(this.value)">
+        onchange="searchRestaurantDemo(this.value)">
+        <h6 id="restSearch"></h6>
       </div>
     </div>
-    <!-- Ricardo: input location-->
-    <div id="map" style="width: 100%; height: 70vh; display: none;"></div>
+    <!-- Ricardo: input dish -->
     <div class="row justify-content-center">
       <div class="col-sm-6 form-group">
-        <input type="url" id="locationInput" class="form-control input-lg" style="display: none;" >          
-        <p><label id="locationLabel" for="locationInput" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;" onclick="getCurrentLocation()">Set Location</label></p>      
-        <input type="text" id="address" class="form-control input-lg" style="display: none;">
-        <p id="instruction" style="display: none;">Please drag the red pin to the place you want to choose</p>
-        <p><label id="addressConfirm" for="address" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;display: none;">Confirm Address</label></p>
+        <input type="text"
+        class="form-control input-lg"
+        id="dishInput"
+        placeholder="What is the name of the dish?">
       </div>
-    </div>
+    </div>   
     <div class="row justify-content-center">
       <div class="col-sm-6 form-group">
         <input type="text"
@@ -216,7 +219,8 @@ var restaurantInput = document.getElementById('restaurantInput');
 var locationInput = document.getElementById('locationInput');
 var map;
 // added in 16/7
-var currentLocation = [22.3, 114.16];
+var defaultLocation = [22.3, 114.16];
+var currentLocation;
 var contentString = '<div>' +
                 restaurantInput.value +
                 '</div>' +
@@ -250,6 +254,38 @@ var request = {
   };
 var service;
 
+var markers = [];
+var current;
+
+function stopAnimation(marker) {
+    setTimeout(function () {
+        marker.setAnimation(null);
+    }, 3000);
+}
+
+function searchRestaurantDemo(input) {
+  var count = 0;
+  markers.forEach(item => {
+    if(input == item.name){
+      count++;
+      item.marker.setAnimation(google.maps.Animation.BOUNCE); 
+      stopAnimation(item.marker);     
+      item.marker.setIcon('http://maps.google.com/mapfiles/ms/micons/blue-dot.png');
+      map.setCenter(item.marker.position);
+      (current)?current.setPosition(item.marker.position):currentLocation = item.marker.position;
+    }else{
+      item.marker.setVisible(false);
+      item.marker.setIcon('http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png');
+    }
+  })     
+  document.getElementById('restSearch').innerText = count + ' restaurant found';
+  if(count > 0){
+    document.getElementById('restSearch').style.color = 'rgb(0,255,0)'
+  }else{
+    document.getElementById('restSearch').style.color = 'rgb(255,0,0)'
+    markers.forEach(item => item.marker.setVisible(true));
+  };
+}
 
 function searchRestaurant(input) {
   console.log('searching ', input);
@@ -369,35 +405,33 @@ function initMap() {
   db.collection('receipts').get().then((snapshot) => {
     snapshot.docs.forEach(doc => {
       var restaurantData = doc.data();
-      addMarker(restaurantData);
+      addMarker(restaurantData, 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png');
     });
   });
   service = new google.maps.places.PlacesService(map);
 }
 
 //Ricardo: get the location of the restaurant
-function addMarker(restaurant) {
-    console.log("making marker");      
+function addMarker(restaurant, iconUse) { 
     var img = "<img src='" + restaurant.fileURL + "' style='width: 125px;'>";
     var tags = restaurant.tags;
     var tagString = '';
+    let name = restaurant.restaurant;
     var makeTagString = tags.forEach((tags) => {
       if(tags.value == true){
         tagString += '#' + tags.name + '  ';
       };
     });
-    console.log(tagString);
-    console.log(tagString);
     var marker = new google.maps.Marker({
         position: {lat: restaurant.location[0], lng: restaurant.location[1]},
         map: map,
-        icon: 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png'
+        icon: iconUse
     });           
 
     marker.addListener('click', function() {
       var infowindow = new google.maps.InfoWindow({
         content:'<div><h6> Restaurant: ' +
-                restaurant.restaurant +
+                name +
                 '</h6><h6> Dish: ' +
                 restaurant.dish +
                 '<h6></div>' +
@@ -410,22 +444,21 @@ function addMarker(restaurant) {
       });
       infowindow.open(map, marker);
     });
+    markers.push({marker, name});
 }
 
-function addCurrentMarker() {
+function addCurrentMarker(pos) {
     console.log("making Current marker");
-    var marker = new google.maps.Marker({
-        position: {lat: currentLocation[0], lng: currentLocation[1]},
+    current = new google.maps.Marker({
+        position: pos,
         map: map,
         draggable: true,
         title: 'here is me'
     });            
-    marker.addListener('dragend', function() {
+    current.addListener('dragend', function() {
         var markcoords = this.getPosition();
-        currentLocation[0] = markcoords.lat();
-        currentLocation[1] = markcoords.lng();
-        locationInput.value = currentLocation;
-        map.setCenter(new google.maps.LatLng(currentLocation[0], currentLocation[1]));
+        locationInput.value = markcoords;
+        map.setCenter(markcoords);
         //the function below need to pay.
         //getLocationAddress(markcoords);
     });
@@ -434,9 +467,11 @@ function addCurrentMarker() {
 function error(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
     locationInput.value = currentLocation; 
-    addCurrentMarker();
-    map.setCenter(new google.maps.LatLng(currentLocation[0], currentLocation[1]));
+    var pos = new google.maps.LatLng(defaultLocation[0], defaultLocation[1]);
+    addCurrentMarker(pos);
+    map.setCenter(pos);
     map.setZoom(18);
+    locationInput.value = pos;
 };
 
 var options = {
@@ -449,7 +484,7 @@ function getCurrentLocation() {
     console.log("updating location");
     navigator.geolocation.getCurrentPosition(setLocation, error, options);
     document.getElementById('map').style.display = 'block';
-    document.getElementById('locationInput').style.display = 'block';
+    //document.getElementById('locationInput').style.display = 'block';
     document.getElementById('instruction').style.display = 'block';
     document.getElementById('locationLabel').style.display = 'none';
     document.getElementById('address').style.display = 'none';
@@ -460,11 +495,10 @@ function getCurrentLocation() {
 
 function setLocation(position) {
   console.log("location set");
-    currentLocation[0] = position.coords.latitude;
-    currentLocation[1] = position.coords.longitude;  
+    currentLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
     locationInput.value = currentLocation; 
-    addCurrentMarker();
-    map.setCenter(new google.maps.LatLng(currentLocation[0], currentLocation[1]));
+    addCurrentMarker(currentLocation);
+    map.setCenter(currentLocation);
     map.setZoom(18);
 }
 
