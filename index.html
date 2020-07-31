@@ -271,8 +271,10 @@ function searchRestaurantDemo(input) {
       item.marker.setAnimation(google.maps.Animation.BOUNCE); 
       stopAnimation(item.marker);     
       item.marker.setIcon('http://maps.google.com/mapfiles/ms/micons/blue-dot.png');
+      item.marker.setVisible(true)
       map.setCenter(item.marker.position);
-      (current)?current.setPosition(item.marker.position):currentLocation = item.marker.position;
+      currentLocation = item.marker.position;
+      if(current)current.setPosition(item.marker.position);
     }else{
       item.marker.setVisible(false);
       item.marker.setIcon('http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png');
@@ -405,7 +407,7 @@ function initMap() {
   db.collection('receipts').get().then((snapshot) => {
     snapshot.docs.forEach(doc => {
       var restaurantData = doc.data();
-      addMarker(restaurantData, 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png');
+      addMarker(restaurantData, {url: 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png', scaledSize: new google.maps.Size(28,45)});
     });
   });
   service = new google.maps.places.PlacesService(map);
@@ -443,6 +445,10 @@ function addMarker(restaurant, iconUse) {
                 '<h6></div>'
       });
       infowindow.open(map, marker);
+      map.setCenter(this.position);
+      currentLocation = this.position;
+      if(current)current.setPosition(this.position);
+      document.getElementById('restaurantInput').value = name;
     });
     markers.push({marker, name});
 }
@@ -453,7 +459,8 @@ function addCurrentMarker(pos) {
         position: pos,
         map: map,
         draggable: true,
-        title: 'here is me'
+        title: 'here is me',
+        icon: {url: 'https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi.png', scaledSize: new google.maps.Size(20, 35)}
     });            
     current.addListener('dragend', function() {
         var markcoords = this.getPosition();
@@ -646,7 +653,9 @@ function upload() {
             {name: 'vegan', value : isVegan = document.getElementById('vegan').checked},
             {name: 'buddhist_friendly', value : isBuddhistFriendly = document.getElementById('buddhist-friendly').checked},
             {name: 'all_natural', value : isAllNatural = document.getElementById('all-natural').checked}
-          ]
+          ],
+          //31/7 add
+          approved: false
         })
         .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id);

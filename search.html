@@ -53,7 +53,11 @@
 
             <div id="mapSection">
                 <div id="sidebar-wrapper">                   
-                    <div id="toggle-btn" onclick="toggleSidebar()">&#10095;</div>
+                    <div id="toggle-btn" onclick="toggleSidebar()">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
                     <div id="sidebar">            
                         <h3 id="restaurantName">Restaurant</h3>
                         <h4 id="restName"></h4>
@@ -62,12 +66,18 @@
                         <h4 id="restLocation"></h4>
                         <h3>Dishes</h3>
                         <div id="restaurnatDish">
-                            <h5>Dish</h5>
-                            <h6 id="dishName"></h6>
-                            <img src="" id="dishImage" style='width: 150px;'>
-                            <div style="width: 150px;overflow: auto;">
-                                <h5>tags</h5>
-                                <h6 id="tagString"></h6>
+                            <div class="slideContainer">
+                                <h5>Dish</h5>
+                                <h6 id="dishName"></h6>
+                                <img src="" id="dishImage" style='width: 150px;'>
+                                <div style="width: 150px;overflow: auto;">
+                                    <h5>tags</h5>
+                                    <h6 id="tagString"></h6>
+                                </div>
+                                <div class="dotSection">
+                                    <span class="dot"></span>
+                                </div>
+
                             </div>
 
                         </div>
@@ -125,6 +135,8 @@
             let selected = [];
             let selectedRegex = [];
 
+            var isSideOpen = false;
+
             function stopAnimation(marker) {
                 setTimeout(function () {
                     marker.setAnimation(null);
@@ -158,6 +170,7 @@
 
             function toggleSidebar() {
                 document.getElementById("sidebar-wrapper").classList.toggle('open');
+                isSideOpen = !isSideOpen;
                 console.log('ckicked')
             }
 
@@ -328,25 +341,32 @@
                 });            
 
                 marker.addListener('click', function() {
-                    var infowindow = new google.maps.InfoWindow({
-                        content:'<div><h6> Restaurant: ' +
-                                name +
-                                '</h6><h6> Dish: ' +
-                                restaurant.dish +
-                                '<h6></div>' +
-                                '<div>' +
-                                img +
-                                '</div>' +
-                                '<div style="width: 150px;overflow: auto;"><h6>Tags : ' +
-                                tagString +
-                                '<h6></div>'
-                    });
-                    infowindow.open(map, marker);
-                    document.getElementById('restName').innerText = restaurant.restaurant;
-                    document.getElementById('restLocation').innerText = restaurant.location;
-                    document.getElementById('dishName').innerText = restaurant.dish;
-                    document.getElementById('dishImage').src = restaurant.fileURL;
-                    document.getElementById('tagString').innerText = tagString;
+                    if(!isSideOpen){
+                        var infowindow = new google.maps.InfoWindow({
+                            content:'<div><h6> Restaurant: ' +
+                                    name +
+                                    '</h6><h6> Dish: ' +
+                                    restaurant.dish +
+                                    '<h6></div>' +
+                                    '<div>' +
+                                    img +
+                                    '</div>' +
+                                    '<div style="width: 150px;overflow: auto;"><h6>Tags : ' +
+                                    tagString +
+                                    '<h6></div>'
+                        });
+                        infowindow.open(map, marker);
+                    }else{
+                        document.getElementById('restName').innerText = restaurant.restaurant;
+                        document.getElementById('restLocation').innerText = restaurant.location;
+                        document.getElementById('dishName').innerText = restaurant.dish;
+                        document.getElementById('dishImage').src = restaurant.fileURL;
+                        document.getElementById('tagString').innerText = tagString;
+                        this.setAnimation(google.maps.Animation.BOUNCE); 
+                        stopAnimation(this);     
+                    }
+
+
                 });
                 markers.push({marker, name});
             }
