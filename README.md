@@ -1,3 +1,3 @@
-# Try me at 
+# Try me at
 
-https://pay-a-vegan.github.io/receipts/
+https://loving-knuth-e1160e.netlify.app/search.html
