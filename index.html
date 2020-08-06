@@ -39,7 +39,7 @@
     <div class="row justify-content-center">
       <div class="col-sm-6 form-group">        
         <p id="instruction" style="display: none;">Please drag the red pin to the place you want to choose</p>
-        <input type="url" id="locationInput" class="form-control input-lg" style="display: none;" >          
+        <input type="url" id="locationInput" class="form-control input-lg" style="display: block;" >          
         <p><label id="locationLabel" for="locationInput" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;" onclick="getCurrentLocation()">Set Location</label></p>      
         <input type="text" id="address" class="form-control input-lg" style="display: none;">
 
@@ -220,7 +220,7 @@ var locationInput = document.getElementById('locationInput');
 var map;
 // added in 16/7
 var defaultLocation = [22.3, 114.16];
-var currentLocation;
+var currentLocation = [22.3, 114.16];
 var contentString = '<div>' +
                 restaurantInput.value +
                 '</div>' +
@@ -265,15 +265,18 @@ function stopAnimation(marker) {
 
 function searchRestaurantDemo(input) {
   var count = 0;
-  markers.forEach(item => {
-    if(input == item.name){
+  var str = input.toLowerCase().replace(/\s/g,'');
+  markers.forEach(item => {  
+    var pattern = new RegExp(item.name);
+    if(pattern.test(str)){
       count++;
       item.marker.setAnimation(google.maps.Animation.BOUNCE); 
-      stopAnimation(item.marker);     
-      item.marker.setIcon('http://maps.google.com/mapfiles/ms/micons/blue-dot.png');
+      stopAnimation(item.marker);
+      item.marker.setIcon({url: 'http://maps.google.com/mapfiles/ms/micons/blue-dot.png', scaledSize: new google.maps.Size(43,43)});
+      //item.marker.setIcon('http://maps.google.com/mapfiles/ms/micons/blue-dot.png');
       item.marker.setVisible(true)
       map.setCenter(item.marker.position);
-      currentLocation = item.marker.position;
+      currentLocation = [item.marker.position.lat(), item.marker.position.lng()];
       if(current)current.setPosition(item.marker.position);
     }else{
       item.marker.setVisible(false);
@@ -411,6 +414,11 @@ function initMap() {
     });
   });
   service = new google.maps.places.PlacesService(map);
+  var circle = new google.maps.Circle();
+  circle.setCenter({lat: 22.3, lng: 114.2});
+  circle.setRadius(2000);
+  circle.setVisible(true);
+  circle.setMap(map)
 }
 
 //Ricardo: get the location of the restaurant
@@ -427,7 +435,7 @@ function addMarker(restaurant, iconUse) {
     var marker = new google.maps.Marker({
         position: {lat: restaurant.location[0], lng: restaurant.location[1]},
         map: map,
-        icon: iconUse
+        icon: iconUse,
     });           
 
     marker.addListener('click', function() {
@@ -446,9 +454,10 @@ function addMarker(restaurant, iconUse) {
       });
       infowindow.open(map, marker);
       map.setCenter(this.position);
-      currentLocation = this.position;
+      currentLocation = [this.position.lat() ,this.position.lng()];
       if(current)current.setPosition(this.position);
       document.getElementById('restaurantInput').value = name;
+      console.log(restaurant.location)
     });
     markers.push({marker, name});
 }
@@ -460,7 +469,8 @@ function addCurrentMarker(pos) {
         map: map,
         draggable: true,
         title: 'here is me',
-        icon: {url: 'https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi.png', scaledSize: new google.maps.Size(20, 35)}
+        icon: {url: 'https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi.png', scaledSize: new google.maps.Size(20, 35)},
+        zIndex: 10
     });            
     current.addListener('dragend', function() {
         var markcoords = this.getPosition();
@@ -502,10 +512,11 @@ function getCurrentLocation() {
 
 function setLocation(position) {
   console.log("location set");
-    currentLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-    locationInput.value = currentLocation; 
-    addCurrentMarker(currentLocation);
-    map.setCenter(currentLocation);
+    currentLocation = [position.coords.latitude, position.coords.longitude];
+    var currentLocationLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    locationInput.value = currentLocationLatLng; 
+    addCurrentMarker(currentLocationLatLng);
+    map.setCenter(currentLocationLatLng);
     map.setZoom(18);
 }
 
@@ -660,7 +671,7 @@ function upload() {
         .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id);
           helloMessageOutput.innerText = `File received with ID: ${docRef.id}`;       
-          tagList.forEach((item) => {
+         /* tagList.forEach((item) => {
             console.log("looking at ", item.name);
             if(item.value == true){
               db.collection("tagLists").doc(item.name).update({
@@ -668,14 +679,39 @@ function upload() {
               });              
               console.log("added to ", item.name);
             }
-          });
+          });*/
         })
         .catch(function(error) {
           console.error("Error adding document: ", error);
           helloMessageOutput.innerText = `Error adding document: ${error}`;
-        });
+        });      
         console.log("refresh the map");
-        newMarker();
+        newMarker();         
+        var dishes = {
+          dish: dishInput.value,
+          fileURL: imgURL,
+          tags: tagList
+        };
+        db.collection("restaurants").doc(restaurantInput.value).get().then((doc) => {
+          console.log(doc.exists);
+          if(doc.exists){
+            console.log('exist');
+            db.collection('restaurants').doc(restaurantInput.value).update({
+                dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
+            });
+          }else{
+            console.log('not exist');
+            var initArray = [];
+            db.collection("restaurants").doc(restaurantInput.value).set({
+              location: currentLocation,
+              dishes: initArray 
+            }).then(
+              db.collection('restaurants').doc(restaurantInput.value).update({
+                  dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
+              })
+            );
+          }
+        })
       });
     }
     

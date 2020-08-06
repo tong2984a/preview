@@ -36,6 +36,7 @@
         <button type="submit" onclick="initDatabase()"> add ID</button>
         <button type="submit" onclick="addID1()"> add ID</button>
         <button type="submit" onclick="addID2()"> add ID</button>
+        <button type="submit" onclick="addDish()"> Add to dish</button>
 
         <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
@@ -62,6 +63,21 @@
             var id = 'gftugvmjgvtcj';
             var id1 = 'k39pjmfe82';
             var id2 = 'nbsofpi90993';
+
+            function addDish() {
+                db.collection('receipts').doc('WwpgXOy00lPhJbWTbcfH').get().then((doc) => {
+                    var item = doc.data();
+                    var dishes = {dish: item.dish,
+                                 fileURL: item.fileURL,
+                                 tags: item.tags
+                                };
+                    db.collection('restaurants').doc('aa').update({
+                        dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
+                        location: item.location
+                    });
+                })
+
+            }
 
             function initDatabase() {
                 var ar = new Array();
@@ -238,6 +254,8 @@
                 var fname = dateTime + ".jpg";
                 console.log(fname);
             }
+
+
         </script>
         <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEJpg61U3rDVLKE9A0MZ-1i7F1FezKpTQ

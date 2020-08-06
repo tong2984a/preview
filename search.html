@@ -65,9 +65,9 @@
                         <h3 id="restaurantLocation">location</h3>
                         <h4 id="restLocation"></h4>
                         <h3>Dishes</h3>
-                        <div id="restaurnatDish">
-                            <div class="slideContainer">
-                                <h5>Dish</h5>
+                        <div id="restaurnatDish">                                
+                            <h5>Dish</h5>
+                            <div id="slideContainer">
                                 <h6 id="dishName"></h6>
                                 <img src="" id="dishImage" style='width: 150px;'>
                                 <div style="width: 150px;overflow: auto;">
@@ -143,11 +143,20 @@
                 }, 3000);
             }
 
+            function isInArea(position, area) {
+                let x = position[0] - area.center[0];
+                let y = position[1] - area.center[1];
+                let distance = Math.sqrt((x * x) + (y * y));
+                return(distance < area.radius);
+            }
+
             function searchRestaurantDemo(input) {
-                console.log(markers);
-                var count = 0;
+                var count = 0; 
+                var str = input.toLowerCase().replace(/\s/g,'');                   
+                
                 markers.forEach(item => {
-                    if(input == item.name){
+                    var pattern = new RegExp(item.name);
+                    if(pattern.test(str)){
                     count++;
                     item.marker.setAnimation(google.maps.Animation.BOUNCE); 
                     stopAnimation(item.marker);     
@@ -313,36 +322,33 @@
                     streetViewControl: false
                 });
                 console.log('initializing map');
-                db.collection('receipts').get().then((snapshot) => {
+                db.collection('restaurants').get().then((snapshot) => {
                     snapshot.docs.forEach(doc => {
                     var restaurantData = doc.data();
-                    addMarker(restaurantData);
+                    console.log(restaurantData.location);
+                    addMarker(restaurantData, doc.id);
                     });
                 }); 
                 console.log(showing);
             }
 
-            function addMarker(restaurant) {      
-                var img = "<img src='" + restaurant.fileURL + "' style='width: 125px;'>";
-                var tags = restaurant.tags;
-                var tagString = '';
-                var name = restaurant.restaurant;
-                var makeTagString = tags.forEach((tags) => {
-                if(tags.value == true){
-                    tagString += '#' + tags.name + '  ';
-                };
-                });
+            function addMarker(restaurant, restaurantName) {                    
+                var name = restaurantName;         
+                let lat = restaurant.location[0];
+                let lng =  restaurant.location[1];
                 var marker = new google.maps.Marker({
-                    position: {lat: restaurant.location[0], lng: restaurant.location[1]},
+                    position: {lat, lng},
                     map: map,
                     icon: 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png',
-                    title: tagString,
                     animation: google.maps.Animation.DROP
-                });            
+                });     
 
                 marker.addListener('click', function() {
                     if(!isSideOpen){
-                        var infowindow = new google.maps.InfoWindow({
+                        document.getElementById("sidebar-wrapper").classList.toggle('open');
+                        isSideOpen = !isSideOpen;
+                        console.log('ckicked')
+                        /*var infowindow = new google.maps.InfoWindow({
                             content:'<div><h6> Restaurant: ' +
                                     name +
                                     '</h6><h6> Dish: ' +
@@ -355,18 +361,42 @@
                                     tagString +
                                     '<h6></div>'
                         });
-                        infowindow.open(map, marker);
-                    }else{
-                        document.getElementById('restName').innerText = restaurant.restaurant;
+                        infowindow.open(map, marker);*/
+                    }
+                       // $('.dish').remove();
+                       // $('.photo').remove();
+                       // $('.tags').remove();
+                        $('#dishSection').remove();
+                        document.getElementById('restName').innerText = name;
                         document.getElementById('restLocation').innerText = restaurant.location;
-                        document.getElementById('dishName').innerText = restaurant.dish;
-                        document.getElementById('dishImage').src = restaurant.fileURL;
-                        document.getElementById('tagString').innerText = tagString;
+                        var dishSection = document.createElement("div")
+                        dishSection.id = "dishSection";
+                        document.getElementById("slideContainer").appendChild(dishSection);
+                        restaurant.dishes.forEach((dishes) => {                        
+                        var name = document.createElement("h5");
+                        name.innerText = dishes.dish;
+                        document.getElementById('dishSection').appendChild(name)
+                        var photo = document.createElement("img");
+                        photo.src = dishes.fileURL;
+                        photo.style.width = '150px' 
+                        document.getElementById('dishSection').appendChild(photo);                
+                        var tags = dishes.tags;
+                        var tagString = '';
+                        var makeTagString = tags.forEach((tags) => {
+                            if(tags.value == true){
+                                tagString += '#' + tags.name + '  ';
+                            };
+                        });
+                        var tag = document.createElement('h6');
+                        tag.innerText = tagString;
+                        document.getElementById('dishSection').appendChild(tag); 
+                    }) 
+
+                        //document.getElementById('dishName').innerText = restaurant.dish;
+                       // document.getElementById('dishImage').src = restaurant.fileURL;
+                       // document.getElementById('tagString').innerText = tagString;
                         this.setAnimation(google.maps.Animation.BOUNCE); 
                         stopAnimation(this);     
-                    }
-
-
                 });
                 markers.push({marker, name});
             }
