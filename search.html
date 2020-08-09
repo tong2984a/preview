@@ -77,9 +77,7 @@
                                 <div class="dotSection">
                                     <span class="dot"></span>
                                 </div>
-
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -140,19 +138,32 @@
 
             var isSideOpen = false;
             const BreakException = {};
+
+            var map;
             
             const areas = [
                 //kowloon
-                {name: "kwuntong", center: [22.311705, 114.223108], radius: 700},
-                {name: "ngautaukok", center: [22.322609, 114.216777], radius: 700},
+                {name: "kwuntong", center: [22.311705, 114.223108], radius: 750},
+                {name: "ngautaukok", center: [22.320684, 114.218625], radius: 850},
                 {name: "lamtin", center: [22.308872, 114.237096], radius: 700},
-                {name: "yautong", center: [22.308872, 114.237096], radius: 700},
-                {name: "choihung", center: [22.308872, 114.237096], radius: 700},
-                {name: "lamtin", center: [22.308872, 114.237096], radius: 700},
+                {name: "yautong", center: [22.296846, 114.236544], radius: 700},
+                {name: "choihung", center: [22.33493079072518, 114.21162537422178], radius: 700},
+                {name: "kowloonbay", center: [22.32532408641564, 114.2086213001251], radius: 750},
+                {name: "kowlooncity", center: [22.331085211130553, 114.18831697788237], radius: 700},
+
                 //hong kong island
-                {name: "wanchai", center: [22.308872, 114.237096], radius: 700},
+                {name: "wanchai", center: [22.2787032129389, 114.17361067583006], radius: 700},
                 //new territories
             ];
+
+            function visualizeArea(area) {
+                console.log(area.name);
+                var circle = new google.maps.Circle({      fillColor: "#FF0000",});
+                circle.setCenter({lat: area.center[0], lng: area.center[1]});
+                circle.setRadius(area.radius);
+                circle.setVisible(true);
+                circle.setMap(map)
+            }
 
             function stopAnimation(marker) {
                 setTimeout(function () {
@@ -375,6 +386,10 @@
                     });
                 }); 
                 console.log(showing);
+                visualizeArea(areas[0]);
+                areas.forEach((value) => {
+                    visualizeArea(value);
+                })
             }
 
             function addMarker(restaurant, restaurantName) {                    
@@ -393,24 +408,7 @@
                         document.getElementById("sidebar-wrapper").classList.toggle('open');
                         isSideOpen = !isSideOpen;
                         console.log('ckicked')
-                        /*var infowindow = new google.maps.InfoWindow({
-                            content:'<div><h6> Restaurant: ' +
-                                    name +
-                                    '</h6><h6> Dish: ' +
-                                    restaurant.dish +
-                                    '<h6></div>' +
-                                    '<div>' +
-                                    img +
-                                    '</div>' +
-                                    '<div style="width: 150px;overflow: auto;"><h6>Tags : ' +
-                                    tagString +
-                                    '<h6></div>'
-                        });
-                        infowindow.open(map, marker);*/
                     }
-                       // $('.dish').remove();
-                       // $('.photo').remove();
-                       // $('.tags').remove();
                         $('#dishSection').remove();
                         document.getElementById('restName').innerText = name;
                         document.getElementById('restLocation').innerText = restaurant.location;
@@ -436,10 +434,6 @@
                         tag.innerText = tagString;
                         document.getElementById('dishSection').appendChild(tag); 
                     }) 
-
-                        //document.getElementById('dishName').innerText = restaurant.dish;
-                       // document.getElementById('dishImage').src = restaurant.fileURL;
-                       // document.getElementById('tagString').innerText = tagString;
                         this.setAnimation(google.maps.Animation.BOUNCE); 
                         stopAnimation(this);     
                 });
