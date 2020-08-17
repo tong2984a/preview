@@ -8,9 +8,7 @@
   <title>Hello, Vegan!</title>
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/sidebar.css">
-  <script src="js/JIC.min.js" type="text/javascript"></script>
-  <script src="js/mapHelper.js" type="text/javascript"></script>
-  <script src="js/jquery-3.5.1.min.js"></script>
+
 </head>
 <body>
 
@@ -53,14 +51,7 @@
               <h4 id="restLocation"></h4>
               <h3>Dishes</h3>
               <div id="restaurnatDish">                                
-                  <div id="slideContainer">
-                      <h6 id="dishName"></h6>
-                      <img src="" id="dishImage" style='width: 150px;'>
-                      <div style="width: 150px;overflow: auto;">
-                          <h6 id="tagString"></h6>
-                      </div>
-
-                  </div>                      
+                  <div id="slideContainer"></div>                      
                   <div class="dotSection">
                       <span class="dot"></span>
                   </div>
@@ -86,7 +77,7 @@
         class="form-control input-lg"
         id="searchInput"
         placeholder="Please enter the name of the restaurnt you want to find?"
-        onchange="searchRestaurantDemo(this.value)">
+        onchange="searchRestaurantDemo(this.value, 'add')">
         <input type="text"
         class="form-control input-lg"
         id="restaurantInput"
@@ -298,21 +289,9 @@ var greenIcon;
 var markers = [];
 var showing = [];
 var current;
-const areas = [
-    //kowloon
-    {name: "kwuntong", center: [22.311705, 114.223108], radius: 750},
-    {name: "ngautaukok", center: [22.320684, 114.218625], radius: 850},
-    {name: "lamtin", center: [22.308872, 114.237096], radius: 700},
-    {name: "yautong", center: [22.296846, 114.236544], radius: 700},
-    {name: "choihung", center: [22.33493079072518, 114.21162537422178], radius: 700},
-    {name: "kowloonbay", center: [22.32532408641564, 114.2086213001251], radius: 750},
-    {name: "kowlooncity", center: [22.331085211130553, 114.18831697788237], radius: 700},
-
-    //hong kong island
-    {name: "wanchai", center: [22.2787032129389, 114.17361067583006], radius: 700},
-    //new territories
-];
-
+var currentRestaurantId;
+var newRestaurantId;
+const mode = "add";
 
 function visualizeArea(area) {
     console.log(area.name);
@@ -321,99 +300,6 @@ function visualizeArea(area) {
     circle.setRadius(area.radius);
     circle.setVisible(true);
     circle.setMap(map)
-}
-
-function stopAnimation(marker) {
-    setTimeout(function () {
-        marker.setAnimation(null);
-    }, 3000);
-}
-
-function isInArea(position, center, radius) {
-    var distance;
-    if ((position.lat() == center.lat()) && (position.lng() == center.lng())) {
-        distance = 0;
-    } else {
-        console.log(position.lat(), position.lng());
-        console.log(center.lat(), center.lng())
-        console.log(center);
-        distance = google.maps.geometry.spherical.computeDistanceBetween(position, center);
-        console.log(distance);
-    }
-    return(distance < radius);
-}
-
-function searchRestaurantDemo(input) {
-    var count = 0; 
-    var str = input.toLowerCase().replace(/\s/g,'');          
-    var search =  new RegExp(str);            
-    var areaCenter;
-    var areaRadius;
-    var checkArea = false;
-    areas.some((value) => {
-        var pattern = new RegExp(value.name);                        
-        if(pattern.test(str)){
-          areaCenter = new google.maps.LatLng(value.center[0], value.center[1]);
-          areaRadius = value.radius;
-          checkArea = true;
-          str = str.replace(value.name,'');
-          search =  new RegExp(str);   
-          return true;
-        }
-    })
-    markers.forEach(item => {
-      console.log("checking item", )
-        if(search.test(item.name.toLowerCase())){
-            count++;                        
-            item.marker.setAnimation(google.maps.Animation.BOUNCE); 
-            stopAnimation(item.marker);     
-            item.marker.setIcon(blueIcon);
-            map.setCenter(item.marker.position);
-            item.marker.setVisible(true);
-            showing.push(item);
-        }else{
-            item.marker.setVisible(false);
-            item.marker.setIcon(greenIcon);
-        }
-        if(item.marker.getVisible()){
-          currentLocation[0] = item.marker.position.lat();
-          currentLocation[1] = item.marker.position.lng();
-          current.setPosition(item.marker.position);
-          restaurantInput.value = item.name;
-        }
-    })
-    if(checkArea){
-      console.log("checking area")
-        markers.forEach(item => {
-          if(item.marker.getVisible()){
-            if(isInArea(item.marker.position, areaCenter, areaRadius)){
-              if(!item.marker.getVisible())count++;                        
-                item.marker.setAnimation(google.maps.Animation.BOUNCE); 
-                stopAnimation(item.marker);     
-                item.marker.setIcon(blueIcon);
-                map.setCenter(item.marker.position);
-                item.marker.setVisible(true);
-            }else{
-                if(item.marker.getVisible())count--;  
-                item.marker.setVisible(false);
-                item.marker.setIcon(greenIcon);
-            }
-            if(item.marker.getVisible()){
-              currentLocation[0] = item.marker.position.lat();
-              currentLocation[1] = item.marker.position.lng();
-              current.setPosition(item.marker.position);
-              restaurantInput.value = item.name;
-            }
-          }
-        })
-    }
-    document.getElementById('restSearch').innerText = count + ' restaurant found';
-    if(count > 0){
-        document.getElementById('restSearch').style.color = 'rgb(0,255,0)'
-    }else{
-        document.getElementById('restSearch').style.color = 'rgb(255,0,0)'
-        markers.forEach(item => item.marker.setVisible(true));
-    };
 }
 
 function searchRestaurant(input) {
@@ -507,6 +393,11 @@ function reUpload() {
   document.getElementById('reUploadBtn').style.display = "none";
   preview.style.display = "none";
   console.log(preview);
+  db.collection("restaurants").doc(currentRestaurantId.toString()).get().then((doc) => {
+    console.log(doc.exists);
+          if(doc.exists){
+    if(doc.data().location == currentLocation)console.log("match coordinate");}
+  });
 }
 
 //Ricardo: email validation
@@ -536,183 +427,11 @@ function initMap() {
     var restaurantData = doc.data();
     addRestMarker(restaurantData, doc.id);
     });
+  }).then(() => {
+    newRestaurantId = (markers.length + 1);
+    console.log(newRestaurantId);
   }); 
   service = new google.maps.places.PlacesService(map);
-  blueIcon = {url: 'http://maps.google.com/mapfiles/ms/micons/blue-dot.png', scaledSize: new google.maps.Size(45, 45)}
-  greenIcon = {url: 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png', scaledSize: new google.maps.Size(30, 45)}
-
-}
-
-function addRestMarker(restaurant, restaurantName) {        
-  console.log(restaurant);            
-  var name = restaurantName;         
-  let lat = restaurant.location[0];
-  let lng =  restaurant.location[1];
-  var marker = new google.maps.Marker({
-      position: {lat, lng},
-      map: map,
-      icon: greenIcon,
-      animation: google.maps.Animation.DROP
-  });     
-
-  marker.addListener('click', function() {
-      if(!isSideOpen){
-          document.getElementById("sidebar-wrapper").classList.toggle('open');
-          isSideOpen = !isSideOpen;
-          console.log('ckicked')
-      }
-          $('#dishSection').remove();
-          document.getElementById('restName').innerText = name;
-          document.getElementById('restLocation').innerText = restaurant.location;
-          var dishSection = document.createElement("div")
-          dishSection.id = "dishSection";
-          document.getElementById("slideContainer").appendChild(dishSection);
-          restaurant.dishes.forEach((dishes) => {                        
-          var name = document.createElement("h5");
-          name.innerText = "Dish: " + dishes.dish;
-          document.getElementById('dishSection').appendChild(name)
-          var photo = document.createElement("img");
-          photo.src = dishes.fileURL;
-          photo.style.width = '150px' 
-          document.getElementById('dishSection').appendChild(photo);                
-          var tags = dishes.tags;
-          var tagString = 'Tags: ';
-          var makeTagString = tags.forEach((tags) => {
-              if(tags.value == true){
-                  tagString += '#' + tags.name + '  ';
-              };
-          });
-          var tag = document.createElement('h6');
-          tag.innerText = tagString;
-          document.getElementById('dishSection').appendChild(tag); 
-      }) 
-          this.setAnimation(google.maps.Animation.BOUNCE); 
-          stopAnimation(this);     
-          currentLocation[0] = lat;
-          currentLocation[1] = lng;
-          current.setPosition({lat, lng});
-          map.setCenter({lat, lng});
-          restaurantInput.value = name;
-  });
-  markers.push({marker, name});
-}
-
-//Ricardo: get the location of the restaurant
-function addMarker(restaurant, iconUse) { 
-    var img = "<img src='" + restaurant.fileURL + "' style='width: 125px;'>";
-    var tags = restaurant.tags;
-    var tagString = '';
-    let name = restaurant.restaurant;
-    var makeTagString = tags.forEach((tags) => {
-      if(tags.value == true){
-        tagString += '#' + tags.name + '  ';
-      };
-    });
-    var marker = new google.maps.Marker({
-        position: {lat: restaurant.location[0], lng: restaurant.location[1]},
-        map: map,
-        icon: iconUse,
-    });           
-
-    marker.addListener('click', function() {
-      var infowindow = new google.maps.InfoWindow({
-        content:'<div><h6> Restaurant: ' +
-                name +
-                '</h6><h6> Dish: ' +
-                restaurant.dish +
-                '<h6></div>' +
-                '<div>' +
-                img +
-                '</div>' +
-                '<div style="width: 150px;overflow: auto;"><h6>Tags : ' +
-                tagString +
-                '<h6></div>'
-      });
-      infowindow.open(map, marker);
-      map.setCenter(this.position);
-      currentLocation = [this.position.lat() ,this.position.lng()];
-      if(current)current.setPosition(this.position);
-      document.getElementById('restaurantInput').value = name;
-      console.log(restaurant.location)
-    });
-    markers.push({marker, name});
-}
-
-function addCurrentMarker(pos) {
-    console.log("making Current marker");
-    current = new google.maps.Marker({
-        position: pos,
-        map: map,
-        draggable: true,
-        title: 'here is me',
-        icon: {url: 'https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi.png', scaledSize: new google.maps.Size(20, 35)},
-        zIndex: 1000
-    });            
-    current.addListener('dragend', function() {
-        var markcoords = this.getPosition();
-        currentLocation[0] = markcoords.lat();
-        currentLocation[1] = markcoords.lng();
-        console.log(currentLocation)
-        locationInput.value = markcoords;
-        map.setCenter(markcoords);
-        //the function below need to pay.
-        //getLocationAddress(markcoords);
-    });
-}
-
-function error(err) {
-    console.warn(`ERROR(${err.code}): ${err.message}`);
-    locationInput.value = currentLocation; 
-    var pos = new google.maps.LatLng(defaultLocation[0], defaultLocation[1]);
-    addCurrentMarker(pos);
-    map.setCenter(pos);
-    map.setZoom(18);
-    locationInput.value = pos;
-};
-
-var options = {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0
-};
-
-function getCurrentLocation() {
-    console.log("updating location");
-    navigator.geolocation.getCurrentPosition(setLocation, error, options);
-    document.getElementById('mapSection').style.display = 'block';
-    //document.getElementById('locationInput').style.display = 'block';
-    document.getElementById('instruction').style.display = 'block';
-    document.getElementById('locationLabel').style.display = 'none';
-    document.getElementById('address').style.display = 'none';
-    document.getElementById('addressConfirm').style.display = 'none';
-    console.log("location get");
-    return true;
-}
-
-function setLocation(position) {
-  console.log("location set");
-    currentLocation = [position.coords.latitude, position.coords.longitude];
-    var currentLocationLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-    locationInput.value = currentLocationLatLng; 
-    addCurrentMarker(currentLocationLatLng);
-    map.setCenter(currentLocationLatLng);
-    map.setZoom(18);
-}
-
-function getLocationAddress(pos) {
-  geocoder = new google.maps.Geocoder();
-  geocoder.geocode(
-    {
-      location: pos
-    }
-    ,function (result, status){
-      if(status == google.maps.GeocoderStatus.OK){
-        document.getElementById('address').value = result[0].formatted_address;
-      }else{
-        console.log('connot format the address');
-      }
-    }
-  );
 }
   
 //helper function
@@ -721,45 +440,6 @@ function addToList(tagName, id) {
   db.collection('tagLists').doc(tagName).update({
     docID: firebase.firestore.FieldValue.arrayUnion(id)
   });
-}
-
-//refresh map function
-function refreshMap() {
-  var r = document.location.reload();
-}
-
-function newMarker() {
-  console.log("making marker");      
-    var img = "<img src='" + imgURL + "' style='width: 125px;'>";
-    var tagString = '';
-    var makeTagString = tagList.forEach((tagList) => {
-      if(tagList.value == true){
-        tagString += '#' + tagList.name + '  ';
-      };
-    });
-    var marker = new google.maps.Marker({
-        position: {lat: currentLocation[0], lng: currentLocation[1]},
-        map: map,
-        icon: 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png',
-        animation: google.maps.Animation.BOUNCE
-    });         
-
-    marker.addListener('click', function() {
-      var infowindow = new google.maps.InfoWindow({
-        content:'<div><h6> Restaurant: ' +
-                restaurantInput +
-                '</h6><h6> Dish: ' +
-                dishInput +
-                '<h6></div>' +
-                '<div>' +
-                img +
-                '</div>' +
-                '<div style="width: 150px;overflow: auto;"><h6>Tags : ' +
-                tagString +
-                '<h6></div>'
-      });
-      infowindow.open(map, marker);
-    });
 }
 
 function upload() {
@@ -828,7 +508,7 @@ function upload() {
           fileURL: imgURL = downloadURL,
           //15/7 add 
           dish: dishInput.value,          
-          location: currentLocation,
+          location: [current.position.lat(), current.position.lng()],
           restaurant: restaurantInput.value,
           //17/7 add            
           imageName: imageFileName,
@@ -845,58 +525,81 @@ function upload() {
             {name: 'all_natural', value : isAllNatural = document.getElementById('all-natural').checked}
           ],
           //31/7 add
-          approved: false
+          approved: false,
+
         })
         .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id);
-          helloMessageOutput.innerText = `File received with ID: ${docRef.id}`;       
-         /* tagList.forEach((item) => {
-            console.log("looking at ", item.name);
-            if(item.value == true){
-              db.collection("tagLists").doc(item.name).update({
-                  docID: firebase.firestore.FieldValue.arrayUnion(docRef.id)
-              });              
-              console.log("added to ", item.name);
-            }
-          });*/
+          helloMessageOutput.innerText = `File received with ID: ${docRef.id}`; 
+          console.log("refresh the map");
+          console.log(newRestaurantId);
+          newMarker();
+          newRestaurantId = docRef.id; 
+          var dishes = {
+            dish: dishInput.value,
+            fileURL: imgURL,
+            tags: tagList
+          };
+          if(currentRestaurantId){
+            console.log(currentRestaurantId);
+            db.collection("restaurants").doc(currentRestaurantId.toString()).get().then((doc) => {
+            console.log(doc.exists);
+              if(doc.exists){              
+                console.log('exist');
+                console.log(currentLocation);
+                console.log(doc.data().location);
+                if(isAccurate(currentLocation, doc.data().location)){
+                  console.log('accurate');
+                  addToRestaurant(dishes);
+                }else{
+                  addNewRestaurant(dishes);
+                }              
+              }else{
+                addNewRestaurant(dishes);
+              }
+            })
+          }else{
+            addNewRestaurant(dishes);
+          }      
         })
         .catch(function(error) {
           console.error("Error adding document: ", error);
           helloMessageOutput.innerText = `Error adding document: ${error}`;
-        });      
-        console.log("refresh the map");
-        newMarker();         
-        var dishes = {
-          dish: dishInput.value,
-          fileURL: imgURL,
-          tags: tagList
-        };
-        db.collection("restaurants").doc(restaurantInput.value).get().then((doc) => {
-          console.log(doc.exists);
-          if(doc.exists){
-            console.log('exist');
-            db.collection('restaurants').doc(restaurantInput.value).update({
-                dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
-            });
-          }else{
-            console.log('not exist');
-            var initArray = [];
-            db.collection("restaurants").doc(restaurantInput.value).set({
-              location: currentLocation,
-              dishes: initArray 
-            }).then(
-              db.collection('restaurants').doc(restaurantInput.value).update({
-                  dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
-              })
-            );
-          }
-        })
+        });              
+        
       });
     }
-    
   );
     document.getElementById("addBtn").style.display = "block";
 }
+
+function isAccurate(pos1, pos2) {
+    var latDiff = Math.abs(pos1[0] - pos2[0]);
+    var lngDiff = Math.abs(pos1[1] - pos2[1]);
+    return (latDiff < 0.0001 && lngDiff < 0.0001);
+}
+
+function addToRestaurant(dishes) {
+  db.collection('restaurants').doc(currentRestaurantId.toString()).update({
+      dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
+  });
+}
+
+function addNewRestaurant(dishes) {
+  console.log('not exist');
+  var initArray = [];
+  db.collection("restaurants").doc(newRestaurantId.toString()).set({
+    name: restaurantInput.value,
+    location: currentLocation,
+    dishes: initArray,
+    id: newRestaurantId 
+  }).then(
+    db.collection('restaurants').doc(newRestaurantId.toString()).update({
+        dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
+    })
+  );
+}
+
 </script>
 <!-- make map -->
 <script async defer
@@ -909,5 +612,8 @@ function upload() {
           https://developers.google.com/maps/documentation/javascript/get-api-key
         */
 </script>
+<script async defer src="js/JIC.min.js" type="text/javascript"></script>
+<script async defer src="js/jquery-3.5.1.min.js"></script>
+<script async defer src="js/mapHelper.js" type="text/javascript"></script>
 </body>
 </html>

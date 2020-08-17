@@ -25,7 +25,7 @@
 
             <div class="row justify-content-center">
                 <div class="col-xs-6" style="width: 40%;">
-                    <input type="search" id="restaurantInput" class="form-control input-lg" placeholder="Please enter the restaurant name" style="display: none;" onchange="searchRestaurantDemo(this.value)">
+                    <input type="search" id="restaurantInput" class="form-control input-lg" placeholder="Please enter the restaurant name" style="display: none;" onchange="searchRestaurantDemo(this.value, 'search', selected)">
                     <h6 id="restSearch"></h6>
                     <label id="searchBtn" class="btn btn-success my-2 btn-default btn-block btn-lg" " onClick="(function s(){
                         document.getElementById('restaurantInput').style.display = 'block';
@@ -66,17 +66,10 @@
                         <h4 id="restLocation"></h4>
                         <h3>Dishes</h3>
                         <div id="restaurnatDish">                                
-                            <h5>Dish</h5>
                             <div id="slideContainer">
-                                <h6 id="dishName"></h6>
-                                <img src="" id="dishImage" style='width: 150px;'>
-                                <div style="width: 150px;overflow: auto;">
-                                    <h5>tags</h5>
-                                    <h6 id="tagString"></h6>
-                                </div>
-                                <div class="dotSection">
-                                    <span class="dot"></span>
-                                </div>
+                            </div>                                
+                            <div class="dotSection">
+                                <span class="dot"></span>
                             </div>
                         </div>
                     </div>
@@ -140,21 +133,7 @@
             const BreakException = {};
 
             var map;
-            
-            const areas = [
-                //kowloon
-                {name: "kwuntong", center: [22.311705, 114.223108], radius: 750},
-                {name: "ngautaukok", center: [22.320684, 114.218625], radius: 850},
-                {name: "lamtin", center: [22.308872, 114.237096], radius: 700},
-                {name: "yautong", center: [22.296846, 114.236544], radius: 700},
-                {name: "choihung", center: [22.33493079072518, 114.21162537422178], radius: 700},
-                {name: "kowloonbay", center: [22.32532408641564, 114.2086213001251], radius: 750},
-                {name: "kowlooncity", center: [22.331085211130553, 114.18831697788237], radius: 700},
-
-                //hong kong island
-                {name: "wanchai", center: [22.2787032129389, 114.17361067583006], radius: 700},
-                //new territories
-            ];
+            const mode = "search";
 
             function visualizeArea(area) {
                 console.log(area.name);
@@ -186,11 +165,12 @@
                 return(distance < area.radius);
             }
 
-            function searchRestaurantDemo(input) {
+            function searchRestaurantDem(input) {
                 var count = 0; 
                 var str = input.toLowerCase().replace(/\s/g,'');                   
                 var area;
                 var checkArea = false;
+                var isFilter = (selected == [])?true:false ;
                 areas.some((value) => {
                     var pattern = new RegExp(value.name);                        
                     if(pattern.test(str)){
@@ -199,7 +179,7 @@
                         return true;
                     }
                 })
-                console.log(area);
+
                 markers.forEach(item => {
                     var pattern = new RegExp(item.name);
                     var nameTest = true;
@@ -223,14 +203,19 @@
                         item.marker.setVisible(false);
                         item.marker.setIcon('http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png');
                     }
-                })     
-                document.getElementById('restSearch').innerText = count + ' restaurant found';
+                })
+                if(isFilter){
+                    document.getElementById('restSearch').innerText = count + ' restaurant found under the filter requirment(s)';
+                }else{
+                    document.getElementById('restSearch').innerText = count + ' restaurant found';
+                }                    
                 if(count > 0){
                     document.getElementById('restSearch').style.color = 'rgb(0,255,0)'
                 }else{
                     document.getElementById('restSearch').style.color = 'rgb(255,0,0)'
                     markers.forEach(item => item.marker.setVisible(true));
-                };
+                };     
+
             }
 
             function toggleSidebar() {
@@ -291,154 +276,12 @@
                     });
                     map.fitBounds(bounds);
                 });
-            }
-            
-
-            function btnClick(btn) {
-                var isClicked;
-                var tag;
-                switch(btn.id){
-                    case "gluten_free":
-                        isGlutenShown = !isGlutenShown;
-                        isClicked = isGlutenShown;
-                        tag = /gluten_free/;
-                        break;
-                    case "egg_free":
-                        isEggShown = !isEggShown;
-                        isClicked = isEggShown;
-                        tag = /egg_free/;
-                        break;
-                    case "dairy_free":
-                        isDairyShown = !isDairyShown;
-                        isClicked = isDairyShown;
-                        tag = /dairy_free/;
-                        break;
-                    case "treenut_free":
-                        isTreenutShown = !isTreenutShown;
-                        isClicked = isTreenutShown;
-                        tag = /treenut_free/;
-                        break;
-                    case "peanut_free":
-                        isPeanutShown = !isPeanutShown;
-                        isClicked = isPeanutShown;
-                        tag = /peanut_free/;
-                        break;
-                    case "soy_free":
-                        isSoyShown = !isSoyShown;
-                        isClicked = isSoyShown;
-                        tag = /soy_free/;
-                        break;
-                    case "raw":
-                        isRawShown = !isRawShown;
-                        isClicked = isRawShown;
-                        tag = /raw/;
-                        break;
-                    case "vegan":
-                        isVeganShown = !isVeganShown;
-                        isClicked = isVeganShown;
-                        tag = /vegan/;
-                        break;
-                    case "buddhist_friendly":
-                        isBuddhistFriendlyShown = !isBuddhistFriendlyShown;
-                        isClicked = isBuddhistFriendlyShown;
-                        tag = /buddhist_friendly/;
-                        break;
-                    case "all_natural":
-                        isAllNaturalShown = !isAllNaturalShown;
-                        isClicked = isAllNaturalShown;
-                        tag = /all_natural/;
-                        break;
-                }
-                if(isClicked) {
-                    btn.style.backgroundColor = 'green';
-                    selected.push(btn.id);
-                    selectedRegex.push(tag);     
-                    filter(tag);
-                }else{
-                    btn.style = '';
-                    var i = selected.indexOf(btn.id);
-                    selected.splice(i, 1);
-                    selectedRegex.splice(i, 1);   
-                    deselect();
-                }
-            }
-
-            function initMap() {
-                map = new google.maps.Map(document.getElementById('map'), {
-                    center: {lat: 22.3, lng: 114.16},
-                    zoom: 12,
-                    styles: [{
-                    featureType: 'poi',
-                    stylers: [{ visibility: 'off' }]  // Turn off points of interest.
-                    }, {
-                    featureType: 'transit.station',
-                    stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
-                    }],
-                    disableDoubleClickZoom: true,
-                    streetViewControl: false
-                });
-                console.log('initializing map');
-                db.collection('restaurants').get().then((snapshot) => {
-                    snapshot.docs.forEach(doc => {
-                    var restaurantData = doc.data();
-                    console.log(restaurantData.location);
-                    addMarker(restaurantData, doc.id);
-                    });
-                }); 
-                console.log(showing);
+            }              
+            /* console.log(showing);
                 visualizeArea(areas[0]);
                 areas.forEach((value) => {
                     visualizeArea(value);
-                })
-            }
-
-            function addMarker(restaurant, restaurantName) {                    
-                var name = restaurantName;         
-                let lat = restaurant.location[0];
-                let lng =  restaurant.location[1];
-                var marker = new google.maps.Marker({
-                    position: {lat, lng},
-                    map: map,
-                    icon: 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png',
-                    animation: google.maps.Animation.DROP
-                });     
-
-                marker.addListener('click', function() {
-                    if(!isSideOpen){
-                        document.getElementById("sidebar-wrapper").classList.toggle('open');
-                        isSideOpen = !isSideOpen;
-                        console.log('ckicked')
-                    }
-                        $('#dishSection').remove();
-                        document.getElementById('restName').innerText = name;
-                        document.getElementById('restLocation').innerText = restaurant.location;
-                        var dishSection = document.createElement("div")
-                        dishSection.id = "dishSection";
-                        document.getElementById("slideContainer").appendChild(dishSection);
-                        restaurant.dishes.forEach((dishes) => {                        
-                        var name = document.createElement("h5");
-                        name.innerText = dishes.dish;
-                        document.getElementById('dishSection').appendChild(name)
-                        var photo = document.createElement("img");
-                        photo.src = dishes.fileURL;
-                        photo.style.width = '150px' 
-                        document.getElementById('dishSection').appendChild(photo);                
-                        var tags = dishes.tags;
-                        var tagString = '';
-                        var makeTagString = tags.forEach((tags) => {
-                            if(tags.value == true){
-                                tagString += '#' + tags.name + '  ';
-                            };
-                        });
-                        var tag = document.createElement('h6');
-                        tag.innerText = tagString;
-                        document.getElementById('dishSection').appendChild(tag); 
-                    }) 
-                        this.setAnimation(google.maps.Animation.BOUNCE); 
-                        stopAnimation(this);     
-                });
-                markers.push({marker, name});
-            }
+                })*/
 
             function showList(tag) {
                 hideAllMarkers();
@@ -449,64 +292,22 @@
                     console.log(idList);
                     idList.forEach((id) => {
                         var d = db.collection('receipts').doc(id).get().then((rdoc) => {
-                            addMarker(rdoc.data());
+                            addRestMarker(rdoc.data());
                         });
                     });
                 })
             }
 
             function hideAllMarkers() {
-                markers.forEach(item => item.setVisible(false));
+                markers.forEach(item => item.marker.setVisible(false));
             }
 
             function showAllMarkers() {
-                markers.forEach(item => item.setVisible(true));
-            }
-
-            function filter(tag) {
-                console.log('filtering', tag);
-                hideAllMarkers();                              
-                    if(showing.length == 0){                    
-                        markers.forEach(item => {  
-                            if(tag.test(item.getTitle())){
-                                console.log(true);
-                                item.setVisible(true);                        
-                                showing.push(item);
-                            }
-                        })
-                        console.log(showing.length);
-                    }else{
-                        showing.forEach(item => {
-                            if(tag.test(item.getTitle())){                            
-                                console.log(true);        
-                                item.setVisible(true);                        
-                                newShowing.push(item);
-                            }
-                        })
-                        showing = newShowing;
-                        newShowing = [];
-                    }
-                console.log(selected);
-                console.log(selectedRegex);
-            }
-
-            function deselect() {
-                console.log(selected);
-                console.log(selectedRegex);
-                showing = [];
-                if(selectedRegex.length != 0){
-                    selectedRegex.forEach(item => {
-                    filter(item);
-                    });  
-                }else{
-                    showAllMarkers();
-                }                
+                markers.forEach(item => item.marker.setVisible(true));
             }
 
             function clearTag() {
-                showAllMarkers();
-                selected = [];
-                selectedRegex = [];
+                clearAll();
                 isGlutenShown = false;
                 isEggShown = false;
                 isDairyShown = false;
@@ -530,10 +331,35 @@
                 document.getElementById('all_natural').style = '';
             }
 
-        </script>
-       <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEJpg61U3rDVLKE9A0MZ-1i7F1FezKpTQ
-            &callback=initMap&libraries=visualization,places,geometry">
-        </script>
-    
+            function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: 22.3, lng: 114.16},
+      zoom: 12,
+      styles: [{
+      featureType: 'poi',
+      stylers: [{ visibility: 'off' }]  // Turn off points of interest.
+      }, {
+      featureType: 'transit.station',
+      stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
+      }],
+      disableDoubleClickZoom: true,
+      streetViewControl: false
+  });
+  console.log('initializing map');
+  db.collection('restaurants').get().then((snapshot) => {
+      snapshot.docs.forEach(doc => {
+      var restaurantData = doc.data();
+      console.log(restaurantData.location);
+      addRestMarker(restaurantData, doc.id);
+      });
+  }); 
+} 
+
+</script>        
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEJpg61U3rDVLKE9A0MZ-1i7F1FezKpTQ
+        &callback=initMap&libraries=visualization,places,geometry">
+    </script>
+    <script async defer src="js/mapHelper.js" type="text/javascript"></script>
 </html>
