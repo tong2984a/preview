@@ -10,12 +10,7 @@
   <script src="js/JIC.min.js" type="text/javascript"></script>
 </head>
 <body>
-    <div>
-        <label for="coupon">Adding Coupon: </label>
-        <input type="number" name="" id="coupon">
-        <button onclick="publish()"></button>
-    </div>
-
+    
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-storage.js"></script>
@@ -32,23 +27,6 @@
                 appId: "1:570103698695:web:e82b8eacc896e8ccbd21a2",
                 measurementId: "G-YLS51K3GQZ"
             };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        var increment = firebase.firestore.FieldValue.increment(1);
-        var storageRef = firebase.storage().ref();
-        var storage = firebase.storage();
-
-        function publish() {
-            var coupon = document.getElementById('coupon').value;
-            var d = new Date();
-            var date = d.getFullYear + '_' + d.getMonth + '_' + d.getTime;
-            db.collection('coupon').doc('counter').get().then(doc => {
-                console.log(doc.data().numOfDoc);
-            })
-
-            alert(coupon);
-        }
-
+            
     </script>
 </body>
