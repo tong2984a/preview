@@ -35,18 +35,30 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        var increment = firebase.firestore.FieldValue.increment(1);
-        var storageRef = firebase.storage().ref();
-        var storage = firebase.storage();
+        const increment = firebase.firestore.FieldValue.increment(1);
+        const storageRef = firebase.storage().ref();
+        const storage = firebase.storage();
+        const idRef = db.collection('coupon').doc('counter');
 
         function publish() {
-            var coupon = document.getElementById('coupon').value;
+            var coupon = parseInt(document.getElementById('coupon').value);
             var d = new Date();
-            var date = d.getFullYear + '_' + d.getMonth + '_' + d.getTime;
-            db.collection('coupon').doc('counter').get().then(doc => {
-                console.log(doc.data().numOfDoc);
+            var date = d.getFullYear() + '_' + d.getMonth() + '_' + d.getDay();
+            var id;
+            idRef.get().then(doc => {
+                id = doc.data().nextDocId;
+                console.log(doc.data().nextDocId);            
+                idRef.update({
+                    numOfDoc: id,
+                    nextDocId: increment
+                });
+                db.collection('coupon').doc(id.toString()).set({
+                    coupon: coupon,
+                    couponRemaining: coupon,
+                    date: d,
+                    restaurant: []
+                });
             })
-
             alert(coupon);
         }
 

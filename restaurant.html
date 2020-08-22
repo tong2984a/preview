@@ -10,6 +10,24 @@
   <script src="js/JIC.min.js" type="text/javascript"></script>
 </head>
 <body>
+    <label for="idInput">Please input your id</label>
+    <input type="text" id="idInput">
+    <button id="confirmId" onclick="confirmId()">Confirm</button>
+
+    <div id="bidding" style="display: none;">
+      <div>
+        <h1>Number of coupon remaining:</h1>
+        <h1 id="couponRemains"></h1>
+      </div>
+      <div>
+        <h1>Each restaurant can only bid atmost <h1 id="limitOfCoupon"></h1> coupon</h1>
+      </div>
+      <label for="request"></label>
+      <input type="text" id="request">
+      <button id="bidCoupon" onclick="bidCoupon()">Bid Coupon</button>
+    </div>
+    <button id="bidCoupon" onclick="setCoupon()" >set Coupon</button>
+
     
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
@@ -17,6 +35,7 @@
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-analytics.js"></script>
 
     <script>
+        const couponLimit = 10;
         const firebaseConfig = {
                 apiKey: "AIzaSyCSVVuOWRkUqETWCJ_lvkVViCn3kJ0sW20",
                 authDomain: "evernote-95214.firebaseapp.com",
@@ -27,6 +46,73 @@
                 appId: "1:570103698695:web:e82b8eacc896e8ccbd21a2",
                 measurementId: "G-YLS51K3GQZ"
             };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const increment = firebase.firestore.FieldValue.increment(1);
+        const storageRef = firebase.storage().ref();
+        const storage = firebase.storage();
+        const idRef = db.collection('coupon').doc('counter');
+        var id;
+        var record;
+        var couponRemains;
+        var restaurantId;
+
+        function confirmId() {
+          var idInput = document.getElementById('idInput').value;
+          db.collection('restaurants').doc(idInput).get().then((doc) => {
+            console.log(idInput)
+            console.log(doc.exists)
+            if(doc.exists){
+              document.getElementById('bidding').style.display = 'block';
+              restaurantId = idInput;
+              idRef.get().then(doc => {
+                id = doc.data().numOfDoc;
+                db.collection('coupon').doc(id.toString()).get().then(doc => {
+                couponRemains = doc.data().couponRemaining;
+                document.getElementById('couponRemains').innerText = couponRemains;
+                document.getElementById('limitOfCoupon').innerText = 10;
+              })  
+              })  
+            }
+          })
+        }
+
+        function bidCoupon() {
+          document.getElementById('limitOfCoupon').innerText = couponLimit;
+          var request = document.getElementById('request').value;
+          if(request > couponLimit || request > couponRemains) {
+            alert('the number of coupon you bid exceed the limit')
+          }else{
+            couponRemains -= request;
+            record = {
+              restaurantId: restaurantId,
+              numOfCoupon: request        
+            }
+            db.collection('coupon').doc(id.toString()).update({
+              restaurant: firebase.firestore.FieldValue.arrayUnion(record),
+              couponRemaining: couponRemains
+            })
+            db.collection('restaurants').doc(restaurantId).get().then(doc => {
+              var couponNew = parseInt(doc.data().coupon) + parseInt(request);
+              db.collection('restaurants').doc(restaurantId).update({coupon: couponNew})              
+            })
+            var success = document.createElement('div')
+            success.innerText = 'Success! You bid ' + request + 'coupons '
+
+          }
+        }
+
+        function setCoupon() {
+          db.collection('restaurants').get().then((snapshot) => {
+              snapshot.docs.forEach(doc => {
+                var rid = doc.data().id;
+                console.log(rid)
+                db.collection('restaurants').doc(rid.toString()).update({
+                  coupon: 0
+                })
+              });
+          });
+        }
             
     </script>
 </body>
