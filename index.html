@@ -544,13 +544,20 @@ function upload() {
             console.log(currentRestaurantId);
             db.collection("restaurants").doc(currentRestaurantId.toString()).get().then((doc) => {
             console.log(doc.exists);
-              if(doc.exists){              
+              if(doc.exists){                
                 console.log('exist');
+                var couponRemains = doc.data().coupon;
+                var getCoupon = false;
+                if(couponRemains > 0){
+                  console.log('get coupon');
+                  couponRemains -= 1;
+                  getCoupon = true;
+                }              
                 console.log(currentLocation);
                 console.log(doc.data().location);
                 if(isAccurate(currentLocation, doc.data().location)){
                   console.log('accurate');
-                  addToRestaurant(dishes);
+                  addToRestaurant(dishes, couponRemains, getCoupon);
                 }else{
                   addNewRestaurant(dishes);
                 }              
@@ -579,9 +586,10 @@ function isAccurate(pos1, pos2) {
     return (latDiff < 0.0001 && lngDiff < 0.0001);
 }
 
-function addToRestaurant(dishes) {
+function addToRestaurant(dishes, couponRemains, getCoupon) {
   db.collection('restaurants').doc(currentRestaurantId.toString()).update({
       dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
+      coupon:  couponRemains
   });
 }
 
