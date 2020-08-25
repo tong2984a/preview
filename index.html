@@ -591,6 +591,7 @@ function addToRestaurant(dishes, couponRemains, getCoupon) {
       dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
       coupon:  couponRemains
   });
+  if(getCoupon)alert('You get a coupon');
 }
 
 function addNewRestaurant(dishes) {

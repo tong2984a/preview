@@ -26,7 +26,7 @@
       <input type="text" id="request">
       <button id="bidCoupon" onclick="bidCoupon()">Bid Coupon</button>
     </div>
-    <button id="bidCoupon" onclick="setCoupon()" >set Coupon</button>
+    <button id="bidCoupon" onclick="setCoupon()" style="display: none;">set Coupon</button>
 
     
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
@@ -82,6 +82,8 @@
           var request = document.getElementById('request').value;
           if(request > couponLimit || request > couponRemains) {
             alert('the number of coupon you bid exceed the limit')
+          }else if(request <= 0){
+            alert('the number of coupon you bid is invalid')
           }else{
             couponRemains -= request;
             record = {
