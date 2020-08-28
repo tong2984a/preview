@@ -311,35 +311,35 @@ function addRestMarker(restaurant) {
     map.setCenter({lat, lng});
   });   
   markers.push(restaurantObj);         
-  }
+}
 
-  function showDishes(name, location, dishes) {
-    $('#dishSection').remove();
-    document.getElementById('restName').innerText = name;
-    document.getElementById('restLocation').innerText = location;
-    var dishSection = document.createElement("div")
-    dishSection.id = "dishSection";
-    document.getElementById("slideContainer").appendChild(dishSection);
-    dishes.forEach((dishes) => {                        
-      var name = document.createElement("h5");
-      name.innerText = "Dish: " + dishes.dish;
-      document.getElementById('dishSection').appendChild(name)
-      var photo = document.createElement("img");
-      photo.src = dishes.fileURL;
-      photo.style.width = '150px' 
-      document.getElementById('dishSection').appendChild(photo);                
-      var tags = dishes.tags;
-      var tagString = 'Tags: ';
-      var makeTagString = tags.forEach((tags) => {
-          if(tags.value == true){
-              tagString += '#' + tags.name + '  ';
-          };
-      });
-      var tag = document.createElement('h6');
-      tag.innerText = tagString;
-      document.getElementById('dishSection').appendChild(tag); 
-    }) 
-  }
+function showDishes(name, location, dishes) {
+  $('#dishSection').remove();
+  document.getElementById('restName').innerText = name;
+  document.getElementById('restLocation').innerText = location;
+  var dishSection = document.createElement("div")
+  dishSection.id = "dishSection";
+  document.getElementById("slideContainer").appendChild(dishSection);
+  dishes.forEach((dishes) => {                        
+    var name = document.createElement("h5");
+    name.innerText = "Dish: " + dishes.dish;
+    document.getElementById('dishSection').appendChild(name)
+    var photo = document.createElement("img");
+    photo.src = dishes.fileURL;
+    photo.style.width = '150px' 
+    document.getElementById('dishSection').appendChild(photo);                
+    var tags = dishes.tags;
+    var tagString = 'Tags: ';
+    var makeTagString = tags.forEach((tags) => {
+        if(tags.value == true){
+            tagString += '#' + tags.name + '  ';
+        };
+    });
+    var tag = document.createElement('h6');
+    tag.innerText = tagString;
+    document.getElementById('dishSection').appendChild(tag); 
+  }) 
+}
   
   //Ricardo: get the location of the restaurant
   function addMarker(restaurant, iconUse) { 
@@ -383,6 +383,7 @@ function addRestMarker(restaurant) {
   }
   
   function addCurrentMarker(pos) {
+    //create the red marker that represent the current prosition
       console.log("making Current marker");
       current = new google.maps.Marker({
           position: pos,
@@ -459,11 +460,12 @@ function addRestMarker(restaurant) {
   }
 
   //refresh map function
-function refreshMap() {
+  function refreshMap() {
     var r = document.location.reload();
   }
   
   function newMarker() {
+    //add the yellow icon to show the new upload data
     console.log("making marker");      
       var img = "<img src='" + imgURL + "' style='width: 125px;'>";
       var tagString = '';
@@ -497,6 +499,7 @@ function refreshMap() {
   }
 
   function btnClick(btn) {
+    //to add the filter requirment and call the restaurant filtering function 
     var isClicked;
     var tag;
     switch(btn.id){
@@ -577,6 +580,7 @@ function refreshMap() {
 }
 
     function clearAll() {
+      //remove all the filter requirment and show all the restaurant
       selected = [];
       filterNumber = 0;
       markers.forEach(element => {

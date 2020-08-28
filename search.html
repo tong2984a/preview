@@ -165,7 +165,7 @@
                 return(distance < area.radius);
             }
 
-            function searchRestaurantDem(input) {
+        /*    function searchRestaurantDem(input) {
                 var count = 0; 
                 var str = input.toLowerCase().replace(/\s/g,'');                   
                 var area;
@@ -216,7 +216,7 @@
                     markers.forEach(item => item.marker.setVisible(true));
                 };     
 
-            }
+            }*/
 
             function toggleSidebar() {
                 document.getElementById("sidebar-wrapper").classList.toggle('open');
@@ -332,28 +332,28 @@
             }
 
             function initMap() {
-  map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: 22.3, lng: 114.16},
-      zoom: 12,
-      styles: [{
-      featureType: 'poi',
-      stylers: [{ visibility: 'off' }]  // Turn off points of interest.
-      }, {
-      featureType: 'transit.station',
-      stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
-      }],
-      disableDoubleClickZoom: true,
-      streetViewControl: false
-  });
-  console.log('initializing map');
-  db.collection('restaurants').get().then((snapshot) => {
-      snapshot.docs.forEach(doc => {
-      var restaurantData = doc.data();
-      console.log(restaurantData.location);
-      addRestMarker(restaurantData, doc.id);
-      });
-  }); 
-} 
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: 22.3, lng: 114.16},
+                    zoom: 12,
+                    styles: [{
+                    featureType: 'poi',
+                    stylers: [{ visibility: 'off' }]  // Turn off points of interest.
+                    }, {
+                    featureType: 'transit.station',
+                    stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
+                    }],
+                    disableDoubleClickZoom: true,
+                    streetViewControl: false
+                });
+                console.log('initializing map');
+                db.collection('restaurants').get().then((snapshot) => {
+                    snapshot.docs.forEach(doc => {
+                    var restaurantData = doc.data();
+                    console.log(restaurantData.location);
+                    addRestMarker(restaurantData, doc.id);
+                    });
+                }); 
+            } 
 
 </script>        
 
