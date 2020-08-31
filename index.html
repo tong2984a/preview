@@ -63,7 +63,7 @@
     <div class="row justify-content-center">
       <div class="col-sm-6 form-group">        
         <p id="instruction" style="display: none;">Please drag the red pin to the place you want to choose</p>
-        <input type="url" id="locationInput" class="form-control input-lg" style="display: block;" >          
+        <input type="url" id="locationInput" class="form-control input-lg" style="display: none;" >          
         <p><label id="locationLabel" for="locationInput" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;" onclick="getCurrentLocation()">Set Location</label></p>      
         <input type="text" id="address" class="form-control input-lg" style="display: none;">
 
@@ -393,11 +393,6 @@ function reUpload() {
   document.getElementById('reUploadBtn').style.display = "none";
   preview.style.display = "none";
   console.log(preview);
-  db.collection("restaurants").doc(currentRestaurantId.toString()).get().then((doc) => {
-    console.log(doc.exists);
-          if(doc.exists){
-    if(doc.data().location == currentLocation)console.log("match coordinate");}
-  });
 }
 
 //Ricardo: email validation
@@ -540,6 +535,7 @@ function upload() {
             fileURL: imgURL,
             tags: tagList
           };
+          console.log(currentRestaurantId);
           if(currentRestaurantId){
             console.log(currentRestaurantId);
             db.collection("restaurants").doc(currentRestaurantId.toString()).get().then((doc) => {
@@ -586,9 +582,9 @@ function isAccurate(pos1, pos2) {
     return (latDiff < 0.0001 && lngDiff < 0.0001);
 }
 
-function addToRestaurant(dishes, couponRemains, getCoupon) {
+function addToRestaurant(dish, couponRemains, getCoupon) {
   db.collection('restaurants').doc(currentRestaurantId.toString()).update({
-      dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
+      dishes: firebase.firestore.FieldValue.arrayUnion(dish),
       coupon:  couponRemains
   });
   if(getCoupon)alert('You get a coupon');
@@ -601,7 +597,8 @@ function addNewRestaurant(dishes) {
     name: restaurantInput.value,
     location: currentLocation,
     dishes: initArray,
-    id: newRestaurantId 
+    id: newRestaurantId,
+    coupon: 0
   }).then(
     db.collection('restaurants').doc(newRestaurantId.toString()).update({
         dishes: firebase.firestore.FieldValue.arrayUnion(dishes),

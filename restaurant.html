@@ -71,7 +71,7 @@
                 db.collection('coupon').doc(id.toString()).get().then(doc => {
                 couponRemains = doc.data().couponRemaining;
                 document.getElementById('couponRemains').innerText = couponRemains;
-                document.getElementById('limitOfCoupon').innerText = 10;
+                document.getElementById('limitOfCoupon').innerText = couponLimit;
               })  
               })  
             }
@@ -103,7 +103,7 @@
             })
             var success = document.createElement('div')
             success.innerText = 'Success! You bid ' + request + 'coupons '
-
+            document.getElementById('bidding').appendChild(success)
           }
         }
 
