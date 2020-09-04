@@ -32,7 +32,7 @@ class Restaurant {
       this.id = id;
       var dishList = [];
       dishes.forEach(value => {
-        dishList.push(new Dish(value.dish, value.fileURL, value.tags));
+        dishList.push(new Dish(value.dish, value.fileURL, value.category, value.tags));
       })
       this.dishes = dishList;
   }
@@ -57,6 +57,10 @@ class Restaurant {
     return this.id;
   }
 
+  setInfoWindow(info) {
+    this.infowindow = info;
+  }
+
   //show the the restaurant details in the side bar
   showDetails() {
     document.getElementById("restName").innerText = this.name;
@@ -70,43 +74,100 @@ class Restaurant {
   }
 
   //show or hide the resaturant by screening all the dishes, show the dishes match all the sectleted tags, if no dishes match, hide the marker
-  filterDishes(filterTags, tagsNum) {   
+  filterDishes(filterTags, tagsNum, catagory) {   
+    var check = 0;
     var dishMatch = 0;
-    this.dishes.forEach(element => {
-        var check = 0;
-        filterTags.forEach(value => {
-            if(element.hasTag(value)){
-                check++;
+    var firstDish = true;
+    if(this.infowindow)this.infowindow.close();
+    if(category){
+      console.log('searching' + category)
+      this.dishes.forEach(element => {
+        if(catagory == element.getCategory()){
+          console.log('match' + category)
+          if(tagsNum){
+            filterTags.forEach(value => {
+              if(element.hasTag(value)){
+                  check++;
+              }
+          })
+          if(check > 0){
+            dishMatch++;
+            element.setShow(true);
+            if(firstDish && tagsNum){
+              this.showInfoWindow(element, this.marker);
+              firstDish = false;
             }
-        })
-        if(check == tagsNum){
-          dishMatch++;
-          element.setShow(true);
+          }else{
+            element.setShow(false);
+          }
+          }else{
+            dishMatch++;
+            element.setShow(true);
+          }
         }else{
           element.setShow(false);
         }
-    });
-    if(dishMatch){
-      this.marker.setVisible(true);
+      })    
+      if(dishMatch){
+        this.marker.setVisible(true);
+      }else{
+        this.marker.setVisible(false);
+      }
     }else{
-      this.marker.setVisible(false);
+      this.dishes.forEach(element => {
+        element.setShow(true);
+      })
+      this.marker.setVisible(true);
     }
+
+  }
+
+  showInfoWindow(dish, marker) {
+    var contentString = 
+      "<h3>" + dish.getName() + "</h3><br>"
+      + '<img src="' + dish.getImage() + '" style="width: 125px">'
+      + "<h6>" + dish.getTagString() + "</h6>"
+    var infowindow = new google.maps.InfoWindow({
+      content: contentString,
+      maxWidth: 125
+    });
+    this.setInfoWindow(infowindow);
+    infowindow.open(map, marker);
   }
 }
 
 class Dish {
-  constructor(name, image, tags) {
+  constructor(name, image, category, tags) {
     this.name = name;
     this.image = image;
     this.tags = tags;
     var string = '';
-    tags.forEach((tags) => {
-        if(tags.value == true){
-            string += '#' + tags.name + '  ';
-        };
+    tags.forEach((tag) => {
+      string += '#' + tag + '  ';
     });
     this.tagString = string;
     this.show = true;
+    this.catagory = category;
+  }
+
+  getName() {
+    return this.name;
+  }
+
+  getImage() {
+    return this.image;
+  }
+
+  getTags() {
+    return this.tags;
+  }
+
+  getTagString() {
+    return this.tagString;
+  }
+
+  getCategory() {
+    return this.catagory;
   }
 
   //show the dish details in the side bar
@@ -129,8 +190,8 @@ class Dish {
     this.show = boolean;
   }
 
-  hasTag(id) {
-    return this.tags[id].value;
+  hasTag(tag) {
+    return tag.test(this.tagString);
   }
 }
 
@@ -483,10 +544,8 @@ function getLocationAddress(pos) {
     console.log("making marker");      
       var img = "<img src='" + imgURL + "' style='width: 125px;'>";
       var tagString = '';
-      var makeTagString = tagList.forEach((tagList) => {
-        if(tagList.value == true){
-          tagString += '#' + tagList.name + '  ';
-        };
+      var makeTagString = tagList.forEach((tag) => {
+          tagString += '#' + tag + '  ';
       });
       var marker = new google.maps.Marker({
           position: {lat: currentLocation[0], lng: currentLocation[1]},
@@ -601,3 +660,102 @@ function getLocationAddress(pos) {
         element.filterDishes(selected, filterNumber);
       })
     }
+
+
+    var tagNum = 0;
+    var tagList = [];
+    var category;
+    const categoriesList = [];
+    const listOfCategoriesAndTags = [];
+
+    (function() {
+        console.log('ready');
+        db.collection('categories').get().then(docs => {
+            docs.forEach(doc => {
+                var option = document.createElement('option');
+                option.innerText = doc.id;
+                option.value = doc.id;
+                console.log(doc.id);
+                document.getElementById('categories').appendChild(option);
+                categoriesList.push(doc.id);
+                var group = {name: doc.id, tags: doc.data().tags}
+                listOfCategoriesAndTags.push(group);
+            })
+        })
+    })();
+
+    function loadTags(cate) {
+        document.getElementById('selectTags').innerHTML = '';
+        if(checkCategories(cate)){
+          var a = 0;
+          var i = 0;
+          listOfCategoriesAndTags.forEach(group => {
+            if(cate == group.name) i = a;
+            a++;
+          })         
+          tagNum = listOfCategoriesAndTags[i].tags.length;
+          listOfCategoriesAndTags[i].tags.forEach(tag =>{
+            var box = document.createElement('input');
+            box.type = 'checkbox';
+            box.id = tag;
+            box.className = 'checkbox';
+            box.onclick = function() {addFilter(box.id, box.checked);};
+            var boxLabel = document.createElement('label');
+            boxLabel.innerText = tag;
+            boxLabel.htmlFor = tag;
+            document.getElementById('selectTags').appendChild(box);
+            document.getElementById('selectTags').appendChild(boxLabel);
+          })
+        }
+    }
+    
+    function uploadTags() {
+        tagList = [];
+        category = document.getElementById('categories').value;
+        for(i = 0; i < tagNum; i++){
+            var tag = $('.checkbox')[i];
+            if(tag.checked){
+                console.log(tag.id);
+                tagList.push(tag.id);
+            }
+        }
+        if($('.checkbox')[tagNum].checked){
+            var newTag = document.getElementById('newTagName').value;
+            tagList.push(newTag);
+            db.collection('categories').doc(category).update({
+                tags: firebase.firestore.FieldValue.arrayUnion(newTag)
+            })
+        }
+    }
+
+
+    function filterCategory(cate) {
+      loadTags(cate);
+      category = (cate);
+      markers.forEach(element => {
+        element.filterDishes(selected, filterNumber, cate);
+      })
+    }
+
+    function addFilter(tag, state) {
+      tagRegex = new RegExp(tag)
+      if(state){
+        selected.push(tagRegex);
+        filterNumber++;
+        markers.forEach(element => {
+          element.filterDishes(selected, filterNumber, category);
+        })
+      }else{
+        var i = selected.indexOf(tagRegex);
+        selected.splice(i, 1);  
+        filterNumber--;
+        markers.forEach(element => {
+          element.filterDishes(selected, filterNumber, category);
+        })
+      }
+    }
+
+    function checkCategories(input) {
+      return categoriesList.some(x => {return(x == input)});
+    }
+    
