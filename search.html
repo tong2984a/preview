@@ -36,7 +36,18 @@
                 </div>
             </div>
 
-            <div > 
+            <div id="filter" style="height: 100px;">
+                        <div>Filter restaurant</div>
+                        <select name="" id="categories" onchange="filterCategory(this.value)">
+                            <option value="">Please Select</option>
+                        </select>
+                        <div id="selectTags">
+                    
+                        </div>
+            </div>
+
+
+            <div style="display: none;"> 
                 <button id="gluten_free" onclick="btnClick(this)" class="btn btn-primary">Gluten Free</button>
                 <button id="egg_free" onclick="btnClick(this)" class="btn btn-primary">Egg Free</button>
                 <button id="dairy_free" onclick="btnClick(this)" class="btn btn-primary">Dairy Free</button>
@@ -95,14 +106,14 @@
 
         <script>
             const firebaseConfig = {
-                apiKey: "AIzaSyCSVVuOWRkUqETWCJ_lvkVViCn3kJ0sW20",
-                authDomain: "evernote-95214.firebaseapp.com",
-                databaseURL: "https://evernote-95214.firebaseio.com",
-                projectId: "evernote-95214",
-                storageBucket: "evernote-95214.appspot.com",
-                messagingSenderId: "570103698695",
-                appId: "1:570103698695:web:e82b8eacc896e8ccbd21a2",
-                measurementId: "G-YLS51K3GQZ"
+                apiKey: "AIzaSyAbxF9mc46KksOqqJmS3oOwjjDsW2cy8_k",
+                authDomain: "pav-recipt.firebaseapp.com",
+                databaseURL: "https://pav-recipt.firebaseio.com",
+                projectId: "pav-recipt",
+                storageBucket: "pav-recipt.appspot.com",
+                messagingSenderId: "677673489684",
+                appId: "1:677673489684:web:e61952268b8d6c45fdde01",
+                measurementId: "G-PCXD5E1428"
             };
 
             firebase.initializeApp(firebaseConfig);
@@ -217,12 +228,6 @@
                 };     
 
             }*/
-
-            function toggleSidebar() {
-                document.getElementById("sidebar-wrapper").classList.toggle('open');
-                isSideOpen = !isSideOpen;
-                console.log('ckicked')
-            }
 
            /* $( document ).ready(function() {
                 var autocomplete;

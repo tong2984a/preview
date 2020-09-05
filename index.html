@@ -63,7 +63,7 @@
     <div class="row justify-content-center">
       <div class="col-sm-6 form-group">        
         <p id="instruction" style="display: none;">Please drag the red pin to the place you want to choose</p>
-        <input type="url" id="locationInput" class="form-control input-lg" style="display: block;" >          
+        <input type="url" id="locationInput" class="form-control input-lg" style="display: none;" >          
         <p><label id="locationLabel" for="locationInput" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;" onclick="getCurrentLocation()">Set Location</label></p>      
         <input type="text" id="address" class="form-control input-lg" style="display: none;">
 
@@ -115,8 +115,21 @@
     <div class="row justify-content-center">
       <div class="col-xs-12 form-group">
         <button id="reUploadBtn" class="btn btn-success my-2 btn-default btn-block btn-lg" style="display: none;" onClick="reUpload()">
-          Re-Upload
+          Re-Upload Photo
         </button>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-xs-12 form-group" id="tags" style="display: none;">
+        <select name="" id="categories" onchange="loadTags(this.value)">
+          <option value="">Please Select</option>
+        </select>
+        <div id="selectTags">
+    
+        </div>
+        <input type="checkbox" id="newTag" class="checkbox">
+        <input type="text" id="newTagName">
       </div>
     </div>
 
@@ -193,6 +206,19 @@
 <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-storage.js"></script>
 <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-analytics.js"></script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEJpg61U3rDVLKE9A0MZ-1i7F1FezKpTQ
+        &libraries=visualization,places,geometry&callback=initMap">
+        /*Maybe need to change to yours maps to makes it work, change the src above to 
+          https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap
+          and replace the "YOUR_API_KEY" by an enabled google maps API key.
+          The guide lines can be found in the link below.
+          https://developers.google.com/maps/documentation/javascript/get-api-key
+        */
+</script>
+<script async defer src="js/JIC.min.js" type="text/javascript"></script>
+<script async defer src="js/jquery-3.5.1.min.js"></script>
+<script async defer src="js/mapHelper.js" type="text/javascript"></script>
 
 
 <script>
@@ -200,17 +226,6 @@
 
 //Ricardo: current
 const firebaseConfig = {
-                apiKey: "AIzaSyCSVVuOWRkUqETWCJ_lvkVViCn3kJ0sW20",
-                authDomain: "evernote-95214.firebaseapp.com",
-                databaseURL: "https://evernote-95214.firebaseio.com",
-                projectId: "evernote-95214",
-                storageBucket: "evernote-95214.appspot.com",
-                messagingSenderId: "570103698695",
-                appId: "1:570103698695:web:e82b8eacc896e8ccbd21a2",
-                measurementId: "G-YLS51K3GQZ"
-            };
-
-/*const firebaseConfig = {
     apiKey: "AIzaSyAbxF9mc46KksOqqJmS3oOwjjDsW2cy8_k",
     authDomain: "pav-recipt.firebaseapp.com",
     databaseURL: "https://pav-recipt.firebaseio.com",
@@ -219,7 +234,8 @@ const firebaseConfig = {
     messagingSenderId: "677673489684",
     appId: "1:677673489684:web:e61952268b8d6c45fdde01",
     measurementId: "G-PCXD5E1428"
-  };*/
+  };
+  
 /*var firebaseConfig = {
   apiKey: "AIzaSyBg34hCq_jGHdj-HNWi2ZjfqhM2YgWq4ek",
   authDomain: "pay-a-vegan.firebaseapp.com",
@@ -393,11 +409,6 @@ function reUpload() {
   document.getElementById('reUploadBtn').style.display = "none";
   preview.style.display = "none";
   console.log(preview);
-  db.collection("restaurants").doc(currentRestaurantId.toString()).get().then((doc) => {
-    console.log(doc.exists);
-          if(doc.exists){
-    if(doc.data().location == currentLocation)console.log("match coordinate");}
-  });
 }
 
 //Ricardo: email validation
@@ -443,6 +454,7 @@ function addToList(tagName, id) {
 }
 
 function upload() {
+  uploadTags();
   if (emailInput.value.length == 0) {
     helloMessageOutput.innerText = "Looks like you haven't provided an email";
     return;
@@ -512,20 +524,10 @@ function upload() {
           restaurant: restaurantInput.value,
           //17/7 add            
           imageName: imageFileName,
-          tags: tagList = [
-            {name: 'gluten_free', value : isGlutenFree = document.getElementById('gluten-free').checked},
-            {name: 'egg_free', value : isEggFree = document.getElementById('egg-free').checked},
-            {name: 'dairy_free', value : isDairyFree = document.getElementById('dairy-free').checked},
-            {name: 'treenut_free', value : isTreenutFree = document.getElementById('treenut-free').checked},
-            {name: 'peanut_free', value : isPeanutFree = document.getElementById('peanut-free').checked},
-            {name: 'soy_free', value : isSoyFree = document.getElementById('soy-free').checked},
-            {name: 'raw', value : isRaw = document.getElementById('raw').checked},
-            {name: 'vegan', value : isVegan = document.getElementById('vegan').checked},
-            {name: 'buddhist_friendly', value : isBuddhistFriendly = document.getElementById('buddhist-friendly').checked},
-            {name: 'all_natural', value : isAllNatural = document.getElementById('all-natural').checked}
-          ],
+          tags: tagList,
           //31/7 add
           approved: false,
+          category: category,
 
         })
         .then(function(docRef) {
@@ -538,8 +540,10 @@ function upload() {
           var dishes = {
             dish: dishInput.value,
             fileURL: imgURL,
+            category: category,
             tags: tagList
           };
+          console.log(currentRestaurantId);
           if(currentRestaurantId){
             console.log(currentRestaurantId);
             db.collection("restaurants").doc(currentRestaurantId.toString()).get().then((doc) => {
@@ -586,9 +590,9 @@ function isAccurate(pos1, pos2) {
     return (latDiff < 0.0001 && lngDiff < 0.0001);
 }
 
-function addToRestaurant(dishes, couponRemains, getCoupon) {
+function addToRestaurant(dish, couponRemains, getCoupon) {
   db.collection('restaurants').doc(currentRestaurantId.toString()).update({
-      dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
+      dishes: firebase.firestore.FieldValue.arrayUnion(dish),
       coupon:  couponRemains
   });
   if(getCoupon)alert('You get a coupon');
@@ -601,7 +605,8 @@ function addNewRestaurant(dishes) {
     name: restaurantInput.value,
     location: currentLocation,
     dishes: initArray,
-    id: newRestaurantId 
+    id: newRestaurantId,
+    coupon: 0
   }).then(
     db.collection('restaurants').doc(newRestaurantId.toString()).update({
         dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
@@ -611,18 +616,6 @@ function addNewRestaurant(dishes) {
 
 </script>
 <!-- make map -->
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEJpg61U3rDVLKE9A0MZ-1i7F1FezKpTQ
-        &libraries=visualization,places,geometry&callback=initMap">
-        /*Maybe need to change to yours maps to makes it work, change the src above to 
-          https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap
-          and replace the "YOUR_API_KEY" by an enabled google maps API key.
-          The guide lines can be found in the link below.
-          https://developers.google.com/maps/documentation/javascript/get-api-key
-        */
-</script>
-<script async defer src="js/JIC.min.js" type="text/javascript"></script>
-<script async defer src="js/jquery-3.5.1.min.js"></script>
-<script async defer src="js/mapHelper.js" type="text/javascript"></script>
+
 </body>
 </html>

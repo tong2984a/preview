@@ -32,7 +32,7 @@ class Restaurant {
       this.id = id;
       var dishList = [];
       dishes.forEach(value => {
-        dishList.push(new Dish(value.dish, value.fileURL, value.tags));
+        dishList.push(new Dish(value.dish, value.fileURL, value.category, value.tags));
       })
       this.dishes = dishList;
   }
@@ -53,6 +53,15 @@ class Restaurant {
       return this.dishes;
   }
 
+  getRestaurantId() {
+    return this.id;
+  }
+
+  setInfoWindow(info) {
+    this.infowindow = info;
+  }
+
+  //show the the restaurant details in the side bar
   showDetails() {
     document.getElementById("restName").innerText = this.name;
     document.getElementById("restLocation").innerText = this.location;
@@ -64,45 +73,104 @@ class Restaurant {
     })
   }
 
-  filterDishes(filterTags, tagsNum) {
+  //show or hide the resaturant by screening all the dishes, show the dishes match all the sectleted tags, if no dishes match, hide the marker
+  filterDishes(filterTags, tagsNum, catagory) {   
+    var check = 0;
     var dishMatch = 0;
-    this.dishes.forEach(element => {
-        var check = 0;
-        filterTags.forEach(value => {
-            if(element.hasTag(value)){
-                check++;
+    var firstDish = true;
+    if(this.infowindow)this.infowindow.close();
+    if(category){
+      console.log('searching' + category)
+      this.dishes.forEach(element => {
+        if(catagory == element.getCategory()){
+          console.log('match' + category)
+          if(tagsNum){
+            filterTags.forEach(value => {
+              if(element.hasTag(value)){
+                  check++;
+              }
+          })
+          if(check > 0){
+            dishMatch++;
+            element.setShow(true);
+            if(firstDish && tagsNum){
+              this.showInfoWindow(element, this.marker);
+              firstDish = false;
             }
-        })
-        if(check == tagsNum){
-          dishMatch++;
-          element.setShow(true);
+          }else{
+            element.setShow(false);
+          }
+          }else{
+            dishMatch++;
+            element.setShow(true);
+          }
         }else{
           element.setShow(false);
         }
-    });
-    if(dishMatch){
-      this.marker.setVisible(true);
+      })    
+      if(dishMatch){
+        this.marker.setVisible(true);
+      }else{
+        this.marker.setVisible(false);
+      }
     }else{
-      this.marker.setVisible(false);
+      this.dishes.forEach(element => {
+        element.setShow(true);
+      })
+      this.marker.setVisible(true);
     }
+
+  }
+
+  showInfoWindow(dish, marker) {
+    var contentString = 
+      "<h3>" + dish.getName() + "</h3><br>"
+      + '<img src="' + dish.getImage() + '" style="width: 125px">'
+      + "<h6>" + dish.getTagString() + "</h6>"
+    var infowindow = new google.maps.InfoWindow({
+      content: contentString,
+      maxWidth: 125
+    });
+    this.setInfoWindow(infowindow);
+    infowindow.open(map, marker);
   }
 }
 
 class Dish {
-  constructor(name, image, tags) {
+  constructor(name, image, category, tags) {
     this.name = name;
     this.image = image;
     this.tags = tags;
     var string = '';
-    tags.forEach((tags) => {
-        if(tags.value == true){
-            string += '#' + tags.name + '  ';
-        };
+    tags.forEach((tag) => {
+      string += '#' + tag + '  ';
     });
     this.tagString = string;
     this.show = true;
+    this.catagory = category;
   }
 
+  getName() {
+    return this.name;
+  }
+
+  getImage() {
+    return this.image;
+  }
+
+  getTags() {
+    return this.tags;
+  }
+
+  getTagString() {
+    return this.tagString;
+  }
+
+  getCategory() {
+    return this.catagory;
+  }
+
+  //show the dish details in the side bar
   showDish(nodeId) {
     if(this.show){
       var name = document.createElement("h5");
@@ -122,8 +190,8 @@ class Dish {
     this.show = boolean;
   }
 
-  hasTag(id) {
-    return this.tags[id].value;
+  hasTag(tag) {
+    return tag.test(this.tagString);
   }
 }
 
@@ -153,6 +221,7 @@ class CurrentMarker {
     return this.location;
   }
 
+  //set the location of the marker
   setLocation(lat, lng) {
     this.location = [lat, lng];
     this.marker.setPosition({lat, lng});
@@ -167,12 +236,14 @@ class CurrentMarker {
   }
 }
 
+//show the side bar
 function toggleSidebar() {
     document.getElementById("sidebar-wrapper").classList.toggle('open');
     isSideOpen = !isSideOpen;
     console.log('ckicked')
 }
 
+//check weather the restaurant inside the searching area
 function isInArea(position, center, radius) {
     var distance;
     if ((position.lat() == center.lat()) && (position.lng() == center.lng())) {
@@ -187,12 +258,14 @@ function isInArea(position, center, radius) {
     return(distance < radius);
 }
 
+//stop the bouncing animation after searched
 function stopAnimation(marker) {
     setTimeout(function () {
         marker.setAnimation(null);
     }, 3000);
 }
 
+//the restaurant searching function that search all the restaurant in the database
 function searchRestaurantDemo(input, mode, selected = []) {
     var count = 0; 
     var str = input.toLowerCase().replace(/\s/g,'');          
@@ -275,6 +348,7 @@ function searchRestaurantDemo(input, mode, selected = []) {
     };
 }
 
+//add the marker on a restaurant and create a Restaurant object
 function addRestMarker(restaurant) {
   let lat = restaurant.location[0];
   let lng =  restaurant.location[1];
@@ -341,123 +415,124 @@ function showDishes(name, location, dishes) {
   }) 
 }
   
-  //Ricardo: get the location of the restaurant
-  function addMarker(restaurant, iconUse) { 
-      var img = "<img src='" + restaurant.fileURL + "' style='width: 125px;'>";
-      var tags = restaurant.tags;
-      var tagString = '';
-      let name = restaurant.restaurant;
-      var makeTagString = tags.forEach((tags) => {
-        if(tags.value == true){
-          tagString += '#' + tags.name + '  ';
-        };
+//Ricardo: get the location of the restaurant
+function addMarker(restaurant, iconUse) { 
+    var img = "<img src='" + restaurant.fileURL + "' style='width: 125px;'>";
+    var tags = restaurant.tags;
+    var tagString = '';
+    let name = restaurant.restaurant;
+    var makeTagString = tags.forEach((tags) => {
+      if(tags.value == true){
+        tagString += '#' + tags.name + '  ';
+      };
+    });
+    var marker = new google.maps.Marker({
+        position: {lat: restaurant.location[0], lng: restaurant.location[1]},
+        map: map,
+        icon: iconUse,
+    });           
+
+    marker.addListener('click', function() {
+      var infowindow = new google.maps.InfoWindow({
+        content:'<div><h6> Restaurant: ' +
+                name +
+                '</h6><h6> Dish: ' +
+                restaurant.dish +
+                '<h6></div>' +
+                '<div>' +
+                img +
+                '</div>' +
+                '<div style="width: 150px;overflow: auto;"><h6>Tags : ' +
+                tagString +
+                '<h6></div>'
       });
-      var marker = new google.maps.Marker({
-          position: {lat: restaurant.location[0], lng: restaurant.location[1]},
-          map: map,
-          icon: iconUse,
-      });           
-  
-      marker.addListener('click', function() {
-        var infowindow = new google.maps.InfoWindow({
-          content:'<div><h6> Restaurant: ' +
-                  name +
-                  '</h6><h6> Dish: ' +
-                  restaurant.dish +
-                  '<h6></div>' +
-                  '<div>' +
-                  img +
-                  '</div>' +
-                  '<div style="width: 150px;overflow: auto;"><h6>Tags : ' +
-                  tagString +
-                  '<h6></div>'
-        });
-        infowindow.open(map, marker);
-        map.setCenter(this.position);
-        currentLocation = [this.position.lat() ,this.position.lng()];
-        if(current)current.setPosition(this.position);
-        document.getElementById('restaurantInput').value = name;
-        console.log(restaurant.location)
-      });
-      markers.push({marker, name});
-  }
-  
-  function addCurrentMarker(pos) {
-    //create the red marker that represent the current prosition
-      console.log("making Current marker");
-      current = new google.maps.Marker({
-          position: pos,
-          map: map,
-          draggable: true,
-          title: 'here is me',
-          icon: {url: 'https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi.png', scaledSize: new google.maps.Size(20, 35)},
-          zIndex: 1000,
-      });          
-      current.addListener('dragend', function() {
-          var markcoords = this.getPosition();
-          current.setPosition(markcoords);
-          locationInput.value = markcoords;
-          currentLocation = [markcoords.lat(), markcoords.lng()];
-          map.setCenter(markcoords);
-          //the function below need to pay.
-          //getLocationAddress(markcoords);
-      });
-  }
-  
-  function error(err) {
-      console.warn(`ERROR(${err.code}): ${err.message}`);
-    //  locationInput.value = currentLocation; 
-      var pos = new google.maps.LatLng(defaultLocation[0], defaultLocation[1]);
-      addCurrentMarker(pos);
-      map.setCenter(pos);
-      map.setZoom(18);
-      locationInput.value = pos;
-  };
-  
-  var options = {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0
-  };
-  
-  function getCurrentLocation(map) {
-      console.log("updating location");
-      navigator.geolocation.getCurrentPosition(setLocation, error, options);
-      document.getElementById('mapSection').style.display = 'block';
-      //document.getElementById('locationInput').style.display = 'block';
-      document.getElementById('instruction').style.display = 'block';
-      document.getElementById('locationLabel').style.display = 'none';
-      document.getElementById('address').style.display = 'none';
-      document.getElementById('addressConfirm').style.display = 'none';
-      console.log("location get");
-      return true;
-  }
-  
-  function setLocation(position) {
-    console.log("location set");
-      currentLocation = [position.coords.latitude, position.coords.longitude];
-      var currentLocationLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-      locationInput.value = currentLocationLatLng; 
-      addCurrentMarker(currentLocationLatLng);
-      map.setCenter(currentLocationLatLng);
-      map.setZoom(18);
-  }
-  
-  function getLocationAddress(pos) {
-    geocoder = new google.maps.Geocoder();
-    geocoder.geocode(
-      {
-        location: pos
+      infowindow.open(map, marker);
+      map.setCenter(this.position);
+      currentLocation = [this.position.lat() ,this.position.lng()];
+      if(current)current.setPosition(this.position);
+      document.getElementById('restaurantInput').value = name;
+      console.log(restaurant.location)
+    });
+    markers.push({marker, name});
+}
+
+//add current marker
+function addCurrentMarker(pos) {
+  //create the red marker that represent the current prosition
+    console.log("making Current marker");
+    current = new google.maps.Marker({
+        position: pos,
+        map: map,
+        draggable: true,
+        title: 'here is me',
+        icon: {url: 'https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi.png', scaledSize: new google.maps.Size(20, 35)},
+        zIndex: 1000,
+    });          
+    current.addListener('dragend', function() {
+        var markcoords = this.getPosition();
+        current.setPosition(markcoords);
+        locationInput.value = markcoords;
+        currentLocation = [markcoords.lat(), markcoords.lng()];
+        map.setCenter(markcoords);
+        //the function below need to pay.
+        //getLocationAddress(markcoords);
+    });
+}
+
+function error(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+  //  locationInput.value = currentLocation; 
+    var pos = new google.maps.LatLng(defaultLocation[0], defaultLocation[1]);
+    addCurrentMarker(pos);
+    map.setCenter(pos);
+    map.setZoom(18);
+    locationInput.value = pos;
+};
+
+var options = {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 0
+};
+
+function getCurrentLocation(map) {
+    console.log("updating location");
+    navigator.geolocation.getCurrentPosition(setLocation, error, options);
+    document.getElementById('mapSection').style.display = 'block';
+    //document.getElementById('locationInput').style.display = 'block';
+    document.getElementById('instruction').style.display = 'block';
+    document.getElementById('locationLabel').style.display = 'none';
+    document.getElementById('address').style.display = 'none';
+    document.getElementById('addressConfirm').style.display = 'none';
+    console.log("location get");
+    return true;
+}
+
+function setLocation(position) {
+  console.log("location set");
+    currentLocation = [position.coords.latitude, position.coords.longitude];
+    var currentLocationLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    locationInput.value = currentLocationLatLng; 
+    addCurrentMarker(currentLocationLatLng);
+    map.setCenter(currentLocationLatLng);
+    map.setZoom(18);
+}
+
+function getLocationAddress(pos) {
+  geocoder = new google.maps.Geocoder();
+  geocoder.geocode(
+    {
+      location: pos
+    }
+    ,function (result, status){
+      if(status == google.maps.GeocoderStatus.OK){
+        document.getElementById('address').value = result[0].formatted_address;
+      }else{
+        console.log('connot format the address');
       }
-      ,function (result, status){
-        if(status == google.maps.GeocoderStatus.OK){
-          document.getElementById('address').value = result[0].formatted_address;
-        }else{
-          console.log('connot format the address');
-        }
-      }
-    );
-  }
+    }
+  );
+}
 
   //refresh map function
   function refreshMap() {
@@ -469,10 +544,8 @@ function showDishes(name, location, dishes) {
     console.log("making marker");      
       var img = "<img src='" + imgURL + "' style='width: 125px;'>";
       var tagString = '';
-      var makeTagString = tagList.forEach((tagList) => {
-        if(tagList.value == true){
-          tagString += '#' + tagList.name + '  ';
-        };
+      var makeTagString = tagList.forEach((tag) => {
+          tagString += '#' + tag + '  ';
       });
       var marker = new google.maps.Marker({
           position: {lat: currentLocation[0], lng: currentLocation[1]},
@@ -587,3 +660,102 @@ function showDishes(name, location, dishes) {
         element.filterDishes(selected, filterNumber);
       })
     }
+
+
+    var tagNum = 0;
+    var tagList = [];
+    var category;
+    const categoriesList = [];
+    const listOfCategoriesAndTags = [];
+
+    (function() {
+        console.log('ready');
+        db.collection('categories').get().then(docs => {
+            docs.forEach(doc => {
+                var option = document.createElement('option');
+                option.innerText = doc.id;
+                option.value = doc.id;
+                console.log(doc.id);
+                document.getElementById('categories').appendChild(option);
+                categoriesList.push(doc.id);
+                var group = {name: doc.id, tags: doc.data().tags}
+                listOfCategoriesAndTags.push(group);
+            })
+        })
+    })();
+
+    function loadTags(cate) {
+        document.getElementById('selectTags').innerHTML = '';
+        if(checkCategories(cate)){
+          var a = 0;
+          var i = 0;
+          listOfCategoriesAndTags.forEach(group => {
+            if(cate == group.name) i = a;
+            a++;
+          })         
+          tagNum = listOfCategoriesAndTags[i].tags.length;
+          listOfCategoriesAndTags[i].tags.forEach(tag =>{
+            var box = document.createElement('input');
+            box.type = 'checkbox';
+            box.id = tag;
+            box.className = 'checkbox';
+            box.onclick = function() {addFilter(box.id, box.checked);};
+            var boxLabel = document.createElement('label');
+            boxLabel.innerText = tag;
+            boxLabel.htmlFor = tag;
+            document.getElementById('selectTags').appendChild(box);
+            document.getElementById('selectTags').appendChild(boxLabel);
+          })
+        }
+    }
+    
+    function uploadTags() {
+        tagList = [];
+        category = document.getElementById('categories').value;
+        for(i = 0; i < tagNum; i++){
+            var tag = $('.checkbox')[i];
+            if(tag.checked){
+                console.log(tag.id);
+                tagList.push(tag.id);
+            }
+        }
+        if($('.checkbox')[tagNum].checked){
+            var newTag = document.getElementById('newTagName').value;
+            tagList.push(newTag);
+            db.collection('categories').doc(category).update({
+                tags: firebase.firestore.FieldValue.arrayUnion(newTag)
+            })
+        }
+    }
+
+
+    function filterCategory(cate) {
+      loadTags(cate);
+      category = (cate);
+      markers.forEach(element => {
+        element.filterDishes(selected, filterNumber, cate);
+      })
+    }
+
+    function addFilter(tag, state) {
+      tagRegex = new RegExp(tag)
+      if(state){
+        selected.push(tagRegex);
+        filterNumber++;
+        markers.forEach(element => {
+          element.filterDishes(selected, filterNumber, category);
+        })
+      }else{
+        var i = selected.indexOf(tagRegex);
+        selected.splice(i, 1);  
+        filterNumber--;
+        markers.forEach(element => {
+          element.filterDishes(selected, filterNumber, category);
+        })
+      }
+    }
+
+    function checkCategories(input) {
+      return categoriesList.some(x => {return(x == input)});
+    }
+    
