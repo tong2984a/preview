@@ -8,13 +8,14 @@
   <title>Hello, Vegan!</title>
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/sidebar.css">
+  <link href="css/selectbox.css" rel="stylesheet">
 </head>
     <body>
         <div class="container">
             <div class="jumbotron">
               <p class="text-center">
                 <a href="main.html">
-                    <img src="images/i128x128.png" class="img-responsive" style="margin:0 auto;" alt="Responsive image">                
+                    <img src="images/i128x128.png" class="img-responsive" style="margin:0 auto;" alt="Responsive image">
                 </a>
               </p>
               <h1 class="text-center">Hello World!</h1>
@@ -24,30 +25,41 @@
             </div>
 
             <div class="row justify-content-center">
-                <div class="col-xs-6" style="width: 40%;">
-                    <input type="search" id="restaurantInput" class="form-control input-lg" placeholder="Please enter the restaurant name" style="display: none;" onchange="searchRestaurantDemo(this.value, 'search', selected)">
-                    <h6 id="restSearch"></h6>
-                    <label id="searchBtn" class="btn btn-success my-2 btn-default btn-block btn-lg" " onClick="(function s(){
-                        document.getElementById('restaurantInput').style.display = 'block';
-                        console.log('clicked');
-                    })()">
-                    Search Restaurant
-                  </label>
+              <div class="col-xs-6" style="width: 40%;">
+                <input type="search" id="restaurantInput" class="form-control input-lg" placeholder="Please enter the restaurant name" style="display: none;" onchange="searchRestaurantDemo(this.value, 'search', selected)">
+                <h6 id="restSearch"></h6>
+                <label id="searchBtn" class="btn btn-success my-2 btn-default btn-block btn-lg" " onClick="(function s(){
+                  document.getElementById('restaurantInput').style.display = 'block';
+                  console.log('clicked');
+                })()">
+                  Search Restaurant
+                </label>
+              </div>
+            </div>
+
+            <div id="filter" class="row justify-content-center">
+              <div class="col-xs-12 form-group" >
+                <div id="checkboxgroup-container">
+                  <fieldset class="checkboxgroup">
+                    <p>Filter restaurant:</p>
+                    <div id="selectCategories">
+                    </div>
+                  </fieldset>
                 </div>
+              </div>
+              <div class="col-xs-12 form-group" >
+                <div id="checkboxgroup-container">
+                  <fieldset class="checkboxgroup">
+                    <p>Ingredient List:</p>
+                    <div id="selectTags">
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
             </div>
 
-            <div id="filter" style="height: 100px;">
-                        <div>Filter restaurant</div>
-                        <select name="" id="categories" onchange="filterCategory(this.value)">
-                            <option value="">Please Select</option>
-                        </select>
-                        <div id="selectTags">
-                    
-                        </div>
-            </div>
 
-
-            <div style="display: none;"> 
+            <div style="display: none;">
                 <button id="gluten_free" onclick="btnClick(this)" class="btn btn-primary">Gluten Free</button>
                 <button id="egg_free" onclick="btnClick(this)" class="btn btn-primary">Egg Free</button>
                 <button id="dairy_free" onclick="btnClick(this)" class="btn btn-primary">Dairy Free</button>
@@ -63,24 +75,18 @@
 
 
             <div id="mapSection">
-                <div id="sidebar-wrapper">                   
+                <div id="sidebar-wrapper">
                     <div id="toggle-btn" onclick="toggleSidebar()">
                         <div></div>
                         <div></div>
                         <div></div>
                     </div>
-                    <div id="sidebar">            
+                    <div id="sidebar">
                         <h3 id="restaurantName">Restaurant</h3>
                         <h4 id="restName"></h4>
-                        <hr>
-                        <h3 id="restaurantLocation">location</h3>
-                        <h4 id="restLocation"></h4>
-                        <h3>Dishes</h3>
-                        <div id="restaurnatDish">                                
+
+                        <div id="restaurantDish">
                             <div id="slideContainer">
-                            </div>                                
-                            <div class="dotSection">
-                                <span class="dot"></span>
                             </div>
                         </div>
                     </div>
@@ -106,14 +112,14 @@
 
         <script>
             const firebaseConfig = {
-                apiKey: "AIzaSyAbxF9mc46KksOqqJmS3oOwjjDsW2cy8_k",
-                authDomain: "pav-recipt.firebaseapp.com",
-                databaseURL: "https://pav-recipt.firebaseio.com",
-                projectId: "pav-recipt",
-                storageBucket: "pav-recipt.appspot.com",
-                messagingSenderId: "677673489684",
-                appId: "1:677673489684:web:e61952268b8d6c45fdde01",
-                measurementId: "G-PCXD5E1428"
+                apiKey: "AIzaSyBg34hCq_jGHdj-HNWi2ZjfqhM2YgWq4ek",
+                authDomain: "pay-a-vegan.firebaseapp.com",
+                databaseURL: "https://pay-a-vegan.firebaseio.com",
+                projectId: "pay-a-vegan",
+                storageBucket: "pay-a-vegan.appspot.com",
+                messagingSenderId: "587888386485",
+                appId: "1:587888386485:web:3a81137924d19cbe2439fc",
+                measurementId: "G-MGJK6GF9YW"
             };
 
             firebase.initializeApp(firebaseConfig);
@@ -177,13 +183,13 @@
             }
 
         /*    function searchRestaurantDem(input) {
-                var count = 0; 
-                var str = input.toLowerCase().replace(/\s/g,'');                   
+                var count = 0;
+                var str = input.toLowerCase().replace(/\s/g,'');
                 var area;
                 var checkArea = false;
                 var isFilter = (selected == [])?true:false ;
                 areas.some((value) => {
-                    var pattern = new RegExp(value.name);                        
+                    var pattern = new RegExp(value.name);
                     if(pattern.test(str)){
                         area = value;
                         checkArea = true;
@@ -204,9 +210,9 @@
                         }
                     }
                     if(nameTest && areaTest){
-                        count++;                        
-                        item.marker.setAnimation(google.maps.Animation.BOUNCE); 
-                        stopAnimation(item.marker);     
+                        count++;
+                        item.marker.setAnimation(google.maps.Animation.BOUNCE);
+                        stopAnimation(item.marker);
                         item.marker.setIcon('http://maps.google.com/mapfiles/ms/micons/blue-dot.png');
                         map.setCenter(item.marker.position);
                         item.marker.setVisible(true);
@@ -219,13 +225,13 @@
                     document.getElementById('restSearch').innerText = count + ' restaurant found under the filter requirment(s)';
                 }else{
                     document.getElementById('restSearch').innerText = count + ' restaurant found';
-                }                    
+                }
                 if(count > 0){
                     document.getElementById('restSearch').style.color = 'rgb(0,255,0)'
                 }else{
                     document.getElementById('restSearch').style.color = 'rgb(255,0,0)'
                     markers.forEach(item => item.marker.setVisible(true));
-                };     
+                };
 
             }*/
 
@@ -240,7 +246,7 @@
 
             function initAutocomplete() {
                 // Create the search box and link it to the UI element.
-                const input = document.getElementById("restaurnatInput");
+                const input = document.getElementById("restaurantInput");
                 const searchBox = new google.maps.places.SearchBox(input);
                 map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
                 // Bias the SearchBox results towards current map's viewport.
@@ -281,7 +287,7 @@
                     });
                     map.fitBounds(bounds);
                 });
-            }              
+            }
             /* console.log(showing);
                 visualizeArea(areas[0]);
                 areas.forEach((value) => {
@@ -293,7 +299,7 @@
                 console.log('show', tag);
                 var idList;
                 var list = db.collection('tagLists').doc(tag).get().then((doc) => {
-                    idList = doc.data().docID;                
+                    idList = doc.data().docID;
                     console.log(idList);
                     idList.forEach((id) => {
                         var d = db.collection('receipts').doc(id).get().then((rdoc) => {
@@ -352,19 +358,21 @@
                 });
                 console.log('initializing map');
                 db.collection('restaurants').get().then((snapshot) => {
+                  console.log(snapshot);
                     snapshot.docs.forEach(doc => {
                     var restaurantData = doc.data();
+                    console.log(restaurantData);
                     console.log(restaurantData.location);
                     addRestMarker(restaurantData, doc.id);
                     });
-                }); 
-            } 
+                });
+            }
 
-</script>        
+</script>
 
-    <script async defer
+    <script defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEJpg61U3rDVLKE9A0MZ-1i7F1FezKpTQ
         &callback=initMap&libraries=visualization,places,geometry">
     </script>
-    <script async defer src="js/mapHelper.js" type="text/javascript"></script>
+    <script defer src="js/mapHelper.js" type="text/javascript"></script>
 </html>

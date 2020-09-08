@@ -3,7 +3,7 @@ var selected = [];
 var filterNumber = 0;
 var blueIcon = {url: 'http://maps.google.com/mapfiles/ms/micons/blue-dot.png', scaledSize: new google.maps.Size(45, 45)};
 var greenIcon = {url: 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png', scaledSize: new google.maps.Size(30, 45)};
-var yellowIcon = {url: 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png', scaledSize: new google.maps.Size(45, 45)}; 
+var yellowIcon = {url: 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png', scaledSize: new google.maps.Size(45, 45)};
 var couponIcon = {url: "https://img.icons8.com/material-rounded/48/000000/location-marker.png"}
 var couponIcon2 = {url: "https://img.icons8.com/fluent/48/000000/map.png", scaledSize: new google.maps.Size(40, 40)}
 const areas = [
@@ -64,7 +64,7 @@ class Restaurant {
   //show the the restaurant details in the side bar
   showDetails() {
     document.getElementById("restName").innerText = this.name;
-    document.getElementById("restLocation").innerText = this.location;
+    //document.getElementById("restLocation").innerText = this.location;
     var dishSection = document.createElement("div")
     dishSection.id = "dishSection";
     document.getElementById("slideContainer").appendChild(dishSection);
@@ -74,7 +74,7 @@ class Restaurant {
   }
 
   //show or hide the resaturant by screening all the dishes, show the dishes match all the sectleted tags, if no dishes match, hide the marker
-  filterDishes(filterTags, tagsNum, catagory) {   
+  filterDishes(filterTags, tagsNum, category) {
     var check = 0;
     var dishMatch = 0;
     var firstDish = true;
@@ -82,7 +82,7 @@ class Restaurant {
     if(category){
       console.log('searching' + category)
       this.dishes.forEach(element => {
-        if(catagory == element.getCategory()){
+        if(category == element.getCategory()){
           console.log('match' + category)
           if(tagsNum){
             filterTags.forEach(value => {
@@ -107,7 +107,7 @@ class Restaurant {
         }else{
           element.setShow(false);
         }
-      })    
+      })
       if(dishMatch){
         this.marker.setVisible(true);
       }else{
@@ -123,7 +123,7 @@ class Restaurant {
   }
 
   showInfoWindow(dish, marker) {
-    var contentString = 
+    var contentString =
       "<h3>" + dish.getName() + "</h3><br>"
       + '<img src="' + dish.getImage() + '" style="width: 125px">'
       + "<h6>" + dish.getTagString() + "</h6>"
@@ -147,7 +147,7 @@ class Dish {
     });
     this.tagString = string;
     this.show = true;
-    this.catagory = category;
+    this.category = category;
   }
 
   getName() {
@@ -167,7 +167,7 @@ class Dish {
   }
 
   getCategory() {
-    return this.catagory;
+    return this.category;
   }
 
   //show the dish details in the side bar
@@ -178,11 +178,11 @@ class Dish {
       document.getElementById(nodeId).appendChild(name)
       var photo = document.createElement("img");
       photo.src = this.image;
-      photo.style.width = '150px' 
-      document.getElementById(nodeId).appendChild(photo);                
+      photo.style.width = '150px'
+      document.getElementById(nodeId).appendChild(photo);
       var tag = document.createElement('h6');
       tag.innerText = this.tagString;
-      document.getElementById(nodeId).appendChild(tag);     
+      document.getElementById(nodeId).appendChild(tag);
     }
   }
 
@@ -206,7 +206,7 @@ class CurrentMarker {
         title: 'here is me',
         icon: {url: 'https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi.png', scaledSize: new google.maps.Size(20, 35)},
         zIndex: 1000
-    });            
+    });
     this.marker.addListener('dragend', function() {
         var markcoords = this.getPosition();
         this.location = [markcoords.lat(), markcoords.lng()];
@@ -267,29 +267,29 @@ function stopAnimation(marker) {
 
 //the restaurant searching function that search all the restaurant in the database
 function searchRestaurantDemo(input, mode, selected = []) {
-    var count = 0; 
-    var str = input.toLowerCase().replace(/\s/g,'');          
-    var search =  new RegExp(str);            
+    var count = 0;
+    var str = input.toLowerCase().replace(/\s/g,'');
+    var search =  new RegExp(str);
     var areaCenter;
     var areaRadius;
-    var checkArea = false;      
+    var checkArea = false;
     var isFilter = (selected)?true:false ;
     areas.some((value) => {
-        var pattern = new RegExp(value.name);                        
+        var pattern = new RegExp(value.name);
         if(pattern.test(str)){
           areaCenter = new google.maps.LatLng(value.center[0], value.center[1]);
           areaRadius = value.radius;
           checkArea = true;
           str = str.replace(value.name,'');
-          search =  new RegExp(str);   
+          search =  new RegExp(str);
           return true;
         }
     })
     markers.filter(value => value.marker.getVisible() == true).forEach(item => {
         if(search.test(item.name.toLowerCase())){
-            count++;                        
-            item.marker.setAnimation(google.maps.Animation.BOUNCE); 
-            stopAnimation(item.marker);     
+            count++;
+            item.marker.setAnimation(google.maps.Animation.BOUNCE);
+            stopAnimation(item.marker);
             item.marker.setIcon(blueIcon);
             map.setCenter(item.marker.position);
             item.marker.setVisible(true);
@@ -312,14 +312,14 @@ function searchRestaurantDemo(input, mode, selected = []) {
         markers.forEach(item => {
           if(item.marker.getVisible()){
             if(isInArea(item.marker.position, areaCenter, areaRadius)){
-              if(!item.marker.getVisible())count++;                        
-                item.marker.setAnimation(google.maps.Animation.BOUNCE); 
-                stopAnimation(item.marker);     
+              if(!item.marker.getVisible())count++;
+                item.marker.setAnimation(google.maps.Animation.BOUNCE);
+                stopAnimation(item.marker);
                 item.marker.setIcon(blueIcon);
                 map.setCenter(item.marker.position);
                 item.marker.setVisible(true);
             }else{
-                if(item.marker.getVisible())count--;  
+                if(item.marker.getVisible())count--;
                 item.marker.setVisible(false);
                 item.marker.setIcon(greenIcon);
             }
@@ -338,7 +338,7 @@ function searchRestaurantDemo(input, mode, selected = []) {
     if(isFilter){
       document.getElementById('restSearch').innerText = count + ' restaurant found under the filter requirment(s)';
     }else{
-      document.getElementById('restSearch').innerText = count + ' restaurant found';  
+      document.getElementById('restSearch').innerText = count + ' restaurant found';
     }
     if(count > 0){
         document.getElementById('restSearch').style.color = 'rgb(0,255,0)'
@@ -357,34 +357,34 @@ function addRestMarker(restaurant) {
     map: map,
     icon: greenIcon,
     animation: google.maps.Animation.DROP
-  });  
+  });
   console.log(restaurant.coupon);
   if(restaurant.coupon > 0){
     var label = {text: restaurant.coupon.toString(), fontSize: "20px", fontWeight: "bold"}
     marker.setIcon(couponIcon2);
     marker.setLabel(label);
   }
-  var restaurantObj = new Restaurant(marker, restaurant.name, restaurant.location, restaurant.id, restaurant.dishes);     
+  var restaurantObj = new Restaurant(marker, restaurant.name, restaurant.location, restaurant.id, restaurant.dishes);
   marker.addListener('click', function() {
     if(!isSideOpen){
         document.getElementById("sidebar-wrapper").classList.toggle('open');
         isSideOpen = !isSideOpen;
         console.log('ckicked')
-    } 
+    }
     $('#dishSection').remove();
     restaurantObj.showDetails();
-    this.setAnimation(google.maps.Animation.BOUNCE); 
-    stopAnimation(this); 
+    this.setAnimation(google.maps.Animation.BOUNCE);
+    stopAnimation(this);
     if(mode === "add"){
       current.setPosition({lat, lng});
       currentLocation = [restaurant.location[0], restaurant.location[1]]
       locationInput.value = restaurant.location;
       currentRestaurantId = restaurant.id;
       restaurantInput.value = restaurantObj.getName();
-    }    
+    }
     map.setCenter({lat, lng});
-  });   
-  markers.push(restaurantObj);         
+  });
+  markers.push(restaurantObj);
 }
 
 function showDishes(name, location, dishes) {
@@ -394,14 +394,14 @@ function showDishes(name, location, dishes) {
   var dishSection = document.createElement("div")
   dishSection.id = "dishSection";
   document.getElementById("slideContainer").appendChild(dishSection);
-  dishes.forEach((dishes) => {                        
+  dishes.forEach((dishes) => {
     var name = document.createElement("h5");
     name.innerText = "Dish: " + dishes.dish;
     document.getElementById('dishSection').appendChild(name)
     var photo = document.createElement("img");
     photo.src = dishes.fileURL;
-    photo.style.width = '150px' 
-    document.getElementById('dishSection').appendChild(photo);                
+    photo.style.width = '150px'
+    document.getElementById('dishSection').appendChild(photo);
     var tags = dishes.tags;
     var tagString = 'Tags: ';
     var makeTagString = tags.forEach((tags) => {
@@ -411,12 +411,12 @@ function showDishes(name, location, dishes) {
     });
     var tag = document.createElement('h6');
     tag.innerText = tagString;
-    document.getElementById('dishSection').appendChild(tag); 
-  }) 
+    document.getElementById('dishSection').appendChild(tag);
+  })
 }
-  
+
 //Ricardo: get the location of the restaurant
-function addMarker(restaurant, iconUse) { 
+function addMarker(restaurant, iconUse) {
     var img = "<img src='" + restaurant.fileURL + "' style='width: 125px;'>";
     var tags = restaurant.tags;
     var tagString = '';
@@ -430,7 +430,7 @@ function addMarker(restaurant, iconUse) {
         position: {lat: restaurant.location[0], lng: restaurant.location[1]},
         map: map,
         icon: iconUse,
-    });           
+    });
 
     marker.addListener('click', function() {
       var infowindow = new google.maps.InfoWindow({
@@ -459,7 +459,7 @@ function addMarker(restaurant, iconUse) {
 //add current marker
 function addCurrentMarker(pos) {
   //create the red marker that represent the current prosition
-    console.log("making Current marker");
+    console.log("adding Current marker");
     current = new google.maps.Marker({
         position: pos,
         map: map,
@@ -467,7 +467,11 @@ function addCurrentMarker(pos) {
         title: 'here is me',
         icon: {url: 'https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi.png', scaledSize: new google.maps.Size(20, 35)},
         zIndex: 1000,
-    });          
+    });
+
+                  var testrestaurants = markers.map(el => el.name);
+                  console.log('testres:' + testrestaurants);
+                autocomplete(document.getElementById("restaurantInput"), testrestaurants);
     current.addListener('dragend', function() {
         var markcoords = this.getPosition();
         current.setPosition(markcoords);
@@ -481,7 +485,7 @@ function addCurrentMarker(pos) {
 
 function error(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
-  //  locationInput.value = currentLocation; 
+  //  locationInput.value = currentLocation;
     var pos = new google.maps.LatLng(defaultLocation[0], defaultLocation[1]);
     addCurrentMarker(pos);
     map.setCenter(pos);
@@ -505,6 +509,7 @@ function getCurrentLocation(map) {
     document.getElementById('address').style.display = 'none';
     document.getElementById('addressConfirm').style.display = 'none';
     console.log("location get");
+
     return true;
 }
 
@@ -512,7 +517,7 @@ function setLocation(position) {
   console.log("location set");
     currentLocation = [position.coords.latitude, position.coords.longitude];
     var currentLocationLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-    locationInput.value = currentLocationLatLng; 
+    locationInput.value = currentLocationLatLng;
     addCurrentMarker(currentLocationLatLng);
     map.setCenter(currentLocationLatLng);
     map.setZoom(18);
@@ -538,10 +543,10 @@ function getLocationAddress(pos) {
   function refreshMap() {
     var r = document.location.reload();
   }
-  
+
   function newMarker() {
     //add the yellow icon to show the new upload data
-    console.log("making marker");      
+    console.log("making marker");
       var img = "<img src='" + imgURL + "' style='width: 125px;'>";
       var tagString = '';
       var makeTagString = tagList.forEach((tag) => {
@@ -568,11 +573,11 @@ function getLocationAddress(pos) {
                   '<h6></div>'
         });
         infowindow.open(map, marker);
-      })       
+      })
   }
 
   function btnClick(btn) {
-    //to add the filter requirment and call the restaurant filtering function 
+    //to add the filter requirment and call the restaurant filtering function
     var isClicked;
     var tag;
     switch(btn.id){
@@ -639,14 +644,14 @@ function getLocationAddress(pos) {
     }
     if(isClicked) {
         btn.style.backgroundColor = 'green';
-        selected.push(tag);  
+        selected.push(tag);
         filterNumber += 1;
     }else{
         btn.style = '';
         var i = selected.indexOf(tag);
-        selected.splice(i, 1);  
+        selected.splice(i, 1);
         filterNumber -= 1;
-    }        
+    }
     markers.forEach(element => {
       element.filterDishes(selected, filterNumber);
     })
@@ -667,23 +672,72 @@ function getLocationAddress(pos) {
     var category;
     const categoriesList = [];
     const listOfCategoriesAndTags = [];
+    var li;
 
     (function() {
         console.log('ready');
+        if (document.getElementById('selectTags')) {
+          document.getElementById('selectTags').innerHTML = '';
+        }
+        if (document.getElementById('selectCategories')) {
+          document.getElementById('selectCategories').innerHTML = '';
+        }
         db.collection('categories').get().then(docs => {
             docs.forEach(doc => {
+              if (document.getElementById('categories')) {
                 var option = document.createElement('option');
                 option.innerText = doc.id;
                 option.value = doc.id;
                 console.log(doc.id);
                 document.getElementById('categories').appendChild(option);
+              }
+
+                if (document.getElementById('selectCategories')) {
+                  var box = document.createElement('input');
+                  box.type = 'checkbox';
+                  box.id = doc.id;
+                  box.className = 'checkbox';
+                  box.name = "categories";
+                  box.onclick = filterMarkers;
+                  var boxLabel = document.createElement('label');
+                  boxLabel.innerText = doc.id;
+                  boxLabel.htmlFor = doc.id;
+
+                  document.getElementById('selectCategories').appendChild(boxLabel);
+                  boxLabel.appendChild(box);
+                }
+
                 categoriesList.push(doc.id);
                 var group = {name: doc.id, tags: doc.data().tags}
                 listOfCategoriesAndTags.push(group);
+
+                const sb = document.querySelector('#list');
+                doc.data().tags.forEach(tag => {
+                  if (sb) {
+                    const option = new Option(tag, tag);
+                    sb.add(option, undefined);
+                  }
+
+                  if (document.getElementById('selectTags')) {
+                    var box = document.createElement('input');
+                    box.type = 'checkbox';
+                    box.id = tag;
+                    box.className = 'checkbox';
+                    box.name = "ingredients";
+                    box.onclick = filterMarkers;
+                    var boxLabel = document.createElement('label');
+                    boxLabel.innerText = tag;
+                    boxLabel.htmlFor = tag;
+
+                    document.getElementById('selectTags').appendChild(boxLabel);
+                    boxLabel.appendChild(box);
+                  }
+                })
             })
         })
     })();
 
+    //index.html only onchange
     function loadTags(cate) {
         document.getElementById('selectTags').innerHTML = '';
         if(checkCategories(cate)){
@@ -692,50 +746,118 @@ function getLocationAddress(pos) {
           listOfCategoriesAndTags.forEach(group => {
             if(cate == group.name) i = a;
             a++;
-          })         
+          })
           tagNum = listOfCategoriesAndTags[i].tags.length;
           listOfCategoriesAndTags[i].tags.forEach(tag =>{
-            var box = document.createElement('input');
-            box.type = 'checkbox';
-            box.id = tag;
-            box.className = 'checkbox';
-            box.onclick = function() {addFilter(box.id, box.checked);};
-            var boxLabel = document.createElement('label');
-            boxLabel.innerText = tag;
-            boxLabel.htmlFor = tag;
-            document.getElementById('selectTags').appendChild(box);
-            document.getElementById('selectTags').appendChild(boxLabel);
+            const sb = document.querySelector('#list');
+            const option = new Option(tag, tag);
+            sb.add(option, undefined);
           })
         }
     }
-    
+
     function uploadTags() {
-        tagList = [];
-        category = document.getElementById('categories').value;
-        for(i = 0; i < tagNum; i++){
-            var tag = $('.checkbox')[i];
-            if(tag.checked){
-                console.log(tag.id);
-                tagList.push(tag.id);
-            }
-        }
-        if($('.checkbox')[tagNum].checked){
-            var newTag = document.getElementById('newTagName').value;
-            tagList.push(newTag);
-            db.collection('categories').doc(category).update({
-                tags: firebase.firestore.FieldValue.arrayUnion(newTag)
-            })
-        }
-    }
-
-
-    function filterCategory(cate) {
-      loadTags(cate);
-      category = (cate);
-      markers.forEach(element => {
-        element.filterDishes(selected, filterNumber, cate);
+      tagList = [];
+      category = document.getElementById('categories').value;
+      const sb = document.querySelector('#list');
+      tagList = [...sb.options].map(el => el.value);
+      console.log('tagList:' + tagList);
+      db.collection('categories').doc(category).update({
+        tags: firebase.firestore.FieldValue.arrayUnion(...tagList)
       })
     }
+
+    function filterMarkers() {
+      var checkedBoxes = [...document.querySelectorAll('input[name=categories]:checked')];
+      var active_categories = checkedBoxes.map(el => el.id);
+      console.log(active_categories);
+
+      checkedBoxes = [...document.querySelectorAll('input[name=ingredients]:checked')];
+      var active_ingredients = checkedBoxes.map(el => el.id);
+
+      markers.forEach((item, i) => {
+        if (active_categories.length === 0 && active_ingredients.length === 0) {
+          console.log('allllllll tempry');
+          item.marker.setVisible(true);
+        } else {
+          console.log(item);
+          var marker_categories = item.dishes.map(dish => dish.category);
+          var marker_tags = [];
+          item.dishes.forEach((dish, i) => {
+            marker_tags.push(...dish.tags);
+          });
+          console.log('marker_tags');
+          console.log(marker_tags);
+          item.marker.setVisible(false);
+          marker_categories.forEach((c, i) => {
+            if (active_categories.includes(c)) {
+              item.marker.setVisible(true);
+            }
+          });
+          marker_tags.forEach((t, i) => {
+            console.log('t:' + t);
+            if (active_ingredients.includes(t)) {
+              item.marker.setVisible(true);
+            }
+          });
+        }
+      });
+    }
+
+    //search.html only onchange
+    // function filterCategories() {
+    //   console.log('active filterCategories');
+    //   const sb = document.querySelector('#categories');
+    //   const ingredients = document.querySelector('#list');
+    //
+    //   var active_categories = [];
+    //   var active_ingredients = [];
+    //   for (var i=0, len=sb.options.length; i<len; i++) {
+    //     var opt = sb.options[i];
+    //     console.log('active?:' + opt.selected + ' name:' + opt.value);
+    //     if ( opt.selected ) {
+    //       active_categories.push(opt.value);
+    //     }
+    //   }
+    //   console.log('active_categories length:' + active_categories.length);
+    //
+    //   for (var i=0, len=ingredients.options.length; i<len; i++) {
+    //     var opt = ingredients.options[i];
+    //     console.log('active?:' + opt.selected + ' name:' + opt.value);
+    //     if ( opt.selected ) {
+    //       active_ingredients.push(opt.value);
+    //     }
+    //   }
+    //   console.log('active_ingredients length:' + active_ingredients.length);
+    //
+    //   markers.forEach((item, i) => {
+    //     if (active_categories.length === 0 && active_ingredients.length === 0) {
+    //       console.log('allllllll tempry');
+    //       item.marker.setVisible(true);
+    //     } else {
+    //       console.log(item);
+    //       var marker_categories = item.dishes.map(dish => dish.category);
+    //       var marker_tags = [];
+    //       item.dishes.forEach((dish, i) => {
+    //         marker_tags.push(...dish.tags);
+    //       });
+    //       console.log('marker_tags');
+    //       console.log(marker_tags);
+    //       item.marker.setVisible(false);
+    //       marker_categories.forEach((c, i) => {
+    //         if (active_categories.includes(c)) {
+    //           item.marker.setVisible(true);
+    //         }
+    //       });
+    //       marker_tags.forEach((t, i) => {
+    //         console.log('t:' + t);
+    //         if (active_ingredients.includes(t)) {
+    //           item.marker.setVisible(true);
+    //         }
+    //       });
+    //     }
+    //   });
+    // }
 
     function addFilter(tag, state) {
       tagRegex = new RegExp(tag)
@@ -747,7 +869,7 @@ function getLocationAddress(pos) {
         })
       }else{
         var i = selected.indexOf(tagRegex);
-        selected.splice(i, 1);  
+        selected.splice(i, 1);
         filterNumber--;
         markers.forEach(element => {
           element.filterDishes(selected, filterNumber, category);
@@ -758,4 +880,3 @@ function getLocationAddress(pos) {
     function checkCategories(input) {
       return categoriesList.some(x => {return(x == input)});
     }
-    
