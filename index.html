@@ -149,6 +149,8 @@
           const btnRemove = document.querySelector('#btnRemove');
           const sb = document.querySelector('#list');
           const name = document.querySelector('#name');
+          //Regex for Valid Characters i.e. Alphabets and Numbers.
+          const regex = /^[A-Za-z\s]+$/
 
           btnAdd.onclick = (e) => {
             e.preventDefault();
@@ -158,6 +160,13 @@
               alert('Please enter the name.');
               return;
             }
+
+            //Validate TextBox value against the Regex.
+            var isValid = regex.test(name.value);
+            if (!isValid) {
+                alert("Only Alphabets and Numbers allowed.");
+            }
+
             // create a new option
             const option = new Option(name.value, name.value);
             // add it to the list
