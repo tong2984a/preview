@@ -37,32 +37,32 @@
     </div>
 
     <!-- Ricardo: input location-->
-    <div id="mapSection"  style="display: none;"">
+    <div id="mapSection" style="display: none;">
       <div id="sidebar-wrapper">
-          <div id="toggle-btn" onclick="toggleSidebar()">
-              <div></div>
-              <div></div>
-              <div></div>
+        <div id="toggle-btn" onclick="toggleSidebar()">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div id="sidebar">
+          <h3 id="restaurantName">Restaurant</h3>
+          <h4 id="restName"></h4>
+          <hr>
+          <h3 id="restaurantLocation">location</h3>
+          <h4 id="restLocation"></h4>
+          <h3>Dishes</h3>
+          <div id="restaurantDish">
+            <div id="slideContainer"></div>
+            <div class="dotSection">
+              <span class="dot"></span>
+            </div>
           </div>
-          <div id="sidebar">
-              <h3 id="restaurantName">Restaurant</h3>
-              <h4 id="restName"></h4>
-              <hr>
-              <h3 id="restaurantLocation">location</h3>
-              <h4 id="restLocation"></h4>
-              <h3>Dishes</h3>
-              <div id="restaurantDish">
-                  <div id="slideContainer"></div>
-                  <div class="dotSection">
-                      <span class="dot"></span>
-                  </div>
-              </div>
-          </div>
+        </div>
       </div>
       <div id="map" style="width: 100%; height: 70vh;"></div>
-  </div>
+    </div>
     <div class="row justify-content-center">
-      <div class="col-sm-6 form-group">
+      <div class="col-sm-6">
         <p id="instruction" style="display: none;">Please drag the red pin to the place you want to choose</p>
         <input type="url" id="locationInput" class="form-control input-lg" style="display: none;" >
         <p><label id="locationLabel" for="locationInput" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;" onclick="getCurrentLocation()">Set Location</label></p>
@@ -72,13 +72,9 @@
       </div>
     </div>
     <!-- Ricardo: input restaurant -->
+  <div id="after-location-loaded" style="display: none;">
     <div class="row justify-content-center">
       <div class="col-sm-6 form-group">
-        <!-- <input type="text"
-        class="form-control input-lg"
-        id="searchInput"
-        placeholder="Please enter the name of the restaurant you want to find?"
-        onchange="searchRestaurantDemo(this.value, 'add')"> -->
         <div class="autocomplete">
           <input type="text"
           class="form-control input-lg"
@@ -86,7 +82,6 @@
           placeholder="What is the name of the restaurant?"
           >
         </div>
-        <h6 id="restSearch"></h6>
       </div>
     </div>
 
@@ -99,6 +94,7 @@
         placeholder="What is the name of the dish?">
       </div>
     </div>
+
     <div class="row justify-content-center">
       <div class="col-sm-6 form-group">
         <input type="text"
@@ -107,34 +103,36 @@
         placeholder="Enter your Review Message here...">
       </div>
     </div>
+
     <div class="row justify-content-center">
       <img id="preview" src="" />
     </div>
-    <div class="row justify-content-center">
+    <div class="row justify-content-center" >
       <input type="file" id="customFile" accept="image/*" style="display: none;" onChange="readURL(this)">
       <p><label id="uploadLabel" for="customFile" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;">Upload Image</label></p>
     </div>
+  </div>
 
     <!-- Ricardo Re-upload button -->
     <div class="row justify-content-center">
-      <div class="col-xs-12 form-group">
+      <div class="col-xs-12">
         <button id="reUploadBtn" class="btn btn-success my-2 btn-default btn-block btn-lg" style="display: none;" onClick="reUpload()">
           Re-Upload Photo
         </button>
+
       </div>
     </div>
 
     <div class="row justify-content-center">
-      <div class="col-xs-12 form-group" id="tags" style="display: none;">
-
+      <div class="col-xs-12" id="tags" style="display: none;">
         <div id="selectbox-container">
           <form>
             <label for="name">Category:</label>
-            <select name="" id="categories" onchange="loadTags(this.value)">
+            <select name="" id="categories">
               <option value="">Please Select</option>
             </select>
             <label for="name">Ingredient:</label>
-            <input type="text" id="name" placeholder="Enter an ingredient" autocomplete="off">
+            <input type="text" id="name" placeholder="Enter an ingredient">
 
             <button id="btnAdd">Add</button>
 
@@ -225,7 +223,7 @@
 
     <!-- Send button -->
     <div class="row justify-content-center">
-      <div class="col-xs-12 form-group">
+      <div class="col-xs-12">
         <button id="sendBtn" class="btn btn-success my-2 btn-default btn-block btn-lg" style="display: none;" onClick="upload()">
           Send
         </button>
@@ -234,7 +232,7 @@
 
     <!-- Add another dish button -->
     <div class="row justify-content-center">
-      <div class="col-xs-12 form-group">
+      <div class="col-xs-12">
         <button id="addBtn" class="btn btn-success my-2 btn-default btn-block btn-lg" style="display: none;" onClick="refreshMap()">
           Add another dish
         </button>
@@ -455,6 +453,7 @@ function reUpload() {
   document.getElementById('uploadLabel').style.display = "block";
   document.getElementById('sendBtn').style.display = "none";
   document.getElementById('reUploadBtn').style.display = "none";
+  document.getElementById('tags').style.display = "none";
   preview.style.display = "none";
   console.log(preview);
 }
@@ -505,10 +504,6 @@ function initMap() {
 //}
 
 function upload() {
-    uploadTags();
-}
-
-function uploadorig() {
   uploadTags();
   if (emailInput.value.length == 0) {
     helloMessageOutput.innerText = "Looks like you haven't provided an email";

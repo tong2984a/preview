@@ -334,18 +334,18 @@ function searchRestaurantDemo(input, mode, selected = []) {
           }
         })
     }
-    if(mode === "search"){}
-    if(isFilter){
-      document.getElementById('restSearch').innerText = count + ' restaurant found under the filter requirment(s)';
-    }else{
-      document.getElementById('restSearch').innerText = count + ' restaurant found';
-    }
-    if(count > 0){
-        document.getElementById('restSearch').style.color = 'rgb(0,255,0)'
-    }else{
-        document.getElementById('restSearch').style.color = 'rgb(255,0,0)'
-        markers.forEach(item => item.marker.setVisible(true));
-    };
+    // if(mode === "search"){}
+    // if(isFilter){
+    //   document.getElementById('restSearch').innerText = count + ' restaurant found under the filter requirment(s)';
+    // }else{
+    //   document.getElementById('restSearch').innerText = count + ' restaurant found';
+    // }
+    // if(count > 0){
+    //     document.getElementById('restSearch').style.color = 'rgb(0,255,0)'
+    // }else{
+    //     document.getElementById('restSearch').style.color = 'rgb(255,0,0)'
+    //     markers.forEach(item => item.marker.setVisible(true));
+    // };
 }
 
 //add the marker on a restaurant and create a Restaurant object
@@ -469,9 +469,8 @@ function addCurrentMarker(pos) {
         zIndex: 1000,
     });
 
-                  var testrestaurants = markers.map(el => el.name);
-                  console.log('testres:' + testrestaurants);
-                autocomplete(document.getElementById("restaurantInput"), testrestaurants);
+    var restaurants = [...(new Set(markers.map(el => el.name)))].sort();
+    autocomplete(document.getElementById("restaurantInput"), restaurants);
     current.addListener('dragend', function() {
         var markcoords = this.getPosition();
         current.setPosition(markcoords);
@@ -508,19 +507,24 @@ function getCurrentLocation(map) {
     document.getElementById('locationLabel').style.display = 'none';
     document.getElementById('address').style.display = 'none';
     document.getElementById('addressConfirm').style.display = 'none';
-    console.log("location get");
-
+    // document.getElementById('restaurantInput').style.display = 'block';
+    // document.getElementById('dishInput').style.display = 'block';
+    // document.getElementById('helloMessageInput').style.display = 'block';
+    // document.getElementById('uploadLabel').style.display = 'block';
+    //document.getElementById('after-location-loaded').style.display = 'block';
     return true;
 }
 
 function setLocation(position) {
   console.log("location set");
-    currentLocation = [position.coords.latitude, position.coords.longitude];
-    var currentLocationLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-    locationInput.value = currentLocationLatLng;
-    addCurrentMarker(currentLocationLatLng);
-    map.setCenter(currentLocationLatLng);
-    map.setZoom(18);
+  currentLocation = [position.coords.latitude, position.coords.longitude];
+  var currentLocationLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+  locationInput.value = currentLocationLatLng;
+  addCurrentMarker(currentLocationLatLng);
+  map.setCenter(currentLocationLatLng);
+  map.setZoom(18);
+  document.getElementById('after-location-loaded').style.display = 'block';
+  console.log("location get");
 }
 
 function getLocationAddress(pos) {
@@ -672,89 +676,101 @@ function getLocationAddress(pos) {
     var category;
     const categoriesList = [];
     const listOfCategoriesAndTags = [];
-    var li;
+    var unique_tags = [];
+    var unique_categories = [];
 
     (function() {
-        console.log('ready');
-        if (document.getElementById('selectTags')) {
-          document.getElementById('selectTags').innerHTML = '';
-        }
-        if (document.getElementById('selectCategories')) {
-          document.getElementById('selectCategories').innerHTML = '';
-        }
-        db.collection('categories').get().then(docs => {
-            docs.forEach(doc => {
-              if (document.getElementById('categories')) {
-                var option = document.createElement('option');
-                option.innerText = doc.id;
-                option.value = doc.id;
-                console.log(doc.id);
-                document.getElementById('categories').appendChild(option);
-              }
+      console.log('ready');
+      if (document.getElementById('selectTags')) {
+        document.getElementById('selectTags').innerHTML = '';
+      }
+      if (document.getElementById('selectCategories')) {
+        document.getElementById('selectCategories').innerHTML = '';
+      }
+      db.collection('categories').get().then(docs => {
+        docs.forEach(doc => {
+          let c = doc.id.toLowerCase();
+          c = c.charAt(0).toUpperCase() + c.slice(1);
+          unique_categories.push(c);
 
-                if (document.getElementById('selectCategories')) {
-                  var box = document.createElement('input');
-                  box.type = 'checkbox';
-                  box.id = doc.id;
-                  box.className = 'checkbox';
-                  box.name = "categories";
-                  box.onclick = filterMarkers;
-                  var boxLabel = document.createElement('label');
-                  boxLabel.innerText = doc.id;
-                  boxLabel.htmlFor = doc.id;
+          categoriesList.push(doc.id);
+          var group = {name: doc.id, tags: doc.data().tags}
+          listOfCategoriesAndTags.push(group);
 
-                  document.getElementById('selectCategories').appendChild(boxLabel);
-                  boxLabel.appendChild(box);
-                }
-
-                categoriesList.push(doc.id);
-                var group = {name: doc.id, tags: doc.data().tags}
-                listOfCategoriesAndTags.push(group);
-
-                const sb = document.querySelector('#list');
-                doc.data().tags.forEach(tag => {
-                  if (sb) {
-                    const option = new Option(tag, tag);
-                    sb.add(option, undefined);
-                  }
-
-                  if (document.getElementById('selectTags')) {
-                    var box = document.createElement('input');
-                    box.type = 'checkbox';
-                    box.id = tag;
-                    box.className = 'checkbox';
-                    box.name = "ingredients";
-                    box.onclick = filterMarkers;
-                    var boxLabel = document.createElement('label');
-                    boxLabel.innerText = tag;
-                    boxLabel.htmlFor = tag;
-
-                    document.getElementById('selectTags').appendChild(boxLabel);
-                    boxLabel.appendChild(box);
-                  }
-                })
-            })
+          doc.data().tags.forEach(tag => {
+            let t = tag.toLowerCase();
+            t = t.charAt(0).toUpperCase() + t.slice(1);
+            unique_tags.push(t);
+          })
         })
+        const sb = document.querySelector('#list');
+        const st = document.getElementById('selectTags');
+        const cats = document.getElementById('categories');
+        const scats = document.getElementById('selectCategories');
+
+        [...(new Set(unique_categories))].sort().forEach(ucat => {
+          if (cats) {
+            var option = document.createElement('option');
+            option.innerText = ucat;
+            option.value = ucat;
+            cats.appendChild(option);
+          }
+          if (scats) {
+            var box = document.createElement('input');
+            box.type = 'checkbox';
+            box.id = ucat;
+            box.className = 'checkbox';
+            box.name = "categories";
+            box.onclick = filterMarkers;
+            var boxLabel = document.createElement('label');
+            boxLabel.innerText = ucat;
+            boxLabel.htmlFor = ucat;
+            scats.appendChild(boxLabel);
+            boxLabel.appendChild(box);
+          }
+        });
+
+        [...(new Set(unique_tags))].sort().forEach(tag => {
+          if (sb) {
+            const option = new Option(tag, tag);
+            sb.add(option, undefined);
+          }
+          if (st) {
+            var box = document.createElement('input');
+            box.type = 'checkbox';
+            box.id = tag;
+            box.className = 'checkbox';
+            box.name = "ingredients";
+            box.onclick = filterMarkers;
+            var boxLabel = document.createElement('label');
+            boxLabel.innerText = tag;
+            boxLabel.htmlFor = tag;
+
+            st.appendChild(boxLabel);
+            boxLabel.appendChild(box);
+          }
+        })
+      })
     })();
 
     //index.html only onchange
-    function loadTags(cate) {
-        document.getElementById('selectTags').innerHTML = '';
-        if(checkCategories(cate)){
-          var a = 0;
-          var i = 0;
-          listOfCategoriesAndTags.forEach(group => {
-            if(cate == group.name) i = a;
-            a++;
-          })
-          tagNum = listOfCategoriesAndTags[i].tags.length;
-          listOfCategoriesAndTags[i].tags.forEach(tag =>{
-            const sb = document.querySelector('#list');
-            const option = new Option(tag, tag);
-            sb.add(option, undefined);
-          })
-        }
-    }
+    // function loadTags(cate) {
+    //   console.log('loading tags');
+    //     if(checkCategories(cate)){
+    //       var a = 0;
+    //       var i = 0;
+    //       listOfCategoriesAndTags.forEach(group => {
+    //         if(cate == group.name) i = a;
+    //         a++;
+    //       })
+    //       tagNum = listOfCategoriesAndTags[i].tags.length;
+    //       // listOfCategoriesAndTags[i].tags.forEach(tag =>{
+    //       //   const sb = document.querySelector('#list');
+    //       //   const option = new Option(tag, tag);
+    //       //   sb.add(option, undefined);
+    //       // })
+    //     }
+    // }
 
     function uploadTags() {
       tagList = [];
