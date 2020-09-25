@@ -490,6 +490,8 @@ function error(err) {
     map.setCenter(pos);
     map.setZoom(18);
     locationInput.value = pos;
+    document.getElementById('after-location-loaded').style.display = 'block';
+    console.log("location get");
 };
 
 var options = {
