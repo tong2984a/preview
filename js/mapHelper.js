@@ -267,6 +267,7 @@ function stopAnimation(marker) {
 
 //the restaurant searching function that search all the restaurant in the database
 function searchRestaurantDemo(input, mode, selected = []) {
+  console.log("****************searchRestaurantDemo*************");
     var count = 0;
     var str = input.toLowerCase().replace(/\s/g,'');
     var search =  new RegExp(str);
@@ -349,6 +350,7 @@ function searchRestaurantDemo(input, mode, selected = []) {
 }
 
 //add the marker on a restaurant and create a Restaurant object
+//called by index.html initMap
 function addRestMarker(restaurant) {
   let lat = restaurant.location[0];
   let lng =  restaurant.location[1];
@@ -456,7 +458,7 @@ function addMarker(restaurant, iconUse) {
     markers.push({marker, name});
 }
 
-//add current marker
+//called from setLocation
 function addCurrentMarker(pos) {
   //create the red marker that represent the current prosition
     console.log("adding Current marker");
@@ -469,8 +471,8 @@ function addCurrentMarker(pos) {
         zIndex: 1000,
     });
 
-    var restaurants = [...(new Set(markers.map(el => el.name)))].sort();
-    autocomplete(document.getElementById("restaurantInput"), restaurants);
+    //var restaurants = [...(new Set(markers.map(el => el.name)))].sort();
+    autocomplete(document.getElementById("restaurantInput"), markers);
     current.addListener('dragend', function() {
         var markcoords = this.getPosition();
         current.setPosition(markcoords);

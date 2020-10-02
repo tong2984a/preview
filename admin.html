@@ -33,6 +33,11 @@
         <h3>The button below will OVERWRITE all the data in firebase, just for setting up the firebase, </h3>
         <button onclick="setUpDatabase()">Reset Database</button>
     </div>
+    <br><br><br>
+    <div>
+        <h3>The button below will MERGE all the restaurants in firebase, just for cleaning data, </h3>
+        <button onclick="mergeRestaurants()">Merge Restaurants</button>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
@@ -105,8 +110,37 @@
                     }
                 })
             })
+        }
 
-
+        function mergeRestaurants() {
+          var restaurantDocs = [];
+          db.collection('restaurants').get().then((snapshot) => {
+            snapshot.docs.forEach(doc => {
+              var restaurantData = doc.data();
+              let lat = restaurantData.location[0];
+              let lng = restaurantData.location[1];
+              let found = restaurantDocs.find(el => {
+                let latDiff = Math.abs(lat - el.data().location[0]);
+                let lngDiff = Math.abs(lng - el.data().location[1]);
+                return (el.data().name === restaurantData.name) && (latDiff < 0.0001 && lngDiff < 0.0001);
+              });
+              if (found) {
+                console.log("found name: " + found.data().name + " id: " + found.data().id);
+                console.log(...found.data().dishes);
+                console.log("merge name: " + restaurantData.name + " id: " + restaurantData.id);
+                console.log(...restaurantData.dishes);
+                found.ref.update({
+                  dishes: firebase.firestore.FieldValue.arrayUnion(...restaurantData.dishes)
+                })
+                doc.ref.delete();
+              } else {
+                //console.log("push name: " + restaurantData.name + " id: " + restaurantData.id);
+                restaurantDocs.push(doc);
+              }
+            });
+            return restaurantDocs;
+          }).then(results => {
+          });
         }
 
         function setUpDatabase() {

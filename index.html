@@ -492,16 +492,40 @@ function initMap() {
   db.collection('restaurants').get().then((snapshot) => {
     // console.log('snapshot:' + snapshot);
     snapshot.docs.forEach(doc => {
-    var restaurantData = doc.data();
-    // console.log(restaurantData);
-    //console.log(restaurantData.location);
-    addRestMarker(restaurantData, doc.id);
+      var restaurantData = doc.data();
+      // console.log(restaurantData);
+      //console.log(restaurantData.location);
+      addRestMarker(restaurantData, doc.id);
     });
   }).then(() => {
     newRestaurantId = (markers.length + 1);
-    console.log(newRestaurantId);
+    console.log("newRestaurantId:" + newRestaurantId);
   });
   service = new google.maps.places.PlacesService(map);
+  //init localStorage
+  if (supports_html5_storage()) {
+    let itemsArray = []
+    itemsArray.push({name:'LOVING HUT VEGAN COMPANY LIMITED', lat:22.335489, lng:114.197719});
+    itemsArray.push({name:'Vegan Seven Days', lat:22.311779, lng:114.188552});
+    itemsArray.push({name:'POP Vegan', lat:22.281855, lng:114.152563});
+    itemsArray.push({name:'10 ST. FRANCIS', lat:22.276165, lng:114.169578});
+    itemsArray.push({name:'MANA! Starstreet', lat:22.27774, lng:114.16842});
+    itemsArray.push({name:'MANA! SOHO', lat:22.28162, lng:114.153091});
+    itemsArray.push({name:'Feather and Bone', lat:22.280023, lng:114.151251});
+    itemsArray.push({name:'Feather and Bone', lat:22.276861, lng:114.171361});
+    itemsArray.push({name:'Mana! Fast Slow Food', lat:22.282801, lng:114.154556});
+    itemsArray.push({name:'Fuel Expresso', lat:22.284943, lng:114.157324});
+    localStorage.setItem('restaurants', JSON.stringify(itemsArray));
+    console.log("localstro")
+  }
+}
+
+function supports_html5_storage() {
+    try {
+        return 'localStorage' in window && window['localStorage'] !== null;
+    } catch(e) {
+        return false;
+    }
 }
 
 //helper function
