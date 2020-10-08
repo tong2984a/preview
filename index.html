@@ -503,31 +503,131 @@ function initMap() {
   });
   service = new google.maps.places.PlacesService(map);
   //init localStorage
-  if (supports_html5_storage()) {
-    let itemsArray = []
-    itemsArray.push({name:'LOVING HUT VEGAN COMPANY LIMITED', lat:22.335489, lng:114.197719});
-    itemsArray.push({name:'Vegan Seven Days', lat:22.311779, lng:114.188552});
-    itemsArray.push({name:'POP Vegan', lat:22.281855, lng:114.152563});
-    itemsArray.push({name:'10 ST. FRANCIS', lat:22.276165, lng:114.169578});
-    itemsArray.push({name:'MANA! Starstreet', lat:22.27774, lng:114.16842});
-    itemsArray.push({name:'MANA! SOHO', lat:22.28162, lng:114.153091});
-    itemsArray.push({name:'Feather and Bone', lat:22.280023, lng:114.151251});
-    itemsArray.push({name:'Feather and Bone', lat:22.276861, lng:114.171361});
-    itemsArray.push({name:'Mana! Fast Slow Food', lat:22.282801, lng:114.154556});
-    itemsArray.push({name:'Fuel Expresso', lat:22.284943, lng:114.157324});
+  showAvatar();
+}
+async function showAvatar() {
+
+    var networkDataReceived = false;
+    //await new Promise((resolve, reject) => setTimeout(resolve, 3000));
+    // console.log("async1");
+     await sw();
+    // console.log("async2");
+     await startspinner();
+    // console.log("async3");
+    // await stopspinner();
+    // console.log("async4");
+    // findImages();
+}
+
+async function findImages() {
+  // Get a list of all of the caches for this origin
+  const cacheNames = await caches.keys();
+  const result = [];
+
+  for (const name of cacheNames) {
+    // Open the cache
+    const cache = await caches.open(name);
+
+    // Get a list of entries. Each item is a Request object
+    for (const request of await cache.keys()) {
+      // If the request URL matches, add the response to the result
+      // if (request.url.endsWith('.png')) {
+      //   result.push(await cache.match(request));
+      // }
+      console.log("request.url");
+      console.log(request.url);
+    }
+  }
+
+  return result;
+}
+
+async function stopspinner() {
+  const response = await caches.match('http://localhost:8000/data/sort-veggie.json');
+  console.log(request, response);
+  const reader = await response.json();
+
+  console.log(reader);
+
+  console.log("stopping");
+}
+
+async function stopspinner2() {
+console.log("stopSpinner");
+        // fetch cached data
+        caches.match('http://localhost:8000/data/sort-veggie.json').then(function(response) {
+          console.log("match");
+          console.log(response.json());
+          if (!response) throw Error("No data");
+          return response.json();
+        }).then(function(data) {
+          // don't overwrite newer network data
+        //  if (!networkDataReceived) {
+            console.log("stopspinner(data)");
+            console.log(data);
+        //  }
+        }).catch(function() {
+          // we didn't get cached data, the network is our last hope:
+          //return networkUpdate;
+          console.log("no cacha");
+          return "no cached data";
+        }).catch(console.log("showErrorMessage")).then(console.log("stopSpinner"));
+
+}
+
+async function startspinner() {
+
+  console.log("startspinner");
+
+  // fetch fresh data
+  var networkUpdate = await fetch('http://localhost:8000/data/sort-veggie.json').then(function(response) {
+    console.log("networkUpdate");
+    return response.json();
+  }).then(function(data) {
+    networkDataReceived = true;
+    console.log("startspinner(data)");
+    console.log(data);
+    let itemsArray = data.map(item => {
+      return { "name": item.SS, "dist": item.DIST, "adr": item.ADR, "lat": currentLocation[0], "lng": currentLocation[1] }
+    })
+
+    itemsArray.push({name:'LOVING HUT 愛家國際餐飲 - 淘大店', dist: '51', adr: 'SHOP NOS. G242-245, G/F, AMOY PLAZA , PHASE II, 77 NGAU TAU KOK ROAD, KOWLOON', lat:22.323897, lng:114.216543});
+    itemsArray.push({name:'LOVING HUT 愛家 - Port 33 分店', dist: '53', adr: 'SHOP 103A, 1/F, PORT 33, 33 TSEUK LUK STREET, SAN PO KONG, KOWLOON', lat:22.3355, lng:114.197718});
+    itemsArray.push({name:'Vegan Seven Days', dist: '52', adr: 'G/F, 22C SUNG KIT STREET, HUNG HOM, KOWLOON', lat:22.311779, lng:114.188552});
+    itemsArray.push({name:'POP Vegan', dist: '18', adr: 'SHOP 1, 1ST FLOOR, MILLION CITY, NO. 28 ELGIN STREET, CENTRAL, HONG KONG', lat:22.281855, lng:114.152563});
+    itemsArray.push({name:'10 ST. FRANCIS', dist: '12', adr: 'G/F., 10 ST. FRANCIS STREET, WANCHAI, HONG KONG', lat:22.276165, lng:114.169578});
+    itemsArray.push({name:'MANA! Starstreet', dist: '12', adr: 'G/F., 6 HENNESSY ROAD, HONG KONG', lat:22.27774, lng:114.16842});
+    itemsArray.push({name:'MANA! SOHO', dist: '18', adr: 'G/F., NO. 6-8 STAUNTON STREET, CENTRAL, HONG KONG', lat:22.28162, lng:114.153091});
+    itemsArray.push({name:'Feather and Bone', dist: '18', adr: 'SHOP 1A ON G/F., COMMERCIAL ACCOMMODATION, BOHEMIAN HOUSE, 321 DES VOEUX ROAD WEST, HONG KONG', lat:22.287606, lng:114.138868});
+    itemsArray.push({name:'Feather and Bone', dist: '12', adr: 'THE PORTION A OF SHOP A &amp; C, G/F., WINNER BUILDING, NO. 11 WONG NAI CHUNG ROAD, HAPPY VALLEY, HONG KONG', lat:22.269535, lng:114.184088});
+    itemsArray.push({name:'Feather and Bone', dist: '12', adr: 'SHOP A, G/F., LUARD ON THE PARK, 5 LUARD ROAD, WAN CHAI, HONG KONG', lat:22.276861, lng:114.171361});
+    itemsArray.push({name:'Feather and Bone', dist: '92', adr: 'MAJOR PORTION OF SHOP NOS. G09 AND GO9A, G/F, OP MALL, 100 TAI HO ROAD, TSUEN WAN, NEW TERRITORIES', lat:22.368085, lng:114.110658});
+    itemsArray.push({name:'Feather and Bone', dist: '18', adr: 'SHOP ON SHOP LEVEL 1 FLOOR, SOHO 38, NO. 38 SHELLEY STREET, HONG KONG', lat:22.280023, lng:114.151251});
+    itemsArray.push({name:'Mana! Fast Slow Food', dist: '18', adr: 'G/F., 92 WELLINGTON STREET, CENTRAL, HONG KONG', lat:22.282801, lng:114.154556});
+    itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'SHOP 3023, LEVEL 3, IFC MALL, CENTRAL, HONG KONG', lat:22.284943, lng:114.157324});
+    itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'TWO DESIGNATED SEATING AREAS OPPOSITE TO SHOP B47A AND SHOP B47A, FIRST BASEMENT FLOOR, LANDMARK ATRIUM, 15 QUEEN&apos;S ROAD CENTRAL, CENTRAL, HONG KONG', lat:22.280676, lng:114.157692});
+    itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'SHOP 206 AND AREA A, LEVEL 2, PACIFIC PLACE, 88 QUEENSWAY, HONG KONG', lat:22.277152, lng:114.164887});
+    itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'PORTION OF OFFICE LOBBY AT G/F, CHATER HOUSE, 8 CONNAUGHT ROAD CENTRAL, CENTRAL, HONG KO', lat:22.282126, lng:114.15847});
+    itemsArray.push({name:'Fuel Espresso', dist: '11', adr: 'AREA A, G/F., ONE TAIKOO PLACE, TAIKOO PLACE, 979 KING&apos;S ROAD, QUARRY BAY, HONG KONG', lat:22.287192, lng:114.211008});
+    itemsArray.push({name:'Fuel Espresso', dist: '61', adr: 'SHOP B, LOBBY OF SKY OBSERVATION DECK, 2/F, ICC, 1 AUSTIN ROAD WEST, KOWLOON', lat:22.303381, lng:114.160231});
+    itemsArray.push({name:'FUEL ESPRESSO QUAYSIDE', dist: '51', adr: 'SHOP NO.2, GROUND FLOOR, TOWER 1 AND TOWER 2, THE QUAYSIDE, 77 HOI BUN ROAD, KWUN TONG, KOWLOON', lat:22.316534, lng:114.213709});
+
     localStorage.setItem('restaurants', JSON.stringify(itemsArray));
-    console.log("localstro")
+  })
+}
+
+async function sw() {
+  console.log("sw");
+  if ('serviceWorker' in navigator) {
+    await navigator.serviceWorker.register('service-worker.js')
+    .then(function(registration) {
+      console.log('Registered:', registration);
+    })
+    .catch(function(error) {
+      console.log('Registration failed: ', error);
+    });
   }
 }
-
-function supports_html5_storage() {
-    try {
-        return 'localStorage' in window && window['localStorage'] !== null;
-    } catch(e) {
-        return false;
-    }
-}
-
 //helper function
 //function addToList(tagName, id) {
 //  console.log('add id' + id);

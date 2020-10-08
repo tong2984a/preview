@@ -1,7 +1,7 @@
 function autocomplete(inp, restaurants) {
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
-  var currentFocus;
+  var currentFocus = -1;
   // var sorted_restaurants = restaurants.sort(
   //   (a, b) => (a.location[0] < b.location[0]) ? 1 : ((a.location[1] < b.location[1]) ? 1 : -1)
   // );
@@ -9,7 +9,42 @@ function autocomplete(inp, restaurants) {
   var sorted_restaurants = cachedRestaurants.sort(
     (a, b) => (a.lat < b.lat) ? 1 : ((a.lng < b.lng) ? 1 : -1)
   );
-  var arr = sorted_restaurants.map(el => el.name);
+  var arr = sorted_restaurants.map(el => `${el.name}, ${el.adr}`)
+  // var arr = sorted_restaurants.map(el => {
+  //   if (el.dist === '11') {
+  //     return `${el.name}, Eastern`
+  //   } else if (el.dist === '12') {
+  //     return `${el.name}, Wan Chai`
+  //   } else if (el.dist === '15') {
+  //     return `${el.name}, Southern`
+  //   } else if (el.dist === '17') {
+  //     return `${el.name}, Islands`
+  //   } else if (el.dist === '18') {
+  //     return `${el.name}, Central/Western`
+  //   } else if (el.dist === '51') {
+  //     return `${el.name}, Kwun Tong`
+  //   } else if (el.dist === '52') {
+  //     return `${el.name}, Kowloon City`
+  //   } else if (el.dist === '53') {
+  //     return `${el.name}, Wong Tai Sin`
+  //   } else if (el.dist === '61') {
+  //     return `${el.name}, Yau Tsim`
+  //   } else if (el.dist === '62') {
+  //     return `${el.name}, Mong Kok`
+  //   } else if (el.dist === '63') {
+  //     return `${el.name}, Sham Shui Po`
+  //   } else if (el.dist === '91') {
+  //     return `${el.name}, Kwai Tsing`
+  //   } else if (el.dist === '92') {
+  //     return `${el.name}, Tsuen Wan`
+  //   } else if (el.dist === '93') {
+  //     return `${el.name}, Tuen Mun`
+  //   } else if (el.dist === '94') {
+  //     return `${el.name}, Yuen Long`
+  //   } else if (el.dist === '95') {
+  //     return `${el.name}, Tai Po`
+  //   }
+  // });
   var filtered_restaurants = [];
     console.log(sorted_restaurants);
   /*execute a function when someone writes in the text field:*/
@@ -128,12 +163,16 @@ function autocomplete(inp, restaurants) {
       if (e.keyCode == 40) {
         /*If the arrow DOWN key is pressed,
         increase the currentFocus variable:*/
+        console.log("keyCode 40");
+        console.log(currentFocus);
         currentFocus++;
         /*and and make the current item more visible:*/
         addActive(x);
       } else if (e.keyCode == 38) { //up
         /*If the arrow UP key is pressed,
         decrease the currentFocus variable:*/
+        console.log("keyCode 38");
+        console.log(currentFocus);
         currentFocus--;
         /*and and make the current item more visible:*/
         addActive(x);
@@ -158,6 +197,10 @@ function autocomplete(inp, restaurants) {
     if (currentFocus >= x.length) currentFocus = 0;
     if (currentFocus < 0) currentFocus = (x.length - 1);
     /*add class "autocomplete-active":*/
+    console.log("x");
+    console.log(x);
+    console.log(currentFocus);
+    console.log(x[currentFocus]);
     x[currentFocus].classList.add("autocomplete-active");
 
     //let activeMarker = filtered_restaurants[currentFocus].marker;
