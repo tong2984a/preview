@@ -543,7 +543,7 @@ async function findImages() {
 }
 
 async function stopspinner() {
-  const response = await caches.match('http://localhost:8000/data/sort-veggie.json');
+  const response = await caches.match('/data/sort-veggie.json');
   console.log(request, response);
   const reader = await response.json();
 
@@ -555,7 +555,7 @@ async function stopspinner() {
 async function stopspinner2() {
 console.log("stopSpinner");
         // fetch cached data
-        caches.match('http://localhost:8000/data/sort-veggie.json').then(function(response) {
+        caches.match('/data/sort-veggie.json').then(function(response) {
           console.log("match");
           console.log(response.json());
           if (!response) throw Error("No data");
@@ -580,7 +580,7 @@ async function startspinner() {
   console.log("startspinner");
 
   // fetch fresh data
-  var networkUpdate = await fetch('http://localhost:8000/data/sort-veggie.json').then(function(response) {
+  var networkUpdate = await fetch('/data/sort-veggie.json').then(function(response) {
     console.log("networkUpdate");
     return response.json();
   }).then(function(data) {
