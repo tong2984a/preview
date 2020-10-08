@@ -1,9 +1,9 @@
 var isSideOpen = false;
 var selected = [];
 var filterNumber = 0;
-var blueIcon = {url: 'http://maps.google.com/mapfiles/ms/micons/blue-dot.png', scaledSize: new google.maps.Size(45, 45)};
-var greenIcon = {url: 'http://maps.gstatic.com/mapfiles/markers2/marker_greenV.png', scaledSize: new google.maps.Size(30, 45)};
-var yellowIcon = {url: 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png', scaledSize: new google.maps.Size(45, 45)};
+var blueIcon = {url: 'https://maps.google.com/mapfiles/ms/micons/blue-dot.png', scaledSize: new google.maps.Size(45, 45)};
+var greenIcon = {url: 'https://maps.gstatic.com/mapfiles/markers2/marker_greenV.png', scaledSize: new google.maps.Size(30, 45)};
+var yellowIcon = {url: 'https://maps.google.com/mapfiles/ms/micons/yellow-dot.png', scaledSize: new google.maps.Size(45, 45)};
 var couponIcon = {url: "https://img.icons8.com/material-rounded/48/000000/location-marker.png"}
 var couponIcon2 = {url: "https://img.icons8.com/fluent/48/000000/map.png", scaledSize: new google.maps.Size(40, 40)}
 const areas = [
