@@ -10,6 +10,14 @@
   <link rel="stylesheet" href="css/sidebar.css">
   <link href="css/selectbox.css" rel="stylesheet">
   <link href="css/autocomplete.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin=""/>
+   <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+   <style>#mapid { height: 360px; }</style>
 </head>
 <body>
 
@@ -35,6 +43,8 @@
         placeholder="Enter your email here...">
       </div>
     </div>
+
+<div id="mapid"></div>
 
     <!-- Ricardo: input location-->
     <div id="mapSection" style="display: none;">
@@ -289,6 +299,121 @@
 <script defer src="js/mapHelper.js" type="text/javascript"></script>
 <script>
 //Ricardo: testing
+var mymap = L.map('mapid');
+navigator.geolocation.getCurrentPosition(onLocationFound, onLocationError, {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 0
+});
+
+function onMapClick(e) {
+  var popup = L.popup();
+    popup
+        .setLatLng(e.latlng)
+        .setContent("You clicked the map at " + e.latlng.toString())
+        .openOn(mymap);
+}
+
+	function onLocationFound(e) {
+    currentLocation = [e.coords.latitude, e.coords.longitude];
+		//var radius = e.accuracy / 2;
+
+    		// L.marker(e.latlng).addTo(map)
+    		// 	.bindPopup("You are within " + radius + " meters from this point").openPopup();
+        //
+    		// L.circle(e.latlng, radius).addTo(map);
+
+        mymap.setView(currentLocation, 13);
+    var radius = 1;
+console.log("******onLocationFound" + currentLocation);
+		L.marker(currentLocation).addTo(mymap)
+			.bindPopup("You are within " + radius + " meters from this point").openPopup();
+
+		L.circle(currentLocation, radius).addTo(mymap);
+    L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
+        maxNativeZoom: 18,
+        maxZoom: 20,
+        attribution: '&copy; <a target="_blank" rel="noopener" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors & <a target="_blank" rel="noopener" href="https://maps.wikimedia.org/">Wikimedia maps</a>'
+    }).addTo(mymap);
+
+    var marker = L.marker([51.5, -0.09]).addTo(mymap);
+    var circle = L.circle([51.508, -0.11], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+        radius: 500
+    }).addTo(mymap);
+    var polygon = L.polygon([
+        [51.509, -0.08],
+        [51.503, -0.06],
+        [51.51, -0.047]
+    ]).addTo(mymap);
+    marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+    circle.bindPopup("I am a circle.");
+    polygon.bindPopup("I am a polygon.");
+
+
+    mymap.on('click', onMapClick);
+	}
+
+	function onLocationError(e) {
+    //var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+//currentLocation = [51.505, -0.09];
+ mymap.setView(currentLocation, 13);
+console.log("******onLocationError" + currentLocation);
+        var radius = 1;
+
+    		L.marker(currentLocation).addTo(mymap)
+    			.bindPopup("You are within " + radius + " meters from this point").openPopup();
+
+    		L.circle(currentLocation, radius).addTo(mymap);
+        L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
+            maxNativeZoom: 18,
+            maxZoom: 20,
+            attribution: '&copy; <a target="_blank" rel="noopener" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors & <a target="_blank" rel="noopener" href="https://maps.wikimedia.org/">Wikimedia maps</a>'
+        }).addTo(mymap);
+
+        var marker = L.marker([22.273, 114.163]).addTo(mymap);
+        var circle = L.circle([22.278, 114.171], {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 500
+        }).addTo(mymap);
+        var polygon = L.polygon([
+            [22.279, 114.168],
+            [22.273, 114.16],
+            [22.271, 114.167]
+        ]).addTo(mymap);
+        marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+        circle.bindPopup("I am a circle.");
+        polygon.bindPopup("I am a polygon.");
+
+
+        mymap.on('click', onMapClick);
+	}
+
+//var mymap = L.map('mapid');
+	//mymap.on('locationfound', onLocationFound);
+	//mymap.on('locationerror', onLocationError);
+
+	//mymap.locate({setView: true, maxZoom: 16});
+//var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+
+
+// L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+//     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+//     maxZoom: 18,
+//     id: 'mapbox/streets-v11',
+//     tileSize: 512,
+//     zoomOffset: -1,
+//     accessToken: 'your.mapbox.access.token'
+//}).addTo(mymap);
+
+
+
+
+
 
 //Ricardo: current
 const firebaseConfig = {
@@ -321,7 +446,7 @@ var locationInput = document.getElementById('locationInput');
 var map;
 // added in 16/7
 var defaultLocation = [22.3, 114.16];
-var currentLocation = [22.3, 114.16];
+var currentLocation = [22.276, 114.173];
 var contentString = '<div>' +
                 restaurantInput.value +
                 '</div>' +

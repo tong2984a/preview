@@ -1,7 +1,6 @@
 var CACHE_NAME = 'static-cache';
 var urlsToCache = [
   '.',
-  'index.html',
   'data/sort-veggie.json',
   'pages/offline.html',
   'pages/404.html'
