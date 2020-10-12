@@ -5,11 +5,15 @@ function autocomplete(inp, restaurants) {
   // var sorted_restaurants = restaurants.sort(
   //   (a, b) => (a.location[0] < b.location[0]) ? 1 : ((a.location[1] < b.location[1]) ? 1 : -1)
   // );
-  var cachedRestaurants = JSON.parse(localStorage.getItem('restaurants'));
+  var cachedRestaurants = JSON.parse(localStorage.getItem('restaurants')) || [];
+
   var sorted_restaurants = cachedRestaurants.sort(
     (a, b) => (a.lat < b.lat) ? 1 : ((a.lng < b.lng) ? 1 : -1)
   );
-  var arr = sorted_restaurants.map(el => `${el.name}, ${el.adr}`)
+  //console.log("sorted_restaurants")
+    //console.log(localStorage.getItem('restaurants'));
+  var arr = sorted_restaurants.map(el => `${el.name}, ${el.adr}`);
+  //  console.log(arr);
   // var arr = sorted_restaurants.map(el => {
   //   if (el.dist === '11') {
   //     return `${el.name}, Eastern`
@@ -46,7 +50,6 @@ function autocomplete(inp, restaurants) {
   //   }
   // });
   var filtered_restaurants = [];
-    console.log(sorted_restaurants);
   /*execute a function when someone writes in the text field:*/
   inp.addEventListener("input", function(e) {
     console.log("&&&&&&&input&&&&");
@@ -118,8 +121,33 @@ function autocomplete(inp, restaurants) {
     /*for each item in the array...*/
     for (i = 0; i < arr.length; i++) {
       /*check if the item starts with the same letters as the text field value:*/
-
-      if (valLength == 0 || (arr[i].substr(0, valLength).toUpperCase() == val.toUpperCase())) {
+      let v1 = $('<div>').html(arr[i]).text();
+      v1 = v1.substr(0, valLength).toUpperCase();
+      let v2 = (val.toUpperCase());
+      if (valLength == 0 || (v1 == v2)) {
+        //console.log("&&&&&&&input click arr div&&&&");
+        let ri = sorted_restaurants[i];
+        if (valLength > 0) {
+          let activeLeafletLocation = [ri.lat, ri.lng];
+          let activeLeaflet = L.marker(activeLeafletLocation, {icon:
+            new L.Icon({
+              iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+              shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+              iconSize: [25, 41],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              shadowSize: [41, 41]
+            })
+          }).addTo(mymap);
+          setTimeout(function() {
+            mymap.removeLayer(activeLeaflet);
+          }, 3000);
+          mymap.panTo(new L.LatLng(ri.lat, ri.lng));
+          console.log("getLatLng");
+          console.log(activeLeaflet.getLatLng());
+          console.log("currentLeaflet getLatLng");
+          console.log(currentLeaflet.getLatLng());
+        }
         /*create a DIV element for each matching element:*/
         b = document.createElement("DIV");
         /*make the matching letters bold:*/
@@ -128,28 +156,51 @@ function autocomplete(inp, restaurants) {
         /*insert a input field that will hold the current array item's value:*/
         b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
         /*execute a function when someone clicks on the item value (DIV element):*/
-        let activeLocation = {lat:sorted_restaurants[i].lat, lng:sorted_restaurants[i].lng};
-        b.addEventListener("click", function(e) {
-          /*insert the value for the autocomplete text field:*/
-          inp.value = this.getElementsByTagName("input")[0].value;
-          /*close the list of autocompleted values,
-          (or any other open lists of autocompleted values:*/
-          closeAllLists();
 
-          console.log("****a click***");
-          map.setCenter(activeLocation);
-          let activeMarker = new google.maps.Marker({
-            position: activeLocation,
-            map: map,
-            icon: greenIcon,
-            animation: google.maps.Animation.DROP
-          });
-          activeMarker.setAnimation(google.maps.Animation.BOUNCE);
-          stopAnimation(activeMarker);
-          setTimeout(function () {
-            activeMarker.setMap(null);
-          }, 6000);
+        b.addEventListener("click", function(e) {
+          inp.value = this.getElementsByTagName("input")[0].value;
+          closeAllLists();
+          let activeLeafletLocation = [ri.lat, ri.lng];
+          let activeLeaflet = L.marker(activeLeafletLocation, {icon:
+            new L.Icon({
+              iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+              shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+              iconSize: [25, 41],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              shadowSize: [41, 41]
+            })
+          }).addTo(mymap);
+          setTimeout(function() {
+            mymap.removeLayer(activeLeaflet);
+          }, 3000);
+          mymap.panTo(new L.LatLng(ri.lat, ri.lng));
+          currentLeaflet = activeLeaflet;
+          circle.setLatLng(new L.LatLng(ri.lat, ri.lng));
         });
+
+        // let activeLocation = {lat:sorted_restaurants[i].lat, lng:sorted_restaurants[i].lng};
+        // b.addEventListener("click", function(e) {
+        //   /*insert the value for the autocomplete text field:*/
+        //   inp.value = this.getElementsByTagName("input")[0].value;
+        //   /*close the list of autocompleted values,
+        //   (or any other open lists of autocompleted values:*/
+        //   closeAllLists();
+        //
+        //   console.log("****a click***");
+        //   map.setCenter(activeLocation);
+        //   let activeMarker = new google.maps.Marker({
+        //     position: activeLocation,
+        //     map: map,
+        //     icon: greenIcon,
+        //     animation: google.maps.Animation.DROP
+        //   });
+        //   activeMarker.setAnimation(google.maps.Animation.BOUNCE);
+        //   stopAnimation(activeMarker);
+        //   setTimeout(function () {
+        //     activeMarker.setMap(null);
+        //   }, 6000);
+        // });
         a.appendChild(b);
         filtered_restaurants.push(sorted_restaurants[i]);
       }
@@ -204,19 +255,36 @@ function autocomplete(inp, restaurants) {
     x[currentFocus].classList.add("autocomplete-active");
 
     //let activeMarker = filtered_restaurants[currentFocus].marker;
-    let activeLocation = {lat:filtered_restaurants[currentFocus].lat, lng:filtered_restaurants[currentFocus].lng};
-    map.setCenter(activeLocation);
-    let activeMarker = new google.maps.Marker({
-      position: activeLocation,
-      map: map,
-      icon: greenIcon,
-      animation: google.maps.Animation.DROP
-    });
-    activeMarker.setAnimation(google.maps.Animation.BOUNCE);
-    stopAnimation(activeMarker);
-    setTimeout(function () {
-        activeMarker.setMap(null);
-    }, 6000);
+    // let activeLocation = {lat:filtered_restaurants[currentFocus].lat, lng:filtered_restaurants[currentFocus].lng};
+    // map.setCenter(activeLocation);
+    // let activeMarker = new google.maps.Marker({
+    //   position: activeLocation,
+    //   map: map,
+    //   icon: greenIcon,
+    //   animation: google.maps.Animation.DROP
+    // });
+    // activeMarker.setAnimation(google.maps.Animation.BOUNCE);
+    // stopAnimation(activeMarker);
+    // setTimeout(function () {
+    //     activeMarker.setMap(null);
+    // }, 6000);
+
+    let activeLeafletLocation = [filtered_restaurants[currentFocus].lat, filtered_restaurants[currentFocus].lng];
+    let activeLeaflet = L.marker(activeLeafletLocation, {icon:
+      new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      })
+    }).addTo(mymap);
+    setTimeout(function() {
+      mymap.removeLayer(activeLeaflet);
+    }, 3000);
+    currentLeaflet = activeLeaflet;
+    mymap.panTo(new L.LatLng(filtered_restaurants[currentFocus].lat, filtered_restaurants[currentFocus].lng));
   }
   function removeActive(x) {
     /*a function to remove the "active" class from all autocomplete items:*/
