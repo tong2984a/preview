@@ -693,7 +693,7 @@ function getLocationAddress(pos) {
     var unique_categories = [];
 
     (function() {
-      console.log('ready');
+      console.log('categories ready');
       if (document.getElementById('selectTags')) {
         document.getElementById('selectTags').innerHTML = '';
       }

@@ -11,15 +11,15 @@
   <link href="css/selectbox.css" rel="stylesheet">
   <link href="css/autocomplete.css" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-   crossorigin=""/>
-   <!-- Make sure you put this AFTER Leaflet's CSS -->
- <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-   crossorigin=""></script>
-   <style>
-   #mapid { height: 360px; }
-   </style>
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+  crossorigin=""/>
+  <!-- Make sure you put this AFTER Leaflet's CSS -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  crossorigin=""></script>
+  <style>
+  #mapid { height: 360px; }
+  </style>
 </head>
 <body>
 
@@ -32,7 +32,7 @@
       </p>
       <h1 class="text-center">Hello World!</h1>
       <p class="text-center">
-        A simple hello could lead to a million things
+        A simple hello could lead to <span id="restaurantCount"></span> things
       </p>
     </div>
 
@@ -301,15 +301,22 @@
 <script defer src="js/mapHelper.js" type="text/javascript"></script>
 <script>
 //Ricardo: testing
-showAvatar();
-var mymap = L.map('mapid');
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', initializeRestaurants);
+}
 
-  $.getJSON("https://cors-anywhere.herokuapp.com/https://api.ipgeolocationapi.com/geolocate")
+var mymap = L.map('mapid');
+L.tileLayer('https://b.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxNativeZoom: 18,
+    maxZoom: 20,
+    attribution: '&copy; <a target="_blank" rel="noopener" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(mymap);
+
+$.getJSON("https://cors-anywhere.herokuapp.com/https://api.ipgeolocationapi.com/geolocate")
   .done(onLocationFound)
   .fail(onLocationError)
   .always(function(data) {
-    console.log("always ");
-    console.log(data);
+    console.log("geolocate completes");
   })
 
 function onMapClick(e) {
@@ -321,21 +328,15 @@ function onMapClick(e) {
 }
 
 	function onLocationFound(e) {
-    //currentLocation = [e.geo.latitude, e.geo.longitude]
+    currentLocation = [e.geo.latitude, e.geo.longitude]
     mymap.setView(currentLocation, 13);
     var radius = 1;
-    L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxNativeZoom: 18,
-        maxZoom: 20,
-        attribution: '&copy; <a target="_blank" rel="noopener" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors & <a target="_blank" rel="noopener" href="https://maps.wikimedia.org/">Wikimedia maps</a>'
-    }).addTo(mymap);
     circle = L.circle(currentLocation, {
         color: 'red',
         fillColor: '#f03',
         fillOpacity: 0.5,
         radius: 500
     }).addTo(mymap);
-    //marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
     let p = circle.bindPopup("You are here.").openPopup();
     setTimeout(function () {
         circle = L.circle(currentLocation, {
@@ -357,11 +358,6 @@ function onMapClick(e) {
     			.bindPopup("You are within " + radius + " meters from this point").openPopup();
 
     		L.circle(currentLocation, radius).addTo(mymap);
-        L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxNativeZoom: 18,
-            maxZoom: 20,
-            attribution: '&copy; <a target="_blank" rel="noopener" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors & <a target="_blank" rel="noopener" href="https://maps.wikimedia.org/">Wikimedia maps</a>'
-        }).addTo(mymap);
 
         var marker = L.marker([22.273, 114.163]).addTo(mymap);
         var circle = L.circle([22.278, 114.171], {
@@ -568,20 +564,20 @@ function ValidateEmail(mail) {
 
 //create the map
 function initMap() {
-  map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 22.3, lng: 114.2},
-    zoom: 12,
-    styles: [{
-      featureType: 'poi',
-      stylers: [{ visibility: 'off' }]  // Turn off points of interest.
-    }, {
-      featureType: 'transit.station',
-      stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
-    }],
-    disableDoubleClickZoom: true,
-    streetViewControl: false
-  });
-  console.log('initializing map');
+  // map = new google.maps.Map(document.getElementById('map'), {
+  //   center: {lat: 22.3, lng: 114.2},
+  //   zoom: 12,
+  //   styles: [{
+  //     featureType: 'poi',
+  //     stylers: [{ visibility: 'off' }]  // Turn off points of interest.
+  //   }, {
+  //     featureType: 'transit.station',
+  //     stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
+  //   }],
+  //   disableDoubleClickZoom: true,
+  //   streetViewControl: false
+  // });
+  console.log('initializing markers');
   db.collection('restaurants').get().then((snapshot) => {
     // console.log('snapshot:' + snapshot);
     snapshot.docs.forEach(doc => {
@@ -596,88 +592,70 @@ function initMap() {
     autocomplete(document.getElementById("restaurantInput"), markers);
   });
 
-  service = new google.maps.places.PlacesService(map);
+  //service = new google.maps.places.PlacesService(map);
   //init localStorage
 }
-async function showAvatar() {
 
-    var networkDataReceived = false;
-    //await new Promise((resolve, reject) => setTimeout(resolve, 3000));
-    // console.log("async1");
-     await sw();
-    // console.log("async2");
-     await startspinner();
-    // console.log("async3");
-    // await stopspinner();
-    // console.log("async4");
-    // findImages();
-}
+// async function findImages() {
+//   // Get a list of all of the caches for this origin
+//   const cacheNames = await caches.keys();
+//   const result = [];
+//
+//   for (const name of cacheNames) {
+//     // Open the cache
+//     const cache = await caches.open(name);
+//
+//     // Get a list of entries. Each item is a Request object
+//     for (const request of await cache.keys()) {
+//       // If the request URL matches, add the response to the result
+//       // if (request.url.endsWith('.png')) {
+//       //   result.push(await cache.match(request));
+//       // }
+//       console.log("request.url");
+//       console.log(request.url);
+//     }
+//   }
+//
+//   return result;
+// }
+//
+// async function stopspinner() {
+//   const response = await caches.match('/data/sort-veggie.json');
+//   console.log(request, response);
+//   const reader = await response.json();
+//
+//   console.log(reader);
+//
+//   console.log("stopping");
+// }
+//
+// async function stopspinner2() {
+// console.log("stopSpinner");
+//         // fetch cached data
+//         caches.match('/data/sort-veggie.json').then(function(response) {
+//           console.log("match");
+//           console.log(response.json());
+//           if (!response) throw Error("No data");
+//           return response.json();
+//         }).then(function(data) {
+//           // don't overwrite newer network data
+//         //  if (!networkDataReceived) {
+//             console.log("stopspinner(data)");
+//             console.log(data);
+//         //  }
+//         }).catch(function() {
+//           // we didn't get cached data, the network is our last hope:
+//           console.log("no cacha");
+//           return "no cached data";
+//         }).catch(console.log("showErrorMessage")).then(console.log("stopSpinner"));
+//
+// }
 
-async function findImages() {
-  // Get a list of all of the caches for this origin
-  const cacheNames = await caches.keys();
-  const result = [];
-
-  for (const name of cacheNames) {
-    // Open the cache
-    const cache = await caches.open(name);
-
-    // Get a list of entries. Each item is a Request object
-    for (const request of await cache.keys()) {
-      // If the request URL matches, add the response to the result
-      // if (request.url.endsWith('.png')) {
-      //   result.push(await cache.match(request));
-      // }
-      console.log("request.url");
-      console.log(request.url);
-    }
-  }
-
-  return result;
-}
-
-async function stopspinner() {
-  const response = await caches.match('/data/sort-veggie.json');
-  console.log(request, response);
-  const reader = await response.json();
-
-  console.log(reader);
-
-  console.log("stopping");
-}
-
-async function stopspinner2() {
-console.log("stopSpinner");
-        // fetch cached data
-        caches.match('/data/sort-veggie.json').then(function(response) {
-          console.log("match");
-          console.log(response.json());
-          if (!response) throw Error("No data");
-          return response.json();
-        }).then(function(data) {
-          // don't overwrite newer network data
-        //  if (!networkDataReceived) {
-            console.log("stopspinner(data)");
-            console.log(data);
-        //  }
-        }).catch(function() {
-          // we didn't get cached data, the network is our last hope:
-          //return networkUpdate;
-          console.log("no cacha");
-          return "no cached data";
-        }).catch(console.log("showErrorMessage")).then(console.log("stopSpinner"));
-
-}
-
-async function startspinner() {
+function updateRestaurants() {
   // fetch fresh data
-  var networkUpdate = await fetch('/data/sort-veggie.json').then(function(response) {
-    console.log("networkUpdate");
+  fetch('/data/sort-veggie.json').then(function(response) {
     return response.json();
   }).then(function(data) {
-    networkDataReceived = true;
-    console.log("startspinner(data)");
-    console.log(data);
     let itemsArray = data.map(item => {
       return { "name": item.SS, "dist": item.DIST, "adr": item.ADR, "lat": currentLocation[0], "lng": currentLocation[1] }
     })
@@ -703,29 +681,38 @@ async function startspinner() {
     itemsArray.push({name:'Fuel Espresso', dist: '61', adr: 'SHOP B, LOBBY OF SKY OBSERVATION DECK, 2/F, ICC, 1 AUSTIN ROAD WEST, KOWLOON', lat:22.303381, lng:114.160231});
     itemsArray.push({name:'FUEL ESPRESSO QUAYSIDE', dist: '51', adr: 'SHOP NO.2, GROUND FLOOR, TOWER 1 AND TOWER 2, THE QUAYSIDE, 77 HOI BUN ROAD, KWUN TONG, KOWLOON', lat:22.316534, lng:114.213709});
 
+    document.getElementById(
+      "restaurantCount"
+    ).innerHTML = itemsArray.length;
+
     localStorage.setItem('restaurants', JSON.stringify(itemsArray));
   })
 }
 
-async function sw() {
-  console.log("sw");
-  if ('serviceWorker' in navigator) {
-    await navigator.serviceWorker.register('service-worker.js')
-    .then(function(registration) {
-      console.log('Registered:', registration);
-    })
-    .catch(function(error) {
-      console.log('Registration failed: ', error);
-    });
-  }
+function initializeRestaurants() {
+  console.log("window load");
+  navigator.serviceWorker.register('service-worker.js')
+  .then(function(registration) {
+    console.log('serviceWorker Registered');
+  })
+  .catch(function(error) {
+    console.log('serviceWorker Registration failed: ', error);
+  });
+  navigator.serviceWorker.ready.then( () => {
+    console.log("serviceWorker ready");
+    if (localStorage) {
+      if (localStorage.getItem("restaurants")) {
+        const count = JSON.parse(localStorage.getItem("restaurants")).length;
+        document.getElementById(
+          "restaurantCount"
+        ).innerHTML = count;
+      } else {
+        console.log("fetching restaurants to cache");
+        updateRestaurants();
+      }
+    }
+  })
 }
-//helper function
-//function addToList(tagName, id) {
-//  console.log('add id' + id);
-//  db.collection('tagLists').doc(tagName).update({
-//    docID: firebase.firestore.FieldValue.arrayUnion(id)
-//  });
-//}
 
 function upload() {
   uploadTags();
@@ -745,8 +732,6 @@ function upload() {
   else {
     helloMessage = helloMessageInput.value;
   }
-
-  //var file = document.getElementById('preview').files[0];
 
   var metadata = {
     contentType: 'image/jpeg'
