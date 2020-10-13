@@ -328,7 +328,7 @@ function onMapClick(e) {
 }
 
 	function onLocationFound(e) {
-    currentLocation = [e.geo.latitude, e.geo.longitude]
+//    currentLocation = [e.geo.latitude, e.geo.longitude]
     mymap.setView(currentLocation, 13);
     var radius = 1;
     circle = L.circle(currentLocation, {
