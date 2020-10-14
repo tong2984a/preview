@@ -1,11 +1,11 @@
-function autocomplete(inp, restaurants) {
+function autocomplete(inp, cachedRestaurants) {
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
   var currentFocus = -1;
   // var sorted_restaurants = restaurants.sort(
   //   (a, b) => (a.location[0] < b.location[0]) ? 1 : ((a.location[1] < b.location[1]) ? 1 : -1)
   // );
-  var cachedRestaurants = JSON.parse(localStorage.getItem('restaurants')) || [];
+  //var cachedRestaurants = JSON.parse(localStorage.getItem('restaurants')) || [];
 
   var sorted_restaurants = cachedRestaurants.sort(
     (a, b) => (a.lat < b.lat) ? 1 : ((a.lng < b.lng) ? 1 : -1)
@@ -13,7 +13,7 @@ function autocomplete(inp, restaurants) {
   //console.log("sorted_restaurants")
     //console.log(localStorage.getItem('restaurants'));
   var arr = sorted_restaurants.map(el => `${el.name}, ${el.adr}`);
-  //  console.log(arr);
+    console.log("initialize autocomplete with restaurantCount:" + cachedRestaurants.length);
   // var arr = sorted_restaurants.map(el => {
   //   if (el.dist === '11') {
   //     return `${el.name}, Eastern`

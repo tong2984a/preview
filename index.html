@@ -301,9 +301,10 @@
 <script defer src="js/mapHelper.js" type="text/javascript"></script>
 <script>
 //Ricardo: testing
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', initializeRestaurants);
-}
+
+window.addEventListener('load', initializeRestaurantsOnLoad);
+
+updateRestaurants();
 
 var mymap = L.map('mapid');
 L.tileLayer('https://b.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -588,8 +589,8 @@ function initMap() {
     });
   }).then(() => {
     newRestaurantId = (markers.length + 1);
-    console.log("newRestaurantId:" + newRestaurantId);
-    autocomplete(document.getElementById("restaurantInput"), markers);
+    //console.log("newRestaurantId:" + newRestaurantId);
+    //autocomplete(document.getElementById("restaurantInput"), markers);
   });
 
   //service = new google.maps.places.PlacesService(map);
@@ -685,33 +686,37 @@ function updateRestaurants() {
       "restaurantCount"
     ).innerHTML = itemsArray.length;
 
-    localStorage.setItem('restaurants', JSON.stringify(itemsArray));
+    console.log("newRestaurantId:" + newRestaurantId);
+    autocomplete(document.getElementById("restaurantInput"), itemsArray);
+    //localStorage.setItem('restaurants', JSON.stringify(itemsArray));
   })
 }
 
-function initializeRestaurants() {
+function initializeRestaurantsOnLoad() {
   console.log("window load");
-  navigator.serviceWorker.register('service-worker.js')
-  .then(function(registration) {
-    console.log('serviceWorker Registered');
-  })
-  .catch(function(error) {
-    console.log('serviceWorker Registration failed: ', error);
-  });
-  navigator.serviceWorker.ready.then( () => {
-    console.log("serviceWorker ready");
-    if (localStorage) {
-      if (localStorage.getItem("restaurants")) {
-        const count = JSON.parse(localStorage.getItem("restaurants")).length;
-        document.getElementById(
-          "restaurantCount"
-        ).innerHTML = count;
-      } else {
-        console.log("fetching restaurants to cache");
-        updateRestaurants();
-      }
-    }
-  })
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+    .then(function(registration) {
+      console.log('serviceWorker Registered');
+    })
+    .catch(function(error) {
+      console.log('serviceWorker Registration failed: ', error);
+    });
+    navigator.serviceWorker.ready.then( () => {
+      console.log("serviceWorker ready");
+      // if (localStorage) {
+      //   if (localStorage.getItem("restaurants")) {
+      //     const count = JSON.parse(localStorage.getItem("restaurants")).length;
+      //     document.getElementById(
+      //       "restaurantCount"
+      //     ).innerHTML = count;
+      //   } else {
+      //     console.log("fetching restaurants to cache");
+      //     updateRestaurants();
+      //   }
+      // }
+    })
+  }
 }
 
 function upload() {
