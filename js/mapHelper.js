@@ -354,47 +354,61 @@ function searchRestaurantDemo(input, mode, selected = []) {
 function addRestMarker(restaurant) {
   let lat = restaurant.location[0];
   let lng =  restaurant.location[1];
-  L.marker([lat, lng], {icon: new L.Icon({
+  var marker = L.marker([lat, lng], {icon: new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
     shadowSize: [41, 41]
-  })
-}).addTo(mymap);
-  var marker = new google.maps.Marker({
-    position: {lat, lng},
-    map: map,
-    icon: greenIcon,
-    animation: google.maps.Animation.DROP
+    })
+  }).addTo(mymap);
+  marker.on('click', (e) => {
+    var popup = L.popup();
+    popup
+    .setLatLng(e.latlng)
+    .setContent("You clicked the map at " + restaurant.name)
+    .openOn(mymap);
   });
+  // var marker = new google.maps.Marker({
+  //   position: {lat, lng},
+  //   map: map,
+  //   icon: greenIcon,
+  //   animation: google.maps.Animation.DROP
+  // });
   console.log(restaurant.coupon);
   if(restaurant.coupon > 0){
     var label = {text: restaurant.coupon.toString(), fontSize: "20px", fontWeight: "bold"}
-    marker.setIcon(couponIcon2);
-    marker.setLabel(label);
+    //marker.setIcon(couponIcon2);
+    //marker.setLabel(label);
+    marker.bindTooltip(label,
+        {
+            permanent: true,
+            direction: 'right'
+        }
+    );
   }
   var restaurantObj = new Restaurant(marker, restaurant.name, restaurant.location, restaurant.id, restaurant.dishes);
-  marker.addListener('click', function() {
-    if(!isSideOpen){
-        document.getElementById("sidebar-wrapper").classList.toggle('open');
-        isSideOpen = !isSideOpen;
-        console.log('ckicked')
-    }
-    $('#dishSection').remove();
-    restaurantObj.showDetails();
-    this.setAnimation(google.maps.Animation.BOUNCE);
-    stopAnimation(this);
-    if(mode === "add"){
-      current.setPosition({lat, lng});
-      currentLocation = [restaurant.location[0], restaurant.location[1]]
-      locationInput.value = restaurant.location;
-      currentRestaurantId = restaurant.id;
-      restaurantInput.value = restaurantObj.getName();
-    }
-    map.setCenter({lat, lng});
-  });
+  // marker.addListener('click', function() {
+  //   if(!isSideOpen){
+  //       document.getElementById("sidebar-wrapper").classList.toggle('open');
+  //       isSideOpen = !isSideOpen;
+  //       console.log('ckicked')
+  //   }
+  //   $('#dishSection').remove();
+  //   restaurantObj.showDetails();
+  //   this.setAnimation(google.maps.Animation.BOUNCE);
+  //   stopAnimation(this);
+  //   if(mode === "add"){
+  //     current.setPosition({lat, lng});
+  //     currentLocation = [restaurant.location[0], restaurant.location[1]]
+  //     locationInput.value = restaurant.location;
+  //     currentRestaurantId = restaurant.id;
+  //     restaurantInput.value = restaurantObj.getName();
+  //   }
+    //map.setCenter({lat, lng});
+    //mymap.setView([lat, lng], 13);
+  //});
   markers.push(restaurantObj);
 }
 
@@ -807,7 +821,8 @@ function getLocationAddress(pos) {
       markers.forEach((item, i) => {
         if (active_categories.length === 0 && active_ingredients.length === 0) {
           console.log('allllllll tempry');
-          item.marker.setVisible(true);
+          //item.marker.setVisible(true);
+          item.marker.addTo(mymap);
         } else {
           console.log(item);
           var marker_categories = item.dishes.map(dish => dish.category);
@@ -817,16 +832,19 @@ function getLocationAddress(pos) {
           });
           console.log('marker_tags');
           console.log(marker_tags);
-          item.marker.setVisible(false);
+          //item.marker.setVisible(false);
+          item.marker.remove();
           marker_categories.forEach((c, i) => {
             if (active_categories.includes(c)) {
-              item.marker.setVisible(true);
+              //item.marker.setVisible(true);
+              item.marker.addTo(mymap);
             }
           });
           marker_tags.forEach((t, i) => {
             console.log('t:' + t);
             if (active_ingredients.includes(t)) {
-              item.marker.setVisible(true);
+              //item.marker.setVisible(true);
+              item.marker.addTo(mymap);
             }
           });
         }
