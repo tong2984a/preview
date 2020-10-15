@@ -658,7 +658,7 @@ function updateRestaurants() {
     return response.json();
   }).then(function(data) {
     let itemsArray = data.map(item => {
-      return { "name": item.SS, "dist": item.DIST, "adr": item.ADR, "lat": currentLocation[0], "lng": currentLocation[1] }
+      return { "name": item.SS, "dist": item.DIST, "adr": item.ADR, "lat": item.lat, "lng": item.lng }
     })
 
     itemsArray.push({name:'LOVING HUT 愛家國際餐飲 - 淘大店', dist: '51', adr: 'SHOP NOS. G242-245, G/F, AMOY PLAZA , PHASE II, 77 NGAU TAU KOK ROAD, KOWLOON', lat:22.323897, lng:114.216543});
