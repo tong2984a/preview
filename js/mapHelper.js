@@ -1,11 +1,11 @@
 var isSideOpen = false;
 var selected = [];
 var filterNumber = 0;
-var blueIcon = {url: 'https://maps.google.com/mapfiles/ms/micons/blue-dot.png', scaledSize: new google.maps.Size(45, 45)};
-var greenIcon = {url: 'https://maps.gstatic.com/mapfiles/markers2/marker_greenV.png', scaledSize: new google.maps.Size(30, 45)};
-var yellowIcon = {url: 'https://maps.google.com/mapfiles/ms/micons/yellow-dot.png', scaledSize: new google.maps.Size(45, 45)};
-var couponIcon = {url: "https://img.icons8.com/material-rounded/48/000000/location-marker.png"}
-var couponIcon2 = {url: "https://img.icons8.com/fluent/48/000000/map.png", scaledSize: new google.maps.Size(40, 40)}
+//var blueIcon = {url: 'https://maps.google.com/mapfiles/ms/micons/blue-dot.png', scaledSize: new google.maps.Size(45, 45)};
+//var greenIcon = {url: 'https://maps.gstatic.com/mapfiles/markers2/marker_greenV.png', scaledSize: new google.maps.Size(30, 45)};
+//var yellowIcon = {url: 'https://maps.google.com/mapfiles/ms/micons/yellow-dot.png', scaledSize: new google.maps.Size(45, 45)};
+//var couponIcon = {url: "https://img.icons8.com/material-rounded/48/000000/location-marker.png"}
+//var couponIcon2 = {url: "https://img.icons8.com/fluent/48/000000/map.png", scaledSize: new google.maps.Size(40, 40)}
 const areas = [
   //kowloon
   {name: "kwuntong", center: [22.311705, 114.223108], radius: 750},
@@ -364,10 +364,36 @@ function addRestMarker(restaurant) {
     })
   }).addTo(mymap);
   marker.on('click', (e) => {
+    let feature = geoJson.features[0];
+    var images = restaurant.dishes;
+    var slideshowContent = '';
+console.log(restaurant);
+    for(var i = 0; i < images.length; i++) {
+      var img = images[i];
+      console.log(img);
+      slideshowContent += '<div class="image' + (i === 0 ? ' ' : '') + '">' +
+      '<img src="' + img.fileURL + '" />' +
+      '<div class="caption">' + img.dish + '</div>' +
+      '</div>';
+    }
+
+    var popupContent =  '<div id="' + restaurant.name + '" class="popup">' +
+    "<h1><font color='red'>"+restaurant.name+
+    "</font></h1>"+
+
+    '<div class="slideshow">' +
+    slideshowContent +
+    '</div>' +
+    '<div class="cycle">' +
+    '<a href="#" class="prev">&laquo; Previous</a>' +
+    '<a href="#" class="next">Next &raquo;</a>' +
+    '</div>'
+    '</div>';
+
     var popup = L.popup();
     popup
-    .setLatLng(e.latlng)
-    .setContent("You clicked the map at " + restaurant.name)
+    .setLatLng([lat, lng])
+    .setContent(popupContent)
     .openOn(mymap);
   });
   // var marker = new google.maps.Marker({
@@ -927,3 +953,137 @@ function getLocationAddress(pos) {
     function checkCategories(input) {
       return categoriesList.some(x => {return(x == input)});
     }
+
+
+
+    var geoJson = {
+      "type": "FeatureCollection",
+      features: [{
+        type: 'Feature',
+        "geometry": { "type": "Point", "coordinates": [22.263204, 114.141855]},
+        "properties": {
+          'Title': 'LOVING HUT 愛家國際餐飲',
+          'Head': '77 NGAU TAU KOK ROAD, KOWLOON',
+          'Description': 'Winner of VegNews 2010 Favorite Vegan Restaurant award.',
+          'URL': 'http://www.lovinghut.com/portal/hk/',
+          'images': [
+            ['https://firebasestorage.googleapis.com/v0/b/pay-a-vegan.appspot.com/o/images%2FMon%20Oct%2012%202020%2006%3A40%3A19%20GMT-0400%20(Eastern%20Daylight%20Time).jpg?alt=media&token=acc68f1a-1eb8-4f5f-825c-2ce2382188fe','Fresh Ingredients.'],
+            ['https://firebasestorage.googleapis.com/v0/b/pay-a-vegan.appspot.com/o/images%2FMon%20Sep%2007%202020%2005%3A40%3A36%20GMT-0400%20(Eastern%20Daylight%20Time).jpg?alt=media&token=b6b73a68-a30d-4ba0-98d1-28370834702b', 'Comtemporary brunch and meals'],
+            ['https://firebasestorage.googleapis.com/v0/b/pay-a-vegan.appspot.com/o/images%2FWed%20Sep%2009%202020%2004%3A00%3A27%20GMT-0400%20(Eastern%20Daylight%20Time).jpg?alt=media&token=0e417833-9709-4c74-b1d9-6fabfc1b24d0', 'Convenient Location. Nice atmosphere.']
+          ]
+        }
+      }, {
+        type: 'Feature',
+        "geometry": { "type": "Point", "coordinates": [22.261456, 114.176531]},
+        "properties": {
+          'Title': 'LOCK CHA TEA HOUSE',
+          'Head': '10 HOLLYWOOD ROAD, CENTRAL, HONG KONG',
+          'Description': 'The best teahouse in Hong Kong',
+          'URL': 'https://www.lockcha.com/en/',
+          'images': [
+            ['https://firebasestorage.googleapis.com/v0/b/pay-a-vegan.appspot.com/o/images%2FFri%20Sep%2025%202020%2019%3A02%3A47%20GMT%2B0800%20(HKT).jpg?alt=media&token=02d087ab-a91e-4d6f-a2f4-5d1597a8d97f','Tasty.'],
+            ['https://firebasestorage.googleapis.com/v0/b/pay-a-vegan.appspot.com/o/images%2FSun%20Oct%2018%202020%2000%3A14%3A39%20GMT-0400%20(Eastern%20Daylight%20Time).jpg?alt=media&token=28cdf0ff-71fb-46e4-b266-8e27b4a8c222', 'Good breakfast.'],
+            ['https://firebasestorage.googleapis.com/v0/b/pay-a-vegan.appspot.com/o/images%2FTue%20Sep%2029%202020%2011%3A34%3A18%20GMT%2B0800%20(HKT).jpg?alt=media&token=b80d6e8b-b07b-4918-8574-070fd99b34df','Friendly service. Good dessert.']
+          ]
+
+        }
+      }]};
+
+
+      //var map = L.map('map').setView([52.105, -0.09], 9);
+
+      //L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      // attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      // subdomains: ['a','b','c']
+      //}).addTo( map );
+
+      var geojsonMarkerOptions = {
+        radius: 8,
+        fillColor: "#ff7800",
+        color: "#000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      };
+console.log("****mapHelper.js");
+      var sitis =  L.geoJson(geoJson, {
+        pointToLayer: function (feature, latlng) {
+          console.log("***pointToLayer");
+          feature.properties.myKey = feature.properties.Title + ', ' + feature.properties.Head
+          return L.circleMarker(latlng, geojsonMarkerOptions);
+        },
+        onEachFeature: onEachFeature
+      }).addTo(mymap);
+
+    //L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="openstreetmap.org/copyright">OpenStreetMap</a>', subdomains: ['a','b','c'] }).addTo( map )
+
+    function onEachFeature(feature, layer) {
+      console.log("***onEachFeature");
+      // does this feature have a property named popupContent?
+      if (feature.properties && feature.properties.Title) {
+console.log("***feature.properties.Title", feature.properties.Title);
+        var images = feature.properties.images
+        var slideshowContent = '';
+
+        for(var i = 0; i < images.length; i++) {
+          var img = images[i];
+console.log("***slideshowContent image");
+          slideshowContent += '<div class="image' + (i === 0 ? ' ' : '') + '">' +
+          '<img src="' + img[0] + '" />' +
+          '<div class="caption">' + img[1] + '</div>' +
+          '</div>';
+        }
+
+        var popupContent =  '<div id="' + feature.properties.Title + '" class="popup">' +
+        "<h1><font color='red'>"+feature.properties.Title+
+        "</font></h1><h2>Address: " +feature.properties.Head+
+        "</h2><p>"+feature.properties.Description+"</p><p> Website:"
+        +feature.properties.URL+"</p>"+
+
+        '<div class="slideshow">' +
+        slideshowContent +
+        '</div>' +
+        '<div class="cycle">' +
+        '<a href="#" class="prev">&laquo; Previous</a>' +
+        '<a href="#" class="next">Next &raquo;</a>' +
+        '</div>'
+        '</div>';
+
+      }
+    };
+
+
+    var $slideshow = $('.slideshow');
+    $slideshow.find('.active').removeClass('active').hide();
+
+    $('#mapid').on('click', '.popup .cycle a', function() {
+      console.log("***mapid");
+      var $slideshow = $('.slideshow'),
+      $newSlide;
+
+      if ($(this).hasClass('prev')) {
+        $newSlide = $slideshow.find('.active').prev();
+        if ($newSlide.index() < 0) {
+          $newSlide = $('.image').last();
+        }
+      } else {
+        $newSlide = $slideshow.find('.active').next();
+        if ($newSlide.index() < 0) {
+          $newSlide = $('.image').first();
+        }
+      }
+
+      $slideshow.find('.active').removeClass('active').hide();
+      $newSlide.addClass('active').show();
+      return false;
+    });
+
+    L.control.search({
+      layer: L.layerGroup ([sitis]),
+      initial: false,
+      propertyName: 'myKey', // Specify which property is searched into.
+      zoom: 14,
+      placeholder: "Search order",
+      position: 'topleft'
+    })
+    .addTo(map);
