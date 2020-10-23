@@ -258,6 +258,27 @@ function isInArea(position, center, radius) {
     return(distance < radius);
 }
 
+function calcCrow(lat1, lon1, lat2, lon2)
+{
+  var R = 6371; // km
+  var dLat = toRad(lat2-lat1);
+  var dLon = toRad(lon2-lon1);
+  var lat1 = toRad(lat1);
+  var lat2 = toRad(lat2);
+
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+  Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  var d = R * c;
+  return d;
+}
+
+// Converts numeric degrees to radians
+function toRad(Value)
+{
+  return Value * Math.PI / 180;
+}
+
 //stop the bouncing animation after searched
 function stopAnimation(marker) {
     setTimeout(function () {
@@ -367,19 +388,35 @@ function addRestMarker(restaurant) {
     let feature = geoJson.features[0];
     var images = restaurant.dishes;
     var slideshowContent = '';
-console.log(restaurant);
     for(var i = 0; i < images.length; i++) {
       var img = images[i];
-      console.log(img);
       slideshowContent += '<div class="image' + (i === 0 ? ' ' : '') + '">' +
       '<img src="' + img.fileURL + '" />' +
       '<div class="caption">' + img.dish + '</div>' +
       '</div>';
     }
-
+    let best_distance = null;
+    let best_adr = '';
+    for(var i = 0; i < itemsArray.length; i++)
+    {
+      if(itemsArray[i].name === restaurant.name)
+      {
+        let distance = calcCrow(itemsArray[i].lat, itemsArray[i].lng, lat, lng).toFixed(1);
+        if (!best_distance || distance < best_distance) {
+          best_distance = distance;
+          best_adr = itemsArray[i].adr;
+        }
+      }
+    }
+    sList = best_adr.split(",");
+    num = sList.length;
+    if (num > 2) {
+      best_adr = sList[num-2] + "," + sList[num-1]
+    }
     var popupContent =  '<div id="' + restaurant.name + '" class="popup">' +
     "<h1><font color='red'>"+restaurant.name+
-    "</font></h1>"+
+    "</font></h1><p>" +best_adr+
+    "</p>"+
 
     '<div class="slideshow">' +
     slideshowContent +

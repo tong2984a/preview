@@ -459,6 +459,7 @@ var current;
 var currentLeaflet;
 var currentRestaurantId;
 var newRestaurantId;
+var itemsArray;
 const mode = "add";
 
 function visualizeArea(area) {
@@ -664,7 +665,7 @@ function updateRestaurants() {
   fetch('/data/sort-veggie.json').then(function(response) {
     return response.json();
   }).then(function(data) {
-    let itemsArray = data.map(item => {
+    itemsArray = data.map(item => {
       return { "name": item.SS, "dist": item.DIST, "adr": item.ADR, "lat": item.lat, "lng": item.lng }
     })
 
