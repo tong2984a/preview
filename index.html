@@ -321,12 +321,23 @@ L.tileLayer('https://b.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a target="_blank" rel="noopener" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(mymap);
 
-$.getJSON("https://cors-anywhere.herokuapp.com/https://api.ipgeolocationapi.com/geolocate")
-  .done(onLocationFound)
-  .fail(onLocationError)
-  .always(function(data) {
-    console.log("geolocate completes");
-  })
+var browserGeolocationSuccess = function(position) {
+  currentLocation = [position.coords.latitude, position.coords.longitude];
+  onLocationFound("");
+};
+
+var browserGeolocationFail = function(error) {
+  onLocationFound("");
+}
+
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    browserGeolocationSuccess, browserGeolocationFail,
+    {maximumAge: 70000, timeout: 40000, enableHighAccuracy: true}
+  );
+} else {
+  onLocationFound("");
+}
 
 function onMapClick(e) {
   var popup = L.popup();
@@ -337,7 +348,6 @@ function onMapClick(e) {
 }
 
 	function onLocationFound(e) {
-//    currentLocation = [e.geo.latitude, e.geo.longitude]
     mymap.setView(currentLocation, 13);
     var radius = 1;
     circle = L.circle(currentLocation, {
@@ -357,33 +367,6 @@ function onMapClick(e) {
             p.removeFrom(mymap);
     }, 3000);
     mymap.on('click', onMapClick);
-	}
-
-	function onLocationError(e) {
-    mymap.setView(currentLocation, 13);
-        var radius = 1;
-
-    		L.marker(currentLocation).addTo(mymap)
-    			.bindPopup("You are within " + radius + " meters from this point").openPopup();
-
-    		L.circle(currentLocation, radius).addTo(mymap);
-
-        var marker = L.marker([22.273, 114.163]).addTo(mymap);
-        var circle = L.circle([22.278, 114.171], {
-            color: 'red',
-            fillColor: '#f03',
-            fillOpacity: 0.5,
-            radius: 500
-        }).addTo(mymap);
-        var polygon = L.polygon([
-            [22.279, 114.168],
-            [22.273, 114.16],
-            [22.271, 114.167]
-        ]).addTo(mymap);
-        marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
-        circle.bindPopup("I am a circle.");
-        polygon.bindPopup("I am a polygon.");
-        mymap.on('click', onMapClick);
 	}
 
 //Ricardo: current

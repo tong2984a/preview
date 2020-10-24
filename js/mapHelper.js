@@ -240,7 +240,6 @@ class CurrentMarker {
 function toggleSidebar() {
     document.getElementById("sidebar-wrapper").classList.toggle('open');
     isSideOpen = !isSideOpen;
-    console.log('ckicked')
 }
 
 //check weather the restaurant inside the searching area
@@ -249,11 +248,7 @@ function isInArea(position, center, radius) {
     if ((position.lat() == center.lat()) && (position.lng() == center.lng())) {
         distance = 0;
     } else {
-        console.log(position.lat(), position.lng());
-        console.log(center.lat(), center.lng())
-        console.log(center);
         distance = google.maps.geometry.spherical.computeDistanceBetween(position, center);
-        console.log(distance);
     }
     return(distance < radius);
 }
@@ -288,7 +283,6 @@ function stopAnimation(marker) {
 
 //the restaurant searching function that search all the restaurant in the database
 function searchRestaurantDemo(input, mode, selected = []) {
-  console.log("****************searchRestaurantDemo*************");
     var count = 0;
     var str = input.toLowerCase().replace(/\s/g,'');
     var search =  new RegExp(str);
@@ -439,7 +433,6 @@ function addRestMarker(restaurant) {
   //   icon: greenIcon,
   //   animation: google.maps.Animation.DROP
   // });
-  console.log(restaurant.coupon);
   if(restaurant.coupon > 0){
     var label = {text: restaurant.coupon.toString(), fontSize: "20px", fontWeight: "bold"}
     //marker.setIcon(couponIcon2);
@@ -777,6 +770,9 @@ function getLocationAddress(pos) {
       if (document.getElementById('selectCategories')) {
         document.getElementById('selectCategories').innerHTML = '';
       }
+      if (document.getElementById('selectCuisines')) {
+        document.getElementById('selectCuisines').innerHTML = '';
+      }
       db.collection('categories').get().then(docs => {
         docs.forEach(doc => {
           let c = doc.id;
@@ -797,6 +793,31 @@ function getLocationAddress(pos) {
         const st = document.getElementById('selectTags');
         const cats = document.getElementById('categories');
         const scats = document.getElementById('selectCategories');
+        const cuisines = document.getElementById('cuisines');
+        const scuisines = document.getElementById('selectCuisines');
+
+        ["Chinese","Western","Italian","Japanese","French","Middle-East","Indian","American","Thai","Vietnamese","Korean","Fusion"]
+        .forEach(ucuisine => {
+          if (cuisines) {
+            var option = document.createElement('option');
+            option.innerText = ucuisine;
+            option.value = ucuisine;
+            cuisines.appendChild(option);
+          }
+          if (scuisines) {
+            var box = document.createElement('input');
+            box.type = 'checkbox';
+            box.id = ucuisine;
+            box.className = 'checkbox';
+            box.name = "cuisines";
+            //box.onclick = filterMarkers;
+            var boxLabel = document.createElement('label');
+            boxLabel.innerText = ucuisine;
+            boxLabel.htmlFor = ucuisine;
+            scuisines.appendChild(boxLabel);
+            boxLabel.appendChild(box);
+          }
+        });
 
         [...(new Set(unique_categories))].sort().forEach(ucat => {
           if (cats) {
@@ -867,7 +888,6 @@ function getLocationAddress(pos) {
       category = document.getElementById('categories').value;
       const sb = document.querySelector('#list');
       tagList = [...sb.options].map(el => el.value);
-      console.log('tagList:' + tagList);
       db.collection('categories').doc(category).update({
         tags: firebase.firestore.FieldValue.arrayUnion(...tagList)
       })
@@ -876,25 +896,20 @@ function getLocationAddress(pos) {
     function filterMarkers() {
       var checkedBoxes = [...document.querySelectorAll('input[name=categories]:checked')];
       var active_categories = checkedBoxes.map(el => el.id);
-      console.log(active_categories);
 
       checkedBoxes = [...document.querySelectorAll('input[name=ingredients]:checked')];
       var active_ingredients = checkedBoxes.map(el => el.id);
 
       markers.forEach((item, i) => {
         if (active_categories.length === 0 && active_ingredients.length === 0) {
-          console.log('allllllll tempry');
           //item.marker.setVisible(true);
           item.marker.addTo(mymap);
         } else {
-          console.log(item);
           var marker_categories = item.dishes.map(dish => dish.category);
           var marker_tags = [];
           item.dishes.forEach((dish, i) => {
             marker_tags.push(...dish.tags);
           });
-          console.log('marker_tags');
-          console.log(marker_tags);
           //item.marker.setVisible(false);
           item.marker.remove();
           marker_categories.forEach((c, i) => {
@@ -904,7 +919,6 @@ function getLocationAddress(pos) {
             }
           });
           marker_tags.forEach((t, i) => {
-            console.log('t:' + t);
             if (active_ingredients.includes(t)) {
               //item.marker.setVisible(true);
               item.marker.addTo(mymap);
@@ -1042,10 +1056,8 @@ function getLocationAddress(pos) {
         opacity: 1,
         fillOpacity: 0.8
       };
-console.log("****mapHelper.js");
       var sitis =  L.geoJson(geoJson, {
         pointToLayer: function (feature, latlng) {
-          console.log("***pointToLayer");
           feature.properties.myKey = feature.properties.Title + ', ' + feature.properties.Head
           return L.circleMarker(latlng, geojsonMarkerOptions);
         },
@@ -1055,16 +1067,13 @@ console.log("****mapHelper.js");
     //L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="openstreetmap.org/copyright">OpenStreetMap</a>', subdomains: ['a','b','c'] }).addTo( map )
 
     function onEachFeature(feature, layer) {
-      console.log("***onEachFeature");
       // does this feature have a property named popupContent?
       if (feature.properties && feature.properties.Title) {
-console.log("***feature.properties.Title", feature.properties.Title);
         var images = feature.properties.images
         var slideshowContent = '';
 
         for(var i = 0; i < images.length; i++) {
           var img = images[i];
-console.log("***slideshowContent image");
           slideshowContent += '<div class="image' + (i === 0 ? ' ' : '') + '">' +
           '<img src="' + img[0] + '" />' +
           '<div class="caption">' + img[1] + '</div>' +
@@ -1094,7 +1103,6 @@ console.log("***slideshowContent image");
     $slideshow.find('.active').removeClass('active').hide();
 
     $('#mapid').on('click', '.popup .cycle a', function() {
-      console.log("***mapid");
       var $slideshow = $('.slideshow'),
       $newSlide;
 
