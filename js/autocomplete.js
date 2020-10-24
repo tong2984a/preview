@@ -13,42 +13,8 @@ function autocomplete(inp, cachedRestaurants) {
   //console.log("sorted_restaurants")
     //console.log(localStorage.getItem('restaurants'));
   var arr = sorted_restaurants.map(el => `${el.name}, ${el.adr}`);
-    console.log("initialize autocomplete with restaurantCount:" + cachedRestaurants.length);
-  // var arr = sorted_restaurants.map(el => {
-  //   if (el.dist === '11') {
-  //     return `${el.name}, Eastern`
-  //   } else if (el.dist === '12') {
-  //     return `${el.name}, Wan Chai`
-  //   } else if (el.dist === '15') {
-  //     return `${el.name}, Southern`
-  //   } else if (el.dist === '17') {
-  //     return `${el.name}, Islands`
-  //   } else if (el.dist === '18') {
-  //     return `${el.name}, Central/Western`
-  //   } else if (el.dist === '51') {
-  //     return `${el.name}, Kwun Tong`
-  //   } else if (el.dist === '52') {
-  //     return `${el.name}, Kowloon City`
-  //   } else if (el.dist === '53') {
-  //     return `${el.name}, Wong Tai Sin`
-  //   } else if (el.dist === '61') {
-  //     return `${el.name}, Yau Tsim`
-  //   } else if (el.dist === '62') {
-  //     return `${el.name}, Mong Kok`
-  //   } else if (el.dist === '63') {
-  //     return `${el.name}, Sham Shui Po`
-  //   } else if (el.dist === '91') {
-  //     return `${el.name}, Kwai Tsing`
-  //   } else if (el.dist === '92') {
-  //     return `${el.name}, Tsuen Wan`
-  //   } else if (el.dist === '93') {
-  //     return `${el.name}, Tuen Mun`
-  //   } else if (el.dist === '94') {
-  //     return `${el.name}, Yuen Long`
-  //   } else if (el.dist === '95') {
-  //     return `${el.name}, Tai Po`
-  //   }
-  // });
+  console.log("initialize autocomplete with restaurantCount:" + cachedRestaurants.length);
+  console.log(cachedRestaurants);
   var filtered_restaurants = [];
   /*execute a function when someone writes in the text field:*/
   inp.addEventListener("input", function(e) {
@@ -306,6 +272,6 @@ function autocomplete(inp, cachedRestaurants) {
   //clicking anywhere other than input box and autocomplete list
   document.addEventListener("click", function (e) {
     console.log("&&&&&&&click&&&&");
-    closeAllLists(e.target);
+    //closeAllLists(e.target);
   });
 }
