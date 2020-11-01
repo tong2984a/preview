@@ -139,7 +139,7 @@
         <div id="selectbox-container">
           <form>
             <label for="name">Category:</label>
-            <select name="" id="categories">
+            <select name="" id="indexCategories">
               <option value="">Please Select</option>
             </select>
             <label for="name">Ingredient:</label>
@@ -147,8 +147,8 @@
 
             <button id="btnAdd">Add</button>
 
-            <label for="list">Ingredient List:</label>
-            <select id="list" name="list" multiple>
+            <label for="indexList">Ingredient List:</label>
+            <select id="indexList" name="indexList" multiple>
 
             </select>
             <button id="btnRemove">Remove Selected Ingredient</button>
@@ -158,7 +158,7 @@
         <script>
           const btnAdd = document.querySelector('#btnAdd');
           const btnRemove = document.querySelector('#btnRemove');
-          const sb = document.querySelector('#list');
+          const sb = document.querySelector('#indexList');
           const name = document.querySelector('#name');
           //Regex for Valid Characters i.e. Alphabets and Numbers.
           const regex = /^[A-Za-z\s]+$/

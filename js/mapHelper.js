@@ -22,7 +22,35 @@ const areas = [
 ];
 var current;
 var restaurantInput = document.getElementById('restaurantInput');
-
+const cuisineCategories = {
+  "Chinese": [],
+  "Western": [],
+  "Japanese": [],
+  "Korean": [],
+  "Vietnamese": [],
+  "Middle-East": [],
+  "Indian": [],
+  "Thai": [],
+  "American": [],
+  "French": [],
+  "Italian": [],
+  "Fusion": []
+};
+const categoryIngredients = {
+  "Bar": ["Vegan", "No Animal Extract", "Non-alcohol", "Dairy Free", "Egg Free"],
+  "Dessert & Fruits": ["Dairy Free", "Egg Free", "Nuts Free", "Sugar Free", "Gluten Free"],
+  "Coffee & Tea": ["Dairy Free", "Organic", "Plant-Based Milk"],
+  "Fast Food": ["Dairy Free", "Egg Free", "Plant-Based Meat", "MSG Free"],
+  "Salad": ["Dairy Free", "Egg Free", "Plant-Based Meat", "Nuts Free", "Garlic Free", "Organic"],
+  "Main Dish": ["Vegan", "Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
+  "Dim Sum": ["Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
+  "Noodles": ["Dairy Free", "Egg Free", "No Animal Extract", "Rice Noodle", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
+  "Appetizer": ["Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
+  "Sushi": ["Dairy Free", "Egg Free", "Plant-Based Seafood", "Konjac", "Wasabi", "Soy Free", "No Animal Extract"],
+  "Sashimi": ["Dairy Free", "Egg Free", "Plant-Based Seafood", "Konjac", "Wasabi", "Soy Free", "No Animal Extract"],
+  "Burger": ["Dairy Free", "Egg Free", "Garlic Free", "Honey Free", "Gluten Free", "Soy Free", "Plant-Based Meat", "Impossible Burger", "Mushroom"],
+  "Cheese": ["Dairy Free" , "Egg Free", "Garlic Free", "Honey Free", "Gluten Free", "Soy Free", "Nuts", "Spice", "Herbs"]
+};
 
 class Restaurant {
   constructor(marker, name, location, id, dishes) {
@@ -789,14 +817,14 @@ function getLocationAddress(pos) {
             unique_tags.push(t);
           })
         })
-        const sb = document.querySelector('#list');
-        const st = document.getElementById('selectTags');
-        const cats = document.getElementById('categories');
-        const scats = document.getElementById('selectCategories');
-        const cuisines = document.getElementById('cuisines');
-        const scuisines = document.getElementById('selectCuisines');
+        const sb = document.querySelector('#indexList'); //index.html only
+        const st = document.getElementById('selectTags'); //search.html only
+        const cats = document.getElementById('indexCategories'); //index.html only
+        const scats = document.getElementById('selectCategories'); //search.html only
+        const cuisines = document.getElementById('cuisines'); //search.html only
+        const scuisines = document.getElementById('selectCuisines'); //search.html only
 
-        ["Chinese","Western","Italian","Japanese","French","Middle-East","Indian","American","Thai","Vietnamese","Korean","Fusion"]
+        ["Chinese","Western","Japanese","Korean","Vietnamese","Middle-East","Indian","Thai","American","French","Italian","Fusion"]
         .forEach(ucuisine => {
           if (cuisines) {
             var option = document.createElement('option');
@@ -810,7 +838,7 @@ function getLocationAddress(pos) {
             box.id = ucuisine;
             box.className = 'checkbox';
             box.name = "cuisines";
-            //box.onclick = filterMarkers;
+            box.onclick = filterMarkers;
             var boxLabel = document.createElement('label');
             boxLabel.innerText = ucuisine;
             boxLabel.htmlFor = ucuisine;
@@ -832,7 +860,7 @@ function getLocationAddress(pos) {
             box.id = ucat;
             box.className = 'checkbox';
             box.name = "categories";
-            box.onclick = filterMarkers;
+            box.onclick = filterIngredients;
             var boxLabel = document.createElement('label');
             boxLabel.innerText = ucat;
             boxLabel.htmlFor = ucat;
@@ -840,7 +868,8 @@ function getLocationAddress(pos) {
             boxLabel.appendChild(box);
           }
         });
-
+console.log("***unique_tags", unique_tags);
+console.log("***[...(new Set(unique_tags))].sort()", [...(new Set(unique_tags))].sort());
         [...(new Set(unique_tags))].sort().forEach(tag => {
           if (sb) {
             const option = new Option(tag, tag);
@@ -864,37 +893,78 @@ function getLocationAddress(pos) {
       })
     })();
 
-    //index.html only onchange
-    // function loadTags(cate) {
-    //   console.log('loading tags');
-    //     if(checkCategories(cate)){
-    //       var a = 0;
-    //       var i = 0;
-    //       listOfCategoriesAndTags.forEach(group => {
-    //         if(cate == group.name) i = a;
-    //         a++;
-    //       })
-    //       tagNum = listOfCategoriesAndTags[i].tags.length;
-    //       // listOfCategoriesAndTags[i].tags.forEach(tag =>{
-    //       //   const sb = document.querySelector('#list');
-    //       //   const option = new Option(tag, tag);
-    //       //   sb.add(option, undefined);
-    //       // })
-    //     }
-    // }
-
+    //index.html only
     function uploadTags() {
       tagList = [];
-      category = document.getElementById('categories').value;
-      const sb = document.querySelector('#list');
+      category = document.getElementById('indexCategories').value;
+      const sb = document.querySelector('#indexList');
       tagList = [...sb.options].map(el => el.value);
       db.collection('categories').doc(category).update({
         tags: firebase.firestore.FieldValue.arrayUnion(...tagList)
       })
     }
 
+    // search.html only
+    function filterIngredients() {
+      checkedBoxes = [...document.querySelectorAll('input[name=categories]:checked')];
+      var active_categories = checkedBoxes.map(el => el.id);
+
+      checkedBoxes = [...document.querySelectorAll('input[name=ingredients]:checked')];
+      var active_ingredients = checkedBoxes.map(el => el.id);
+            // let searchCuisines = document.getElementById('selectCuisines');
+            // while (searchCuisines.lastChild) {
+            //   searchCuisines.removeChild(searchCuisines.lastChild);
+            // }
+
+            // let searchCategories = document.getElementById('selectCategories');
+            // while (searchCategories.lastChild) {
+            //   searchCategories.removeChild(searchCategories.lastChild);
+            // }
+
+      let indexIngredients = document.querySelector('#indexList');
+      let searchIngredients = document.getElementById('selectTags');
+      while (searchIngredients.lastChild) {
+        searchIngredients.removeChild(searchIngredients.lastChild);
+      }
+
+      let newIngredients = [];
+      active_categories.forEach(category => {
+        newIngredients.push(...(categoryIngredients[category] || []));
+      });
+
+      [...(new Set(newIngredients))].sort().forEach(tag => {
+        if (indexIngredients) {
+          const option = new Option(tag, tag);
+          indexIngredients.add(option, undefined);
+        }
+        if (searchIngredients) {
+          let box = document.createElement('input');
+          box.type = 'checkbox';
+          box.id = tag;
+          box.className = 'checkbox';
+          box.name = "ingredients";
+          box.onclick = filterMarkers;
+          if (active_ingredients.includes(tag)) {
+            box.defaultChecked = true;
+          }
+          let boxLabel = document.createElement('label');
+          boxLabel.innerText = tag;
+          boxLabel.htmlFor = tag;
+
+          searchIngredients.appendChild(boxLabel);
+          boxLabel.appendChild(box);
+        }
+      });
+
+      filterMarkers();
+    }
+
+    // search.html only
     function filterMarkers() {
-      var checkedBoxes = [...document.querySelectorAll('input[name=categories]:checked')];
+      var checkedBoxes = [...document.querySelectorAll('input[name=cuisines]:checked')];
+      var active_cuisines = checkedBoxes.map(el => el.id);
+
+      checkedBoxes = [...document.querySelectorAll('input[name=categories]:checked')];
       var active_categories = checkedBoxes.map(el => el.id);
 
       checkedBoxes = [...document.querySelectorAll('input[name=ingredients]:checked')];
@@ -927,61 +997,6 @@ function getLocationAddress(pos) {
         }
       });
     }
-
-    //search.html only onchange
-    // function filterCategories() {
-    //   console.log('active filterCategories');
-    //   const sb = document.querySelector('#categories');
-    //   const ingredients = document.querySelector('#list');
-    //
-    //   var active_categories = [];
-    //   var active_ingredients = [];
-    //   for (var i=0, len=sb.options.length; i<len; i++) {
-    //     var opt = sb.options[i];
-    //     console.log('active?:' + opt.selected + ' name:' + opt.value);
-    //     if ( opt.selected ) {
-    //       active_categories.push(opt.value);
-    //     }
-    //   }
-    //   console.log('active_categories length:' + active_categories.length);
-    //
-    //   for (var i=0, len=ingredients.options.length; i<len; i++) {
-    //     var opt = ingredients.options[i];
-    //     console.log('active?:' + opt.selected + ' name:' + opt.value);
-    //     if ( opt.selected ) {
-    //       active_ingredients.push(opt.value);
-    //     }
-    //   }
-    //   console.log('active_ingredients length:' + active_ingredients.length);
-    //
-    //   markers.forEach((item, i) => {
-    //     if (active_categories.length === 0 && active_ingredients.length === 0) {
-    //       console.log('allllllll tempry');
-    //       item.marker.setVisible(true);
-    //     } else {
-    //       console.log(item);
-    //       var marker_categories = item.dishes.map(dish => dish.category);
-    //       var marker_tags = [];
-    //       item.dishes.forEach((dish, i) => {
-    //         marker_tags.push(...dish.tags);
-    //       });
-    //       console.log('marker_tags');
-    //       console.log(marker_tags);
-    //       item.marker.setVisible(false);
-    //       marker_categories.forEach((c, i) => {
-    //         if (active_categories.includes(c)) {
-    //           item.marker.setVisible(true);
-    //         }
-    //       });
-    //       marker_tags.forEach((t, i) => {
-    //         console.log('t:' + t);
-    //         if (active_ingredients.includes(t)) {
-    //           item.marker.setVisible(true);
-    //         }
-    //       });
-    //     }
-    //   });
-    // }
 
     function addFilter(tag, state) {
       tagRegex = new RegExp(tag)

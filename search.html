@@ -56,7 +56,7 @@
               <div class="col-xs-12 form-group" >
                 <div id="checkboxgroup-container">
                   <fieldset class="checkboxgroup">
-                    <p>Filter Restaurant:</p>
+                    <p>Filter Category:</p>
                     <div id="selectCategories">
                     </div>
                   </fieldset>
@@ -136,11 +136,11 @@
 
           var browserGeolocationSuccess = function(position) {
             currentLocation = [position.coords.latitude, position.coords.longitude];
-            onLocationFound("");
+            onLocationFound("You are here.");
           };
 
           var browserGeolocationFail = function(error) {
-            onLocationFound("");
+            onLocationFound("Refresh to find your location");
           }
 
           if (navigator.geolocation) {
@@ -148,7 +148,7 @@
               browserGeolocationSuccess, browserGeolocationFail,
               {maximumAge: 70000, timeout: 40000, enableHighAccuracy: true});
           } else {
-            onLocationFound("");
+            onLocationFound("Cannot find your location");
           }
 
           function onMapClick(e) {
@@ -159,25 +159,16 @@
                   .openOn(mymap);
           }
 
-          	function onLocationFound(e) {
+          	function onLocationFound(message) {
               mymap.setView(currentLocation, 13);
               var radius = 1;
               circle = L.circle(currentLocation, {
                   color: 'red',
                   fillColor: '#f03',
                   fillOpacity: 0.5,
-                  radius: 500
+                  radius: 5
               }).addTo(mymap);
-              let p = circle.bindPopup("You are here.").openPopup();
-              setTimeout(function () {
-                  circle = L.circle(currentLocation, {
-                      color: 'red',
-                      fillColor: '#f03',
-                      fillOpacity: 0.5,
-                      radius: 500
-                  }).addTo(mymap);
-                      p.removeFrom(mymap);
-              }, 3000);
+              let p = circle.bindPopup(message).openPopup();
               mymap.on('click', onMapClick);
           	}
 
@@ -252,68 +243,6 @@
                 }
                 return(distance < area.radius);
             }
-
-        /*    function searchRestaurantDem(input) {
-                var count = 0;
-                var str = input.toLowerCase().replace(/\s/g,'');
-                var area;
-                var checkArea = false;
-                var isFilter = (selected == [])?true:false ;
-                areas.some((value) => {
-                    var pattern = new RegExp(value.name);
-                    if(pattern.test(str)){
-                        area = value;
-                        checkArea = true;
-                        return true;
-                    }
-                })
-
-                markers.forEach(item => {
-                    var pattern = new RegExp(item.name);
-                    var nameTest = true;
-                    var areaTest = true;
-                    if(!pattern.test(str)){
-                        nameTest = false;
-                    }
-                    if(checkArea){
-                        if(!isInArea(item.marker.position, area)){
-                            areaTest = false;
-                        }
-                    }
-                    if(nameTest && areaTest){
-                        count++;
-                        item.marker.setAnimation(google.maps.Animation.BOUNCE);
-                        stopAnimation(item.marker);
-                        item.marker.setIcon('https://maps.google.com/mapfiles/ms/micons/blue-dot.png');
-                        map.setCenter(item.marker.position);
-                        item.marker.setVisible(true);
-                    }else{
-                        item.marker.setVisible(false);
-                        item.marker.setIcon('https://maps.gstatic.com/mapfiles/markers2/marker_greenV.png');
-                    }
-                })
-                if(isFilter){
-                    document.getElementById('restSearch').innerText = count + ' restaurant found under the filter requirment(s)';
-                }else{
-                    document.getElementById('restSearch').innerText = count + ' restaurant found';
-                }
-                if(count > 0){
-                    document.getElementById('restSearch').style.color = 'rgb(0,255,0)'
-                }else{
-                    document.getElementById('restSearch').style.color = 'rgb(255,0,0)'
-                    markers.forEach(item => item.marker.setVisible(true));
-                };
-
-            }*/
-
-           /* $( document ).ready(function() {
-                var autocomplete;
-                autocomplete = new google.maps.places.Autocomplete((document.getElementById('restaurantInput')), {
-                    types: ['address']
-                })
-
-                google.maps.event.addListener(autocomplete, )
-            });*/
 
             function initAutocomplete() {
                 // Create the search box and link it to the UI element.
