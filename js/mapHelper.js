@@ -408,8 +408,8 @@ function addRestMarker(restaurant) {
       best_adr = sList[num-2] + "," + sList[num-1]
     }
     var popupContent =  '<div id="' + restaurant.name + '" class="popup">' +
-    "<h1><font color='red'>"+restaurant.name+
-    "</font></h1><p>" +best_adr+
+    "<h6><font>"+restaurant.name+
+    "</font></h6><p>" +best_adr+
     "</p>"+
 
     '<div class="slideshow">' +
@@ -1122,13 +1122,3 @@ function getLocationAddress(pos) {
       $newSlide.addClass('active').show();
       return false;
     });
-
-    L.control.search({
-      layer: L.layerGroup ([sitis]),
-      initial: false,
-      propertyName: 'myKey', // Specify which property is searched into.
-      zoom: 14,
-      placeholder: "Search order",
-      position: 'topleft'
-    })
-    .addTo(map);

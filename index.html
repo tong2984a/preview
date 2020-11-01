@@ -96,15 +96,12 @@
     </div>
 
     <!-- Ricardo: input dish -->
-    <div class="row justify-content-center"
-    data-toggle="popover" title="Popover title" data-placement="top" data-content="The Dish has to be Meat
-Free, Dairy Free & Egg Free ( beware of butter, cream, cheese, coffee milk, bread
-may contain cow milk & animal eggs) 食物不能含有肉類，乳製品及雞蛋 （留意牛油
-，忌廉，芝士，咖啡奶茶，麵包，都有可能含有動物奶及蛋">
+    <div class="row justify-content-center">
       <div class="col-sm-6 form-group">
         <input type="text"
         class="form-control input-lg"
         id="dishInput"
+        data-toggle="popover" title="Popover title" data-placement="top" data-content="MEAT FREE, DAIRY FREE & EGG FREE ; 無肉，無蛋奶"
         placeholder="What is the name of the dish?">
       </div>
     </div>
@@ -302,12 +299,14 @@ may contain cow milk & animal eggs) 食物不能含有肉類，乳製品及雞�
 <script src="js/bootstrap.bundle.min.js" type="text/javascript"></script>
 <script src="js/autocomplete.js"></script>
 <script src="js/autocomplete2.js"></script>
-<script defer src="js/mapHelper.js" type="text/javascript"></script>
 <script src="js/leaflet-search.src.js"></script>
+<script defer src="js/mapHelper.js" type="text/javascript"></script>
 <script>
 //Ricardo: testing
 $(document).ready(function(){
-  $('[data-toggle="popover"]').popover();
+  $('[data-toggle="popover"]').popover({
+    trigger: 'focus'
+  });
 });
 
 window.addEventListener('load', initializeRestaurantsOnLoad);
@@ -323,11 +322,11 @@ L.tileLayer('https://b.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 var browserGeolocationSuccess = function(position) {
   currentLocation = [position.coords.latitude, position.coords.longitude];
-  onLocationFound("");
+  onLocationFound("You are here.");
 };
 
 var browserGeolocationFail = function(error) {
-  onLocationFound("");
+  onLocationFound("Refresh to find your location");
 }
 
 if (navigator.geolocation) {
@@ -336,7 +335,7 @@ if (navigator.geolocation) {
     {maximumAge: 70000, timeout: 40000, enableHighAccuracy: true}
   );
 } else {
-  onLocationFound("");
+  onLocationFound("Cannot find your location");
 }
 
 function onMapClick(e) {
@@ -347,25 +346,16 @@ function onMapClick(e) {
         .openOn(mymap);
 }
 
-	function onLocationFound(e) {
+	function onLocationFound(message) {
     mymap.setView(currentLocation, 13);
     var radius = 1;
     circle = L.circle(currentLocation, {
         color: 'red',
         fillColor: '#f03',
         fillOpacity: 0.5,
-        radius: 500
+        radius: 5
     }).addTo(mymap);
-    let p = circle.bindPopup("You are here.").openPopup();
-    setTimeout(function () {
-        circle = L.circle(currentLocation, {
-            color: 'red',
-            fillColor: '#f03',
-            fillOpacity: 0.5,
-            radius: 500
-        }).addTo(mymap);
-            p.removeFrom(mymap);
-    }, 3000);
+    let p = circle.bindPopup(message).openPopup();
     mymap.on('click', onMapClick);
 	}
 
@@ -445,6 +435,7 @@ var currentRestaurantId;
 var newRestaurantId;
 var itemsArray;
 var dishArray = [];
+var restaurantHash = {};
 const mode = "add";
 
 function visualizeArea(area) {
@@ -576,78 +567,21 @@ function initMap() {
     // console.log('snapshot:' + snapshot);
     snapshot.docs.forEach(doc => {
       var restaurantData = doc.data();
-      // console.log(restaurantData);
-      //console.log(restaurantData.location);
       addRestMarker(restaurantData, doc.id);
+      let restaurantDishes = restaurantHash[restaurantData.name];
+      restaurantDishes = restaurantDishes || [];
       restaurantData.dishes.forEach(data => {
         dishArray.push(data.dish);
+        restaurantDishes.push(data.dish);
       });
+      restaurantHash[restaurantData.name] = [...(new Set(restaurantDishes))].sort();
     });
   }).then(() => {
-    newRestaurantId = (markers.length + 1);
     dishArray = [...(new Set(dishArray))].sort();
     console.log("dishArray:", dishArray);
     autocomplete2(document.getElementById("dishInput"), dishArray);
   });
-
-  //service = new google.maps.places.PlacesService(map);
-  //init localStorage
 }
-
-// async function findImages() {
-//   // Get a list of all of the caches for this origin
-//   const cacheNames = await caches.keys();
-//   const result = [];
-//
-//   for (const name of cacheNames) {
-//     // Open the cache
-//     const cache = await caches.open(name);
-//
-//     // Get a list of entries. Each item is a Request object
-//     for (const request of await cache.keys()) {
-//       // If the request URL matches, add the response to the result
-//       // if (request.url.endsWith('.png')) {
-//       //   result.push(await cache.match(request));
-//       // }
-//       console.log("request.url");
-//       console.log(request.url);
-//     }
-//   }
-//
-//   return result;
-// }
-//
-// async function stopspinner() {
-//   const response = await caches.match('/data/sort-veggie.json');
-//   console.log(request, response);
-//   const reader = await response.json();
-//
-//   console.log(reader);
-//
-//   console.log("stopping");
-// }
-//
-// async function stopspinner2() {
-// console.log("stopSpinner");
-//         // fetch cached data
-//         caches.match('/data/sort-veggie.json').then(function(response) {
-//           console.log("match");
-//           console.log(response.json());
-//           if (!response) throw Error("No data");
-//           return response.json();
-//         }).then(function(data) {
-//           // don't overwrite newer network data
-//         //  if (!networkDataReceived) {
-//             console.log("stopspinner(data)");
-//             console.log(data);
-//         //  }
-//         }).catch(function() {
-//           // we didn't get cached data, the network is our last hope:
-//           console.log("no cacha");
-//           return "no cached data";
-//         }).catch(console.log("showErrorMessage")).then(console.log("stopSpinner"));
-//
-// }
 
 function updateRestaurants() {
   // fetch fresh data
@@ -672,7 +606,7 @@ function updateRestaurants() {
     itemsArray.push({name:'Feather and Bone', dist: '18', adr: 'SHOP ON SHOP LEVEL 1 FLOOR, SOHO 38, NO. 38 SHELLEY STREET, HONG KONG', lat:22.280023, lng:114.151251});
     itemsArray.push({name:'Mana! Fast Slow Food', dist: '18', adr: 'G/F., 92 WELLINGTON STREET, CENTRAL, HONG KONG', lat:22.282801, lng:114.154556});
     itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'SHOP 3023, LEVEL 3, IFC MALL, CENTRAL, HONG KONG', lat:22.284943, lng:114.157324});
-    itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'TWO DESIGNATED SEATING AREAS OPPOSITE TO SHOP B47A AND SHOP B47A, FIRST BASEMENT FLOOR, LANDMARK ATRIUM, 15 QUEEN&apos;S ROAD CENTRAL, CENTRAL, HONG KONG', lat:22.280676, lng:114.157692});
+    itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'LANDMARK ATRIUM, 15 QUEEN&apos;S ROAD CENTRAL, CENTRAL, HONG KONG', lat:22.280676, lng:114.157692});
     itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'SHOP 206 AND AREA A, LEVEL 2, PACIFIC PLACE, 88 QUEENSWAY, HONG KONG', lat:22.277152, lng:114.164887});
     itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'PORTION OF OFFICE LOBBY AT G/F, CHATER HOUSE, 8 CONNAUGHT ROAD CENTRAL, CENTRAL, HONG KO', lat:22.282126, lng:114.15847});
     itemsArray.push({name:'Fuel Espresso', dist: '11', adr: 'AREA A, G/F., ONE TAIKOO PLACE, TAIKOO PLACE, 979 KING&apos;S ROAD, QUARRY BAY, HONG KONG', lat:22.287192, lng:114.211008});
@@ -682,14 +616,7 @@ function updateRestaurants() {
     itemsArray.push({name:'NINETYS', dist: '18', adr: 'G/F., NO. 2-4 SHELLEY STREET, CENTRAL, HONG KONG', lat:22.281898, lng:114.153399});
     itemsArray.push({name:'NINETYS', dist: '18', adr: "AIA Central, 1 Connaught Road, Central, HONG KONG", lat:22.281333, lng:114.162012});
     itemsArray.push({name:'NINETYS', dist: '12', adr: "SHOP 2, G/F., NO. 222 QUEEN'S ROAD EAST, WAN CHAI, HONG KONG", lat:22.274811, lng:114.172593});
-
-    // document.getElementById(
-    //   "restaurantCount"
-    // ).innerHTML = itemsArray.length;
-
-    console.log("newRestaurantId:" + newRestaurantId);
     autocomplete(document.getElementById("restaurantInput"), itemsArray);
-    //localStorage.setItem('restaurants', JSON.stringify(itemsArray));
   })
 }
 
@@ -705,17 +632,6 @@ function initializeRestaurantsOnLoad() {
     });
     navigator.serviceWorker.ready.then( () => {
       console.log("serviceWorker ready");
-      // if (localStorage) {
-      //   if (localStorage.getItem("restaurants")) {
-      //     const count = JSON.parse(localStorage.getItem("restaurants")).length;
-      //     document.getElementById(
-      //       "restaurantCount"
-      //     ).innerHTML = count;
-      //   } else {
-      //     console.log("fetching restaurants to cache");
-      //     updateRestaurants();
-      //   }
-      // }
     })
   }
 }

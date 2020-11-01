@@ -15,10 +15,11 @@ function autocomplete2(inp, arr) {
       a.setAttribute("class", "autocomplete-items");
       /*append the DIV element as a child of the autocomplete container:*/
       this.parentNode.appendChild(a);
-      /*for each item in the array...*/
+      let displayCount = 0;
       for (i = 0; i < arr.length; i++) {
         /*check if the item starts with the same letters as the text field value:*/
-        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+        if ((displayCount < 10) && (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase())) {
+          displayCount++;
           /*create a DIV element for each matching element:*/
           b = document.createElement("DIV");
           /*make the matching letters bold:*/
@@ -53,7 +54,7 @@ function autocomplete2(inp, arr) {
       /*for each item in the array...*/
       for (i = 0; i < arr.length; i++) {
         /*check if the item starts with the same letters as the text field value:*/
-        if (!val || arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+        if ((val.length > 0) && (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase())) {
           /*create a DIV element for each matching element:*/
           let prefix = arr[i].substr(0, val.length);
           let suffix = arr[i].substr(val.length);
