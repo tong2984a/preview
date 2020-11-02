@@ -44,27 +44,46 @@ function autocomplete(inp, cachedRestaurants) {
         /*insert a input field that will hold the current array item's value:*/
         b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
         /*execute a function when someone clicks on the item value (DIV element):*/
-        let activeLocation = {lat:sorted_restaurants[i].lat, lng:sorted_restaurants[i].lng};
+        let ri = sorted_restaurants[i];
+        //let activeLocation = {lat:sorted_restaurants[i].lat, lng:sorted_restaurants[i].lng};
+
+        //clicking on an option while restaurant field has some text
         b.addEventListener("click", function(e) {
           /*insert the value for the autocomplete text field:*/
           inp.value = this.getElementsByTagName("input")[0].value;
           /*close the list of autocompleted values,
           (or any other open lists of autocompleted values:*/
           closeAllLists();
-
           console.log("****b click***");
-
           let restaurantDishes = restaurantHash[inp.value] || [];
           console.log("restaurantHash", restaurantHash);
           console.log("restaurantDishes:", restaurantDishes);
           autocomplete2(document.getElementById("dishInput"), restaurantDishes);
 
+          let activeLeafletLocation = [ri.lat, ri.lng];
+          let activeLeaflet = L.marker(activeLeafletLocation, {icon:
+            new L.Icon({
+              iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+              shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+              iconSize: [25, 41],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              shadowSize: [41, 41]
+            })
+          }).addTo(mymap);
+          setTimeout(function() {
+            mymap.removeLayer(activeLeaflet);
+          }, 3000);
+          mymap.panTo(new L.LatLng(ri.lat, ri.lng));
+          currentLeaflet = activeLeaflet;
+          //circle.setLatLng(new L.LatLng(ri.lat, ri.lng));
         });
         a.appendChild(b);
         filtered_restaurants.push(sorted_restaurants[i]);
       }
     }
   });
+  //when clicking on restaurant input field
   inp.addEventListener("click", function(e) {
     console.log("&&&&&&&input click&&&&");
     var a, b, i, val = this.value;
@@ -79,12 +98,13 @@ function autocomplete(inp, cachedRestaurants) {
     a.setAttribute("class", "autocomplete-items");
     /*append the DIV element as a child of the autocomplete container:*/
     this.parentNode.appendChild(a);
-    /*for each item in the array...*/
+    // for each popup restaurant options ...
     for (i = 0; i < arr.length; i++) {
       /*check if the item starts with the same letters as the text field value:*/
       let v1 = $('<div>').html(arr[i]).text();
       v1 = v1.substr(0, valLength).toUpperCase();
       let v2 = (val.toUpperCase());
+      // if restaurant input is same as an option
       if ((valLength > 0) && (v1 == v2)) {
         //console.log("&&&&&&&input click arr div&&&&");
         let ri = sorted_restaurants[i];

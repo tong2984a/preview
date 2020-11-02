@@ -798,6 +798,18 @@ function getLocationAddress(pos) {
       if (document.getElementById('selectCategories')) {
         document.getElementById('selectCategories').innerHTML = '';
       }
+      if (document.getElementById('indexCuisines')) {
+        document.getElementById('indexCuisines').onchange = filterIndexCategories;
+      }
+      if (document.getElementById('indexCategories')) {
+        document.getElementById('indexCategories').onchange = filterIndexIngredients;
+      }
+      if (document.querySelector('#indexCategoryBlock')) {
+        document.querySelector('#indexCategoryBlock').style.display = 'none';
+      }
+      if (document.querySelector('#indexIngredientBlock')) {
+        document.querySelector('#indexIngredientBlock').style.display = 'none';
+      }
       if (document.getElementById('selectCuisines')) {
         document.getElementById('selectCuisines').innerHTML = '';
       }
@@ -821,16 +833,16 @@ function getLocationAddress(pos) {
         const st = document.getElementById('selectTags'); //search.html only
         const cats = document.getElementById('indexCategories'); //index.html only
         const scats = document.getElementById('selectCategories'); //search.html only
-        const cuisines = document.getElementById('cuisines'); //search.html only
+        const icuisines = document.getElementById('indexCuisines'); //index.html only
         const scuisines = document.getElementById('selectCuisines'); //search.html only
 
         ["Chinese","Western","Japanese","Korean","Vietnamese","Middle-East","Indian","Thai","American","French","Italian","Fusion"]
         .forEach(ucuisine => {
-          if (cuisines) {
+          if (icuisines) {
             var option = document.createElement('option');
             option.innerText = ucuisine;
             option.value = ucuisine;
-            cuisines.appendChild(option);
+            icuisines.appendChild(option);
           }
           if (scuisines) {
             var box = document.createElement('input');
@@ -868,13 +880,12 @@ function getLocationAddress(pos) {
             boxLabel.appendChild(box);
           }
         });
-console.log("***unique_tags", unique_tags);
-console.log("***[...(new Set(unique_tags))].sort()", [...(new Set(unique_tags))].sort());
+
         [...(new Set(unique_tags))].sort().forEach(tag => {
-          if (sb) {
-            const option = new Option(tag, tag);
-            sb.add(option, undefined);
-          }
+          //if (sb) {
+            //const option = new Option(tag, tag);
+            //sb.add(option, undefined);
+          //}
           if (st) {
             var box = document.createElement('input');
             box.type = 'checkbox';
@@ -896,12 +907,45 @@ console.log("***[...(new Set(unique_tags))].sort()", [...(new Set(unique_tags))]
     //index.html only
     function uploadTags() {
       tagList = [];
+      let uploadCuisine = document.getElementById('indexCuisines').value;
       category = document.getElementById('indexCategories').value;
       const sb = document.querySelector('#indexList');
       tagList = [...sb.options].map(el => el.value);
       db.collection('categories').doc(category).update({
         tags: firebase.firestore.FieldValue.arrayUnion(...tagList)
       })
+    }
+
+    //index.html Only
+    function filterIndexCategories() {
+      let uploadCuisine = document.getElementById('indexCuisines').value;
+      if (uploadCuisine) {
+        document.querySelector('#indexCategoryBlock').style.display = 'block';
+      } else {
+        document.querySelector('#indexCategoryBlock').style.display = 'none';
+      }
+    }
+
+    //index.html Only
+    function filterIndexIngredients() {
+      let indexIngredients = document.querySelector('#indexList');
+      while (indexIngredients.lastChild) {
+        indexIngredients.removeChild(indexIngredients.lastChild);
+      }
+
+      let newIngredients = [];
+      let indexCategory = document.getElementById('indexCategories').value;
+      newIngredients.push(...(categoryIngredients[indexCategory] || []));
+      [...(new Set(newIngredients))].sort().forEach(tag => {
+        const option = new Option(tag, tag);
+        indexIngredients.add(option, undefined);
+      })
+
+      if (newIngredients.length > 0) {
+        document.querySelector('#indexIngredientBlock').style.display = 'block';
+      } else {
+        document.querySelector('#indexIngredientBlock').style.display = 'none';
+      }
     }
 
     // search.html only
@@ -921,7 +965,7 @@ console.log("***[...(new Set(unique_tags))].sort()", [...(new Set(unique_tags))]
             //   searchCategories.removeChild(searchCategories.lastChild);
             // }
 
-      let indexIngredients = document.querySelector('#indexList');
+      //let indexIngredients = document.querySelector('#indexList');
       let searchIngredients = document.getElementById('selectTags');
       while (searchIngredients.lastChild) {
         searchIngredients.removeChild(searchIngredients.lastChild);
@@ -933,11 +977,11 @@ console.log("***[...(new Set(unique_tags))].sort()", [...(new Set(unique_tags))]
       });
 
       [...(new Set(newIngredients))].sort().forEach(tag => {
-        if (indexIngredients) {
-          const option = new Option(tag, tag);
-          indexIngredients.add(option, undefined);
-        }
-        if (searchIngredients) {
+        // if (indexIngredients) {
+        //   const option = new Option(tag, tag);
+        //   indexIngredients.add(option, undefined);
+        // }
+        //if (searchIngredients) {
           let box = document.createElement('input');
           box.type = 'checkbox';
           box.id = tag;
@@ -953,7 +997,7 @@ console.log("***[...(new Set(unique_tags))].sort()", [...(new Set(unique_tags))]
 
           searchIngredients.appendChild(boxLabel);
           boxLabel.appendChild(box);
-        }
+        //}
       });
 
       filterMarkers();
