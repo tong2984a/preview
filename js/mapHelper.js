@@ -22,21 +22,31 @@ const areas = [
 ];
 var current;
 var restaurantInput = document.getElementById('restaurantInput');
-const cuisineCategories = {
+const CUISINE_CATEGORIES = {
+  "Asian": [],
   "Chinese": [],
-  "Western": [],
   "Japanese": [],
   "Korean": [],
-  "Vietnamese": [],
-  "Middle-East": [],
-  "Indian": [],
+  "Singaporean": [],
   "Thai": [],
+  "Vietnamese": [],
+  "Indian": [],
+  "Sri Lankan": [],
+  "Middle-East": [],
+  "Lebanese": [],
+  "Turkish": [],
+  "Western": [],
   "American": [],
+  "Australian": [],
   "French": [],
+  "Greek": [],
   "Italian": [],
+  "Portuguese": [],
+  "Spanish": [],
+  "Mexican": [],
   "Fusion": []
 };
-const categoryIngredients = {
+const CATEGORY_INGREDIENTS = {
   "Bar": ["Vegan", "No Animal Extract", "Non-alcohol", "Dairy Free", "Egg Free"],
   "Dessert & Fruits": ["Dairy Free", "Egg Free", "Nuts Free", "Sugar Free", "Gluten Free"],
   "Coffee & Tea": ["Dairy Free", "Organic", "Plant-Based Milk"],
@@ -52,8 +62,48 @@ const categoryIngredients = {
   "Cheese": ["Dairy Free" , "Egg Free", "Garlic Free", "Honey Free", "Gluten Free", "Soy Free", "Nuts", "Spice", "Herbs"]
 };
 
+var itemsArray;
+  fetch('/data/sort-veggie.json').then(function(response) {
+    return response.json();
+  }).then(function(data) {
+    itemsArray = data.map(item => {
+      return { "name": item.SS, "dist": item.DIST, "adr": item.ADR, "lat": item.lat, "lng": item.lng }
+    })
+
+    itemsArray.push({name:'LOVING HUT 愛家國際餐飲 - 淘大店', dist: '51', adr: 'SHOP NOS. G242-245, G/F, AMOY PLAZA , PHASE II, 77 NGAU TAU KOK ROAD, KOWLOON', lat:22.323897, lng:114.216543});
+    itemsArray.push({name:'LOVING HUT 愛家 - Port 33 分店', dist: '53', adr: 'SHOP 103A, 1/F, PORT 33, 33 TSEUK LUK STREET, SAN PO KONG, KOWLOON', lat:22.3355, lng:114.197718});
+    itemsArray.push({name:'Vegan Seven Days', dist: '52', adr: 'G/F, 22C SUNG KIT STREET, HUNG HOM, KOWLOON', lat:22.311779, lng:114.188552});
+    itemsArray.push({name:'POP Vegan', dist: '18', adr: 'SHOP 1, 1ST FLOOR, MILLION CITY, NO. 28 ELGIN STREET, CENTRAL, HONG KONG', lat:22.281855, lng:114.152563});
+    itemsArray.push({name:'10 ST. FRANCIS', dist: '12', adr: 'G/F., 10 ST. FRANCIS STREET, WANCHAI, HONG KONG', lat:22.276165, lng:114.169578});
+    itemsArray.push({name:'MANA! Starstreet', dist: '12', adr: 'G/F., 6 HENNESSY ROAD, HONG KONG', lat:22.27774, lng:114.16842});
+    itemsArray.push({name:'MANA! SOHO', dist: '18', adr: 'G/F., NO. 6-8 STAUNTON STREET, CENTRAL, HONG KONG', lat:22.28162, lng:114.153091});
+    itemsArray.push({name:'Feather and Bone', dist: '18', adr: 'SHOP 1A ON G/F., COMMERCIAL ACCOMMODATION, BOHEMIAN HOUSE, 321 DES VOEUX ROAD WEST, HONG KONG', lat:22.287606, lng:114.138868});
+    itemsArray.push({name:'Feather and Bone', dist: '12', adr: 'THE PORTION A OF SHOP A &amp; C, G/F., WINNER BUILDING, NO. 11 WONG NAI CHUNG ROAD, HAPPY VALLEY, HONG KONG', lat:22.269535, lng:114.184088});
+    itemsArray.push({name:'Feather and Bone', dist: '12', adr: 'SHOP A, G/F., LUARD ON THE PARK, 5 LUARD ROAD, WAN CHAI, HONG KONG', lat:22.276861, lng:114.171361});
+    itemsArray.push({name:'Feather and Bone', dist: '92', adr: 'MAJOR PORTION OF SHOP NOS. G09 AND GO9A, G/F, OP MALL, 100 TAI HO ROAD, TSUEN WAN, NEW TERRITORIES', lat:22.368085, lng:114.110658});
+    itemsArray.push({name:'Feather and Bone', dist: '18', adr: 'SHOP ON SHOP LEVEL 1 FLOOR, SOHO 38, NO. 38 SHELLEY STREET, HONG KONG', lat:22.280023, lng:114.151251});
+    itemsArray.push({name:'Mana! Fast Slow Food', dist: '18', adr: 'G/F., 92 WELLINGTON STREET, CENTRAL, HONG KONG', lat:22.282801, lng:114.154556});
+    itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'SHOP 3023, LEVEL 3, IFC MALL, CENTRAL, HONG KONG', lat:22.284943, lng:114.157324});
+    itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'LANDMARK ATRIUM, 15 QUEEN&apos;S ROAD CENTRAL, CENTRAL, HONG KONG', lat:22.280676, lng:114.157692});
+    itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'SHOP 206 AND AREA A, LEVEL 2, PACIFIC PLACE, 88 QUEENSWAY, HONG KONG', lat:22.277152, lng:114.164887});
+    itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'PORTION OF OFFICE LOBBY AT G/F, CHATER HOUSE, 8 CONNAUGHT ROAD CENTRAL, CENTRAL, HONG KO', lat:22.282126, lng:114.15847});
+    itemsArray.push({name:'Fuel Espresso', dist: '11', adr: 'AREA A, G/F., ONE TAIKOO PLACE, TAIKOO PLACE, 979 KING&apos;S ROAD, QUARRY BAY, HONG KONG', lat:22.287192, lng:114.211008});
+    itemsArray.push({name:'Fuel Espresso', dist: '61', adr: 'SHOP B, LOBBY OF SKY OBSERVATION DECK, 2/F, ICC, 1 AUSTIN ROAD WEST, KOWLOON', lat:22.303381, lng:114.160231});
+    itemsArray.push({name:'FUEL ESPRESSO QUAYSIDE', dist: '51', adr: 'SHOP NO.2, GROUND FLOOR, TOWER 1 AND TOWER 2, THE QUAYSIDE, 77 HOI BUN ROAD, KWUN TONG, KOWLOON', lat:22.316534, lng:114.213709});
+    itemsArray.push({name:'LOCK CHA TEA HOUSE', dist: '18', adr: 'SHOP 01-G07 AND THE OUTSIDE SEATING ACCOMMODATION AT SIDE, G/F., HEADQUARTERS BLOCK, CENTRAL POLICE STATION, NO. 10 HOLLYWOOD ROAD, CENTRAL, HONG KONG', lat:22.281361, lng:114.153974});
+    itemsArray.push({name:'NINETYS', dist: '18', adr: 'G/F., NO. 2-4 SHELLEY STREET, CENTRAL, HONG KONG', lat:22.281898, lng:114.153399});
+    itemsArray.push({name:'NINETYS', dist: '18', adr: "AIA Central, 1 Connaught Road, Central, HONG KONG", lat:22.281333, lng:114.162012});
+    itemsArray.push({name:'NINETYS', dist: '12', adr: "SHOP 2, G/F., NO. 222 QUEEN'S ROAD EAST, WAN CHAI, HONG KONG", lat:22.274811, lng:114.172593});
+
+    //index.html only
+    if (document.getElementById("restaurantInput")) {
+      autocomplete(document.getElementById("restaurantInput"), itemsArray);
+    }
+  });
+
+
 class Restaurant {
-  constructor(marker, name, location, id, dishes) {
+  constructor(marker, name, location, id, dishes, cuisines) {
       this.marker = marker;
       this.name = name;
       this.location = location;
@@ -63,6 +113,7 @@ class Restaurant {
         dishList.push(new Dish(value.dish, value.fileURL, value.category, value.tags));
       })
       this.dishes = dishList;
+      this.cuisines = cuisines || [];
   }
 
   getName() {
@@ -405,7 +456,7 @@ function addRestMarker(restaurant) {
     popupAnchor: [1, -34],
     shadowSize: [41, 41]
     })
-  }).addTo(mymap);
+  }); //.addTo(mymap);
   marker.on('click', (e) => {
     let feature = geoJson.features[0];
     var images = restaurant.dishes;
@@ -455,12 +506,6 @@ function addRestMarker(restaurant) {
     .setContent(popupContent)
     .openOn(mymap);
   });
-  // var marker = new google.maps.Marker({
-  //   position: {lat, lng},
-  //   map: map,
-  //   icon: greenIcon,
-  //   animation: google.maps.Animation.DROP
-  // });
   if(restaurant.coupon > 0){
     var label = {text: restaurant.coupon.toString(), fontSize: "20px", fontWeight: "bold"}
     //marker.setIcon(couponIcon2);
@@ -472,28 +517,9 @@ function addRestMarker(restaurant) {
         }
     );
   }
-  var restaurantObj = new Restaurant(marker, restaurant.name, restaurant.location, restaurant.id, restaurant.dishes);
-  // marker.addListener('click', function() {
-  //   if(!isSideOpen){
-  //       document.getElementById("sidebar-wrapper").classList.toggle('open');
-  //       isSideOpen = !isSideOpen;
-  //       console.log('ckicked')
-  //   }
-  //   $('#dishSection').remove();
-  //   restaurantObj.showDetails();
-  //   this.setAnimation(google.maps.Animation.BOUNCE);
-  //   stopAnimation(this);
-  //   if(mode === "add"){
-  //     current.setPosition({lat, lng});
-  //     currentLocation = [restaurant.location[0], restaurant.location[1]]
-  //     locationInput.value = restaurant.location;
-  //     currentRestaurantId = restaurant.id;
-  //     restaurantInput.value = restaurantObj.getName();
-  //   }
-    //map.setCenter({lat, lng});
-    //mymap.setView([lat, lng], 13);
-  //});
+  var restaurantObj = new Restaurant(marker, restaurant.name, restaurant.location, restaurant.id, restaurant.dishes, restaurant.cuisines);
   markers.push(restaurantObj);
+  return marker;
 }
 
 function showDishes(name, location, dishes) {
@@ -785,19 +811,10 @@ function getLocationAddress(pos) {
     var tagNum = 0;
     var tagList = [];
     var category;
-    const categoriesList = [];
-    const listOfCategoriesAndTags = [];
-    var unique_tags = [];
     var unique_categories = [];
 
     (function() {
       console.log('categories ready');
-      if (document.getElementById('selectTags')) {
-        document.getElementById('selectTags').innerHTML = '';
-      }
-      if (document.getElementById('selectCategories')) {
-        document.getElementById('selectCategories').innerHTML = '';
-      }
       if (document.getElementById('indexCuisines')) {
         document.getElementById('indexCuisines').onchange = filterIndexCategories;
       }
@@ -813,22 +830,24 @@ function getLocationAddress(pos) {
       if (document.getElementById('selectCuisines')) {
         document.getElementById('selectCuisines').innerHTML = '';
       }
-      db.collection('categories').get().then(docs => {
-        docs.forEach(doc => {
-          let c = doc.id;
-          c = c.charAt(0).toUpperCase() + c.slice(1);
-          unique_categories.push(c);
+      if (document.getElementById('selectCategories')) {
+        document.getElementById('selectCategories').innerHTML = '';
+      }
+      if (document.getElementById('selectTags')) {
+        document.getElementById('selectTags').innerHTML = '';
+      }
+      // db.collection('categories').get().then(docs => {
+      //   docs.forEach(doc => {
+      //     let c = doc.id;
+      //     c = c.charAt(0).toUpperCase() + c.slice(1);
+      //     unique_categories.push(c);
+      //   })
 
-          categoriesList.push(doc.id);
-          var group = {name: doc.id, tags: doc.data().tags}
-          listOfCategoriesAndTags.push(group);
+        for (var key of Object.keys(CATEGORY_INGREDIENTS)) {
+          //console.log(key + " -> " + p[key])
+          unique_categories.push(key);
+        }
 
-          doc.data().tags.forEach(tag => {
-            let t = tag.toLowerCase();
-            t = t.charAt(0).toUpperCase() + t.slice(1);
-            unique_tags.push(t);
-          })
-        })
         const sb = document.querySelector('#indexList'); //index.html only
         const st = document.getElementById('selectTags'); //search.html only
         const cats = document.getElementById('indexCategories'); //index.html only
@@ -836,7 +855,7 @@ function getLocationAddress(pos) {
         const icuisines = document.getElementById('indexCuisines'); //index.html only
         const scuisines = document.getElementById('selectCuisines'); //search.html only
 
-        ["Chinese","Western","Japanese","Korean","Vietnamese","Middle-East","Indian","Thai","American","French","Italian","Fusion"]
+        Object.keys(CUISINE_CATEGORIES)
         .forEach(ucuisine => {
           if (icuisines) {
             var option = document.createElement('option');
@@ -880,28 +899,7 @@ function getLocationAddress(pos) {
             boxLabel.appendChild(box);
           }
         });
-
-        [...(new Set(unique_tags))].sort().forEach(tag => {
-          //if (sb) {
-            //const option = new Option(tag, tag);
-            //sb.add(option, undefined);
-          //}
-          if (st) {
-            var box = document.createElement('input');
-            box.type = 'checkbox';
-            box.id = tag;
-            box.className = 'checkbox';
-            box.name = "ingredients";
-            box.onclick = filterMarkers;
-            var boxLabel = document.createElement('label');
-            boxLabel.innerText = tag;
-            boxLabel.htmlFor = tag;
-
-            st.appendChild(boxLabel);
-            boxLabel.appendChild(box);
-          }
-        })
-      })
+      //})
     })();
 
     //index.html only
@@ -935,7 +933,7 @@ function getLocationAddress(pos) {
 
       let newIngredients = [];
       let indexCategory = document.getElementById('indexCategories').value;
-      newIngredients.push(...(categoryIngredients[indexCategory] || []));
+      newIngredients.push(...(CATEGORY_INGREDIENTS[indexCategory] || []));
       [...(new Set(newIngredients))].sort().forEach(tag => {
         const option = new Option(tag, tag);
         indexIngredients.add(option, undefined);
@@ -973,7 +971,7 @@ function getLocationAddress(pos) {
 
       let newIngredients = [];
       active_categories.forEach(category => {
-        newIngredients.push(...(categoryIngredients[category] || []));
+        newIngredients.push(...(CATEGORY_INGREDIENTS[category] || []));
       });
 
       [...(new Set(newIngredients))].sort().forEach(tag => {
@@ -1013,28 +1011,35 @@ function getLocationAddress(pos) {
 
       checkedBoxes = [...document.querySelectorAll('input[name=ingredients]:checked')];
       var active_ingredients = checkedBoxes.map(el => el.id);
-
+console.log("****active_cuisines", active_cuisines);
+console.log("****active_categories", active_categories);
+console.log("***markers", markers);
       markers.forEach((item, i) => {
-        if (active_categories.length === 0 && active_ingredients.length === 0) {
-          //item.marker.setVisible(true);
-          item.marker.addTo(mymap);
+        if (active_cuisines.length === 0 && active_categories.length === 0 && active_ingredients.length === 0) {
+          item.marker.remove();
         } else {
-          var marker_categories = item.dishes.map(dish => dish.category);
-          var marker_tags = [];
+          let marker_cuisines = item.cuisines;
+          let marker_categories = item.dishes.map(dish => dish.category);
+          let marker_tags = [];
           item.dishes.forEach((dish, i) => {
             marker_tags.push(...dish.tags);
           });
-          //item.marker.setVisible(false);
           item.marker.remove();
+          console.log("***marker_cuisines", marker_cuisines);
+          marker_cuisines.forEach((c, i) => {
+            console.log("***c", c);
+            if (active_cuisines.includes(c)) {
+              item.marker.addTo(mymap);
+            }
+          });
+          console.log("***marker_categories", marker_categories);
           marker_categories.forEach((c, i) => {
             if (active_categories.includes(c)) {
-              //item.marker.setVisible(true);
               item.marker.addTo(mymap);
             }
           });
           marker_tags.forEach((t, i) => {
             if (active_ingredients.includes(t)) {
-              //item.marker.setVisible(true);
               item.marker.addTo(mymap);
             }
           });
@@ -1059,12 +1064,6 @@ function getLocationAddress(pos) {
         })
       }
     }
-
-    function checkCategories(input) {
-      return categoriesList.some(x => {return(x == input)});
-    }
-
-
 
     var geoJson = {
       "type": "FeatureCollection",

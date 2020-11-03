@@ -245,8 +245,8 @@ function autocomplete(inp, cachedRestaurants) {
   }
   /*execute a function when someone clicks in the document:*/
   //clicking anywhere other than input box and autocomplete list
-  document.addEventListener("click", function (e) {
-    console.log("&&&&&&&click&&&&");
-    //closeAllLists(e.target);
-  });
+  // document.addEventListener("click", function (e) {
+  //   console.log("&&&&&&&click&&&&");
+  //   //closeAllLists(e.target);
+  // });
 }

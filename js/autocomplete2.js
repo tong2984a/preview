@@ -6,7 +6,7 @@ function autocomplete2(inp, arr) {
   inp.addEventListener("input", function(e) {
       var a, b, i, val = this.value;
       /*close any already open lists of autocompleted values*/
-      closeAllLists();
+      //closeAllLists();
       if (!val) { return false;}
       currentFocus = -1;
       /*create a DIV element that will contain the items (values):*/
@@ -17,8 +17,10 @@ function autocomplete2(inp, arr) {
       this.parentNode.appendChild(a);
       let displayCount = 0;
       for (i = 0; i < arr.length; i++) {
+        //console.log("***arr[i].substr(0, val.length).toUpperCase()", arr[i].substr(0, val.length).toUpperCase());
+        //console.log("***val.toUpperCase()", val.toUpperCase());
         /*check if the item starts with the same letters as the text field value:*/
-        if ((displayCount < 10) && (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase())) {
+        if ((displayCount < 10) && (arr[i].substr(0, val.length).toUpperCase() === val.toUpperCase())) {
           displayCount++;
           /*create a DIV element for each matching element:*/
           b = document.createElement("DIV");
@@ -35,6 +37,7 @@ function autocomplete2(inp, arr) {
               (or any other open lists of autocompleted values:*/
               closeAllLists();
           });
+          console.log("***a.", a);
           a.appendChild(b);
         }
       }
@@ -133,10 +136,12 @@ function autocomplete2(inp, arr) {
 }
 /*execute a function when someone clicks in the document:*/
 document.addEventListener("click", function (e) {
+  console.log("***addEventListener");
   if (e.target.id === 'dishInput' || e.target.id === 'restaurantInput') {
 
   } else {
     closeAllLists(e.target);
+    console.log("***closeAllLists");
   }
 });
 }

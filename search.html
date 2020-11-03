@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/sidebar.css">
   <link href="css/selectbox.css" rel="stylesheet">
   <link rel="stylesheet" href="css/leaflet.css" />
+  <link rel="stylesheet" href="css/slideshow.css" />
     <!-- Make sure you put this AFTER Leaflet's CSS -->
   <link rel="stylesheet" href="css/leaflet-search.src.css" />
   <script src="js/leaflet.js" ></script>
@@ -33,10 +34,10 @@
 
             <div class="row justify-content-center">
               <div class="col-xs-6" style="width: 40%;">
-                <input type="search" id="restaurantInput" class="form-control input-lg" placeholder="Please enter the restaurant name" style="display: none;" onchange="searchRestaurantDemo(this.value, 'search', selected)">
+                <input type="search" id="searchRestaurantInput" class="form-control input-lg" placeholder="Please enter the restaurant name" style="display: none;" onchange="searchRestaurantDemo(this.value, 'search', selected)">
                 <h6 id="restSearch"></h6>
                 <label id="searchBtn" class="btn btn-success my-2 btn-default btn-block btn-lg" onClick="(function s(){
-                  document.getElementById('restaurantInput').style.display = 'block';
+                  document.getElementById('searchRestaurantInput').style.display = 'block';
                 })()">
                   Search My Dish
                 </label>
@@ -244,71 +245,6 @@
                 return(distance < area.radius);
             }
 
-            function initAutocomplete() {
-                // Create the search box and link it to the UI element.
-                const input = document.getElementById("restaurantInput");
-                const searchBox = new google.maps.places.SearchBox(input);
-                map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-                // Bias the SearchBox results towards current map's viewport.
-                map.addListener("bounds_changed", () => {
-                    searchBox.setBounds(map.getBounds());
-                });
-                let markers = [];
-                // Listen for the event fired when the user selects a prediction and retrieve
-                // more details for that place.
-                searchBox.addListener("places_changed", () => {
-                    const places = searchBox.getPlaces();
-                    if (places.length == 0) {
-                    return;
-                    }
-                    // For each place, get the icon, name and location.
-                    const bounds = new google.maps.LatLngBounds();
-                    places.forEach(place => {
-                    if (!place.geometry) {
-                        console.log("Returned place contains no geometry");
-                        return;
-                    }
-                    const icon = {
-                        url: place.icon,
-                        size: new google.maps.Size(71, 71),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(17, 34),
-                        scaledSize: new google.maps.Size(25, 25)
-                    };
-                    // Create a marker for each place.
-                    markers.push(
-                        new google.maps.Marker({
-                        map,
-                        icon,
-                        title: place.name,
-                        position: place.geometry.location
-                        })
-                    );
-                    });
-                    map.fitBounds(bounds);
-                });
-            }
-            /* console.log(showing);
-                visualizeArea(areas[0]);
-                areas.forEach((value) => {
-                    visualizeArea(value);
-                })*/
-
-            function showList(tag) {
-                hideAllMarkers();
-                console.log('show', tag);
-                var idList;
-                var list = db.collection('tagLists').doc(tag).get().then((doc) => {
-                    idList = doc.data().docID;
-                    console.log(idList);
-                    idList.forEach((id) => {
-                        var d = db.collection('receipts').doc(id).get().then((rdoc) => {
-                            addRestMarker(rdoc.data());
-                        });
-                    });
-                })
-            }
-
             function hideAllMarkers() {
                 markers.forEach(item => item.marker.setVisible(false));
             }
@@ -343,26 +279,13 @@
             }
 
             function initMap() {
-                map = new google.maps.Map(document.getElementById('map'), {
-                    center: {lat: 22.3, lng: 114.16},
-                    zoom: 12,
-                    styles: [{
-                    featureType: 'poi',
-                    stylers: [{ visibility: 'off' }]  // Turn off points of interest.
-                    }, {
-                    featureType: 'transit.station',
-                    stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
-                    }],
-                    disableDoubleClickZoom: true,
-                    streetViewControl: false
+              console.log('initializing map');
+              db.collection('restaurants').get().then((snapshot) => {
+                snapshot.docs.forEach(doc => {
+                  var restaurantData = doc.data();
+                  let marker = addRestMarker(restaurantData, doc.id);
                 });
-                console.log('initializing map');
-                db.collection('restaurants').get().then((snapshot) => {
-                    snapshot.docs.forEach(doc => {
-                    var restaurantData = doc.data();
-                    addRestMarker(restaurantData, doc.id);
-                    });
-                });
+              });
             }
 
 </script>
