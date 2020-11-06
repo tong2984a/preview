@@ -31,7 +31,7 @@
       </p>
       <h1 class="text-center">Hello!</h1>
       <p class="text-center">
-        A simple hello could lead to wonderful things <small>v1.0.0</small>
+        A simple hello could lead to wonderful things <small>v1.1.0</small>
       </p>
     </div>
 
@@ -725,31 +725,31 @@ function upload() {
             category: category,
             tags: ($('#indexIngredients').val().split(","))
           };
+          console.log("***currentRestaurantId", currentRestaurantId);
           if(currentRestaurantId){
-            db.collection("restaurants").doc(currentRestaurantId.toString()).get().then((doc) => {
-              if(doc.exists){
-                var couponRemains = doc.data().coupon;
-                var getCoupon = false;
-                if(couponRemains > 0){
-                  couponRemains -= 1;
-                  getCoupon = true;
+            console.log("***currentRestaurantId==", currentRestaurantId == "MANA! Starstreet");
+            db.collection("restaurants").where("name", "==", "MANA! Starstreet").get().then(querySnapshot => {
+              querySnapshot.forEach(function(doc) {
+                var restaurantData = doc.data();
+                console.log("***restaurantData", restaurantData);
+                if(doc.exists){
+                  var couponRemains = doc.data().coupon;
+                  var getCoupon = false;
+                  if(couponRemains > 0){
+                    couponRemains -= 1;
+                    getCoupon = true;
+                  }
+                  //console.log("****currentRestaurantId.toString()", currentRestaurantId.toString());
+                  //if(isAccurate(currentLocation, doc.data().location)){
+                    console.log('accurate');
+                    db.collection("restaurants").doc(doc.id).update({
+                      dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
+                      coupon:  couponRemains,
+                      cuisines: firebase.firestore.FieldValue.arrayUnion(uploadCuisine)
+                    });
                 }
-                if(isAccurate(currentLocation, doc.data().location)){
-                  console.log('accurate');
-                  db.collection('restaurants').doc(currentRestaurantId.toString()).update({
-                    dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
-                    coupon:  couponRemains,
-                    cuisines: firebase.firestore.FieldValue.arrayUnion(uploadCuisine)
-                  });
-                }else{
-                  //addNewRestaurant(dishes);
-                }
-              }else{
-                //addNewRestaurant(dishes);
-              }
+              })
             })
-          }else{
-            //addNewRestaurant(dishes);
           }
         })
         .catch(function(error) {

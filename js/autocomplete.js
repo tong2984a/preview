@@ -55,6 +55,8 @@ function autocomplete(inp, cachedRestaurants) {
           (or any other open lists of autocompleted values:*/
           closeAllLists();
           console.log("****b click***");
+          currentRestaurantId = ri.name;
+          console.log("***currentRestaurantId", currentRestaurantId);
           let restaurantDishes = restaurantHash[inp.value] || [];
           console.log("restaurantHash", restaurantHash);
           console.log("restaurantDishes:", restaurantDishes);
@@ -139,6 +141,8 @@ function autocomplete(inp, cachedRestaurants) {
         b.addEventListener("click", function(e) {
           inp.value = this.getElementsByTagName("input")[0].value;
           closeAllLists();
+          currentRestaurantId = ri.name;
+          console.log("***currentRestaurantId", currentRestaurantId);
           let activeLeafletLocation = [ri.lat, ri.lng];
           let activeLeaflet = L.marker(activeLeafletLocation, {icon:
             new L.Icon({

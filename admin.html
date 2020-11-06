@@ -317,6 +317,15 @@
           })
         }
 
+        function inspectRestaurant() {
+          db.collection("restaurants").where("name", "==", "MANA! Starstreet").get().then(querySnapshot => {
+            querySnapshot.forEach(function(doc) {
+              var restaurantData = doc.data();
+              console.log("***restaurantData", restaurantData);
+            })
+          })
+        }
+
         function inspectRestaurants() {
           db.collection('restaurants').get().then((snapshot) => {
             snapshot.docs.forEach(doc => {
@@ -393,6 +402,6 @@
           })
         }
 
-        $(document).ready(inspectRestaurants());
+        $(document).ready(inspectRestaurant());
     </script>
 </body>
