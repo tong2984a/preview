@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="css/leaflet.css" />
   <link rel="stylesheet" href="css/slideshow.css" />
   <link rel="stylesheet" href="css/leaflet-search.src.css" />
+  <link rel="stylesheet" href="css/tagsinput.css" />
   <!-- Make sure you put this AFTER Leaflet's CSS -->
   <script src="js/leaflet.js" ></script>
   <style>
@@ -159,10 +160,17 @@
 
 
               <label for="indexList">Ingredient List:</label>
-            -->
-              <select id="indexList" name="indexList" multiple>
+            --><input id="indexIngredients" type="text" data-role="tagsinput" value="">
+            <!-- <select id="indexIngredients" name="indexIngredients" multiple data-role="tagsinput">
+  <option value="Amsterdam">Amsterdam</option>
+  <option value="Washington">Washington</option>
+  <option value="Sydney">Sydney</option>
+  <option value="Beijing">Beijing</option>
+  <option value="Cairo">Cairo</option>
+</select> -->
+              <!-- <select id="indexList" name="indexList" multiple>
 
-              </select>
+              </select> -->
               <!--
               <button id="btnRemove">Remove Selected Ingredient</button>
             -->
@@ -171,61 +179,61 @@
         </div>
 
         <script>
-          const btnAdd = document.querySelector('#btnAdd');
-          const btnRemove = document.querySelector('#btnRemove');
-          const sb = document.querySelector('#indexList');
-          const name = document.querySelector('#name');
-          //Regex for Valid Characters i.e. Alphabets and Numbers.
-          const regex = /^[A-Za-z\s]+$/
-
-          if (btnAdd) {
-            btnAdd.onclick = (e) => {
-              e.preventDefault();
-
-              // validate the option
-              if (name.value == '') {
-                alert('Please enter the name.');
-                return;
-              }
-
-              //Validate TextBox value against the Regex.
-              var isValid = regex.test(name.value);
-              if (!isValid) {
-                alert("Only Alphabets and Numbers allowed.");
-              }
-
-              // create a new option
-              const option = new Option(name.value, name.value);
-              // add it to the list
-              sb.add(option, undefined);
-
-              // reset the value of the input
-              name.value = '';
-              name.focus();
-            };
-          };
-
-          // remove selected option
-          if (btnRemove) {
-            btnRemove.onclick = (e) => {
-              e.preventDefault();
-
-              // save the selected option
-              let selected = [];
-
-              for (let i = 0; i < sb.options.length; i++) {
-                selected[i] = sb.options[i].selected;
-              }
-
-              // remove all selected option
-              let index = sb.options.length;
-              while (index--) {
-                if (selected[index]) {
-                  sb.remove(index);
-                }
-              }
-            }
-          };
+          // const btnAdd = document.querySelector('#btnAdd');
+          // const btnRemove = document.querySelector('#btnRemove');
+          // const sb = document.querySelector('#indexList');
+          // const name = document.querySelector('#name');
+          // //Regex for Valid Characters i.e. Alphabets and Numbers.
+          // const regex = /^[A-Za-z\s]+$/
+          //
+          // if (btnAdd) {
+          //   btnAdd.onclick = (e) => {
+          //     e.preventDefault();
+          //
+          //     // validate the option
+          //     if (name.value == '') {
+          //       alert('Please enter the name.');
+          //       return;
+          //     }
+          //
+          //     //Validate TextBox value against the Regex.
+          //     var isValid = regex.test(name.value);
+          //     if (!isValid) {
+          //       alert("Only Alphabets and Numbers allowed.");
+          //     }
+          //
+          //     // create a new option
+          //     const option = new Option(name.value, name.value);
+          //     // add it to the list
+          //     sb.add(option, undefined);
+          //
+          //     // reset the value of the input
+          //     name.value = '';
+          //     name.focus();
+          //   };
+          // };
+          //
+          // // remove selected option
+          // if (btnRemove) {
+          //   btnRemove.onclick = (e) => {
+          //     e.preventDefault();
+          //
+          //     // save the selected option
+          //     let selected = [];
+          //
+          //     for (let i = 0; i < sb.options.length; i++) {
+          //       selected[i] = sb.options[i].selected;
+          //     }
+          //
+          //     // remove all selected option
+          //     let index = sb.options.length;
+          //     while (index--) {
+          //       if (selected[index]) {
+          //         sb.remove(index);
+          //       }
+          //     }
+          //   }
+          // };
         </script>
       </div>
     </div>
@@ -318,6 +326,7 @@
 <script src="js/bootstrap.bundle.min.js" type="text/javascript"></script>
 <script src="js/autocomplete.js"></script>
 <script src="js/autocomplete2.js"></script>
+<script src="js/tagsinput.js"></script>
 <script src="js/leaflet-search.src.js"></script>
 <script defer src="js/mapHelper.js" type="text/javascript"></script>
 <script>
@@ -433,7 +442,6 @@ var isVegan;
 var isBuddhistFriendly;
 var isAllNatural;
 var referenceID;
-var tagList;
 // added in 23/7
 var imgURL;
 
@@ -455,6 +463,16 @@ var newRestaurantId;
 var dishArray = [];
 var restaurantHash = {};
 const mode = "add";
+
+if (typeof(Storage) !== "undefined") {
+  emailInput.innerHTML = localStorage.getItem("email");
+  emailInput.addEventListener("input", function(e) {
+    var val = this.value;
+    if (ValidateEmail(emailInput)) {
+      localStorage.setItem("email", emailInput.value.trim());
+    }
+  });
+}
 
 function visualizeArea(area) {
     console.log(area.name);
@@ -691,7 +709,7 @@ function upload() {
           location: [currentLat, currentLng],
           restaurant: restaurantInput.value,
           imageName: imageFileName,
-          tags: tagList,
+          tags: ($('#indexIngredients').val().split(",")),
           approved: false,
           category: category,
           cuisine: uploadCuisine
@@ -705,7 +723,7 @@ function upload() {
             dish: dishInput.value,
             fileURL: imgURL,
             category: category,
-            tags: tagList
+            tags: ($('#indexIngredients').val().split(","))
           };
           if(currentRestaurantId){
             db.collection("restaurants").doc(currentRestaurantId.toString()).get().then((doc) => {

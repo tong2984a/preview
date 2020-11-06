@@ -38,6 +38,7 @@
         <h3>The button below will MERGE all the restaurants in firebase, just for cleaning data, </h3>
         <button onclick="mergeRestaurants()">Merge Restaurants</button>
     </div>
+    <div id="myData"></div>
 
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
@@ -45,6 +46,50 @@
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-analytics.js"></script>
 
     <script>
+    function initializeRestaurantsFromFile() {
+      fetch("/data/sort-veggie.json")
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        fetch("/data/api-response101.json")
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (geocodes) {
+          appendResults(data, geocodes.results);
+        })
+        .catch(function (err) {
+          console.log('error: ' + err);
+        });
+      })
+      .catch(function (err) {
+        console.log('error: ' + err);
+      });
+    }
+
+    function appendResults(data, results) {
+      console.log("data:", data.length);
+      console.log("results:", results.length);
+      var mainContainer = document.getElementById("myData");
+
+      var div = document.createElement("div");
+      div.innerHTML = '[';
+      mainContainer.appendChild(div);
+      for (var i = 0; i < results.length; i++) {
+        data[i].lat = results[i].locations[0].latLng.lat;
+        data[i].lng = results[i].locations[0].latLng.lng;
+        div = document.createElement("div");
+        div.innerHTML = `{"SS":"${data[i].SS}", "ADR":"${data[i].ADR}", "DIST":"${data[i].DIST}", "lat":${data[i].lat}, "lng":${data[i].lng}},`;
+        mainContainer.appendChild(div);
+      }
+      div = document.createElement("div");
+      div.innerHTML = ']';
+      mainContainer.appendChild(div);
+      console.log(data);
+    }
+
+
         const firebaseConfig = {
             apiKey: "AIzaSyBg34hCq_jGHdj-HNWi2ZjfqhM2YgWq4ek",
             authDomain: "pay-a-vegan.firebaseapp.com",
@@ -169,6 +214,185 @@
             db.collection('categories').doc('Appetizer').set({tags: [], restaurant: []});
         }
 
-        $(document).ready(showLog());
+        const CUISINE_CATEGORIES = {
+          "Asian": [],
+          "Chinese": [],
+          "Japanese": [],
+          "Korean": [],
+          "Singaporean": [],
+          "Thai": [],
+          "Vietnamese": [],
+          "Indian": [],
+          "Sri Lankan": [],
+          "Middle-East": [],
+          "Lebanese": [],
+          "Turkish": [],
+          "Western": [],
+          "American": [],
+          "Australian": [],
+          "French": [],
+          "Greek": [],
+          "Italian": [],
+          "Portuguese": [],
+          "Spanish": [],
+          "Mexican": [],
+          "Fusion": []
+        };
+
+        const CATEGORY_INGREDIENTS = {
+          "Bar": ["Vegan", "No Animal Extract", "Non-alcohol", "Dairy Free", "Egg Free"],
+          "Dessert & Fruits": ["Dairy Free", "Egg Free", "Nuts Free", "Sugar Free", "Gluten Free"],
+          "Coffee & Tea": ["Dairy Free", "Organic", "Plant-Based Milk"],
+          "Drinks": [],
+          "Fast Food": ["Dairy Free", "Egg Free", "Plant-Based Meat", "MSG Free"],
+          "Salad": ["Dairy Free", "Egg Free", "Plant-Based Meat", "Nuts Free", "Garlic Free", "Organic"],
+          "Main Dish": ["Vegan", "Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
+          "Dim Sum": ["Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
+          "Noodles": ["Dairy Free", "Egg Free", "No Animal Extract", "Rice Noodle", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
+          "Appetizer": ["Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
+          "Sushi": ["Dairy Free", "Egg Free", "Plant-Based Seafood", "Konjac", "Wasabi", "Soy Free", "No Animal Extract"],
+          "Sashimi": ["Dairy Free", "Egg Free", "Plant-Based Seafood", "Konjac", "Wasabi", "Soy Free", "No Animal Extract"],
+          "Burger": ["Dairy Free", "Egg Free", "Garlic Free", "Honey Free", "Gluten Free", "Soy Free", "Plant-Based Meat", "Impossible Burger", "Mushroom"],
+          "Cheese": ["Dairy Free" , "Egg Free", "Garlic Free", "Honey Free", "Gluten Free", "Soy Free", "Nuts", "Spice", "Herbs"]
+        };
+
+        function initializeRestaurantsCuisines() {
+          let x = [];
+          db.collection('restaurants').get().then((snapshot) => {
+            snapshot.docs.forEach(doc => {
+              var restaurantData = doc.data();
+              restaurantData.dishes.forEach((item, i) => {
+                if (Object.keys(CUISINE_CATEGORIES).includes(item.category)) {
+                  x.push(item.category);
+                }
+              });
+
+              db.collection('restaurants').doc(restaurantData.id).update({
+                cuisines: firebase.firestore.FieldValue.arrayUnion(...x)
+              });
+              console.log("****restaurantData.name", restaurantData.name);
+              console.log("****restaurantData.cuisines", restaurantData.cuisines);
+              console.log("****x", [...(new Set(x))].sort());
+            });
+          });
+        }
+
+        function inspectCategories() {
+          db.collection('categories').get().then((snapshot) => {
+            var knownCategories = [];
+            var unknownCategories = [];
+            snapshot.docs.forEach(doc => {
+              var categoryData = doc.data();
+              let category = doc.id;
+              Object.keys(CATEGORY_INGREDIENTS).includes(category) && knownCategories.push(category);
+              Object.keys(CATEGORY_INGREDIENTS).includes(category) || unknownCategories.push(category);
+
+              var knownIngredients = [];
+              var unknownIngredients = [];
+              let all_ingredients = CATEGORY_INGREDIENTS[category] || [];
+              knownIngredients = categoryData.tags.reduce((a, tag) => ((all_ingredients.includes(tag) && a.push(tag)), a), []);
+              unknownIngredients = categoryData.tags.reduce((a, tag) => ((all_ingredients.includes(tag) || a.push(tag)), a), []);
+
+              if (unknownIngredients?.length) {
+                console.log("**category", category);
+                console.log("***ingredients known", knownIngredients);
+                console.log("***ingredients unknown", unknownIngredients);
+              }
+            });
+            if (unknownCategories?.length) {
+              console.log("***categories known", knownCategories);
+              console.log("***categories unknown", unknownCategories);
+            }
+          });
+        }
+
+        function fixCategories() {
+          Object.keys(CATEGORY_INGREDIENTS).forEach((category, i) => {
+            let ingredients = CATEGORY_INGREDIENTS[category];
+            console.log("change category", category);
+            console.log("change ingredients", ingredients);
+            db.collection('categories').doc(category).set({
+              tags: ingredients
+            });
+          })
+        }
+
+        function inspectRestaurants() {
+          db.collection('restaurants').get().then((snapshot) => {
+            snapshot.docs.forEach(doc => {
+              var restaurantData = doc.data();
+              var knownCuisines = restaurantData.cuisines.reduce((a, cuisine) => ((Object.keys(CUISINE_CATEGORIES).includes(cuisine) && a.push(cuisine)), a), []);
+              var unknownCuisines = restaurantData.cuisines.reduce((a, cuisine) => ((Object.keys(CUISINE_CATEGORIES).includes(cuisine) || a.push(cuisine)), a), []);
+
+              var knownCategories = restaurantData.dishes.reduce((a, dish) => ((Object.keys(CATEGORY_INGREDIENTS).includes(dish.category) && a.push(dish.category)), a), []);
+              var unknownCategories = restaurantData.dishes.reduce((a, dish) => ((Object.keys(CATEGORY_INGREDIENTS).includes(dish.category) || a.push(dish.category)), a), []);
+
+              var knownIngredients = [];
+              var unknownIngredients = [];
+              restaurantData.dishes.forEach((dish, i) => {
+                let all_ingredients = CATEGORY_INGREDIENTS[dish.category] || [];
+                knownIngredients = dish.tags.reduce((a, tag) => ((all_ingredients.includes(tag) && a.push(tag)), a), []);
+                unknownIngredients = dish.tags.reduce((a, tag) => ((all_ingredients.includes(tag) || a.push(tag)), a), []);
+              });
+
+              if (unknownCuisines?.length || unknownCategories?.length || unknownIngredients?.length) {
+                console.log("**restaurantData.id", restaurantData.id);
+                console.log("***cuisines known", knownCuisines);
+                console.log("***cuisines unknown", unknownCuisines);
+                console.log("***categories known", knownCategories);
+                console.log("***categories unknown", unknownCategories);
+                console.log("***ingredients known", knownIngredients);
+                console.log("***ingredients unknown", unknownIngredients);
+              }
+            });
+          });
+        }
+
+        function fixRestaurant() {
+          var docId = "XOhqBRtXjpK7dz7RIaAe";
+          var dishes = [];
+          var newCategory = "Appetizer";
+          var oldTag = "";
+          var newTag = "";
+          var newTags = ["Dairy Free"];
+          var dishIndex = 1;
+
+          db.collection('restaurants').doc(docId).get().then(doc => {
+            var restaurantData = doc.data();
+            dishes = restaurantData.dishes;
+
+            if (newCategory.length) {
+              console.log("change category");
+              dishes[dishIndex].category = newCategory;
+              db.collection('restaurants').doc(docId).update({
+                dishes: dishes
+              });
+            }
+
+            if (newTags.length) {
+              console.log("change tags");
+              dishes[dishIndex].tags = newTags;
+              db.collection('restaurants').doc(docId).update({
+                dishes: dishes
+              });
+            }
+
+            if (newTag.length) {
+              console.log("change tag");
+              var tags = dishes[dishIndex].tags;
+              var index = tags.indexOf(oldTag);
+              if (index !== -1) {
+                tags[index] = newTag;
+              }
+              db.collection('restaurants').doc(docId).update({
+                dishes: dishes
+              });
+            }
+
+            console.log("new dishes:", dishes);
+          })
+        }
+
+        $(document).ready(inspectRestaurants());
     </script>
 </body>

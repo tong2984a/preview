@@ -136,12 +136,12 @@ function autocomplete2(inp, arr) {
 }
 /*execute a function when someone clicks in the document:*/
 document.addEventListener("click", function (e) {
-  console.log("***addEventListener");
+  //console.log("***addEventListener");
   if (e.target.id === 'dishInput' || e.target.id === 'restaurantInput') {
 
   } else {
     closeAllLists(e.target);
-    console.log("***closeAllLists");
+    //console.log("***closeAllLists");
   }
 });
 }

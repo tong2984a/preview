@@ -685,38 +685,6 @@ function getLocationAddress(pos) {
     var r = document.location.reload();
   }
 
-  function newMarker() {
-    //add the yellow icon to show the new upload data
-    console.log("making marker");
-      var img = "<img src='" + imgURL + "' style='width: 125px;'>";
-      var tagString = '';
-      var makeTagString = tagList.forEach((tag) => {
-          tagString += '#' + tag + '  ';
-      });
-      var marker = new google.maps.Marker({
-          position: {lat: currentLocation[0], lng: currentLocation[1]},
-          map: map,
-          icon: yellowIcon,
-          animation: google.maps.Animation.BOUNCE
-      });
-      marker.addListener('click', function() {
-        var infowindow = new google.maps.InfoWindow({
-          content:'<div><h6> Restaurant: ' +
-                  restaurantInput.value +
-                  '</h6><h6> Dish: ' +
-                  dishInput.value +
-                  '<h6></div>' +
-                  '<div>' +
-                  img +
-                  '</div>' +
-                  '<div style="width: 150px;overflow: auto;"><h6>Tags : ' +
-                  tagString +
-                  '<h6></div>'
-        });
-        infowindow.open(map, marker);
-      })
-  }
-
   function btnClick(btn) {
     //to add the filter requirment and call the restaurant filtering function
     var isClicked;
@@ -848,7 +816,7 @@ function getLocationAddress(pos) {
           unique_categories.push(key);
         }
 
-        const sb = document.querySelector('#indexList'); //index.html only
+        //const sb = document.querySelector('#indexList'); //index.html only
         const st = document.getElementById('selectTags'); //search.html only
         const cats = document.getElementById('indexCategories'); //index.html only
         const scats = document.getElementById('selectCategories'); //search.html only
@@ -904,11 +872,12 @@ function getLocationAddress(pos) {
 
     //index.html only
     function uploadTags() {
-      tagList = [];
       let uploadCuisine = document.getElementById('indexCuisines').value;
       category = document.getElementById('indexCategories').value;
-      const sb = document.querySelector('#indexList');
-      tagList = [...sb.options].map(el => el.value);
+      //const sb = document.querySelector('#indexIngredients');
+      tagList = $('#indexIngredients').val().split(",");
+      //tagList = [...sb.options].map(el => el.value);
+      //console.log("***tagList", tagList);
       db.collection('categories').doc(category).update({
         tags: firebase.firestore.FieldValue.arrayUnion(...tagList)
       })
@@ -926,20 +895,32 @@ function getLocationAddress(pos) {
 
     //index.html Only
     function filterIndexIngredients() {
-      let indexIngredients = document.querySelector('#indexList');
-      while (indexIngredients.lastChild) {
-        indexIngredients.removeChild(indexIngredients.lastChild);
-      }
+      //let indexIngredients = document.querySelector('#indexIngredients');
+      $('#indexIngredients').tagsinput('removeAll');
+      // while (indexIngredients.lastChild) {
+      //   indexIngredients.removeChild(indexIngredients.lastChild);
+      // }
 
       let newIngredients = [];
       let indexCategory = document.getElementById('indexCategories').value;
       newIngredients.push(...(CATEGORY_INGREDIENTS[indexCategory] || []));
       [...(new Set(newIngredients))].sort().forEach(tag => {
-        const option = new Option(tag, tag);
-        indexIngredients.add(option, undefined);
+        // const option = new Option(tag, tag);
+        // indexIngredients.add(option, undefined);
+        $('#indexIngredients').tagsinput('add', tag);
+        console.log("***tag", tag);
       })
+//console.log("***newIngredients", newIngredients);
+//$('#indexIngredients').tagsinput('refresh');
+// $('#indexIngredients').tagsinput('add', 'some tag2');
+//$('#indexIngredients').tagsinput('refresh');
+console.log("***select.val refresh before add jquery", $('#indexIngredients').val());
+//$('#indexIngredientsInput').tagsinput('add', "jQuery", false);
+//console.log("***select.val refresh after add jquery", $('#indexIngredients').val());
+//$('#indexIngredientsInput').tagsinput('add', "hi", false);
+// $('#indexIngredientsInput').tagsinput('add', { "value": 2, "text": "Script"});
 
-      if (newIngredients.length > 0) {
+      if ($('#indexIngredients').val().length > 0) {
         document.querySelector('#indexIngredientBlock').style.display = 'block';
       } else {
         document.querySelector('#indexIngredientBlock').style.display = 'none';
@@ -1004,45 +985,36 @@ function getLocationAddress(pos) {
     // search.html only
     function filterMarkers() {
       var checkedBoxes = [...document.querySelectorAll('input[name=cuisines]:checked')];
-      var active_cuisines = checkedBoxes.map(el => el.id);
+      var active_cuisines = checkedBoxes.map(el => el.id.toUpperCase());
 
       checkedBoxes = [...document.querySelectorAll('input[name=categories]:checked')];
-      var active_categories = checkedBoxes.map(el => el.id);
+      var active_categories = checkedBoxes.map(el => el.id.toUpperCase());
 
       checkedBoxes = [...document.querySelectorAll('input[name=ingredients]:checked')];
-      var active_ingredients = checkedBoxes.map(el => el.id);
-console.log("****active_cuisines", active_cuisines);
-console.log("****active_categories", active_categories);
-console.log("***markers", markers);
+      var active_ingredients = checkedBoxes.map(el => el.id.toUpperCase());
+       // console.log("****active_cuisines", active_cuisines);
+       // console.log("****active_categories", active_categories);
+       // console.log("***active_ingredients", active_ingredients);
       markers.forEach((item, i) => {
-        if (active_cuisines.length === 0 && active_categories.length === 0 && active_ingredients.length === 0) {
-          item.marker.remove();
-        } else {
-          let marker_cuisines = item.cuisines;
-          let marker_categories = item.dishes.map(dish => dish.category);
-          let marker_tags = [];
-          item.dishes.forEach((dish, i) => {
-            marker_tags.push(...dish.tags);
-          });
-          item.marker.remove();
-          console.log("***marker_cuisines", marker_cuisines);
-          marker_cuisines.forEach((c, i) => {
-            console.log("***c", c);
-            if (active_cuisines.includes(c)) {
-              item.marker.addTo(mymap);
-            }
-          });
-          console.log("***marker_categories", marker_categories);
-          marker_categories.forEach((c, i) => {
-            if (active_categories.includes(c)) {
-              item.marker.addTo(mymap);
-            }
-          });
-          marker_tags.forEach((t, i) => {
-            if (active_ingredients.includes(t)) {
-              item.marker.addTo(mymap);
-            }
-          });
+        item.marker.remove();
+        if (active_cuisines.length > 0 || active_categories.length > 0 || active_ingredients.length > 0) {
+          let marker_cuisines = item.cuisines.map(c => c.toUpperCase());
+          let marker_categories = item.dishes.map(dish => dish.category.toUpperCase());
+          let marker_tags = item.dishes.reduce((a, o) => (a.push(...o.tags), a.map(tag => tag.toUpperCase())), []);
+
+          let hasCuisine = marker_cuisines.reduce((a, marker_cuisine) => (a || active_cuisines.includes(marker_cuisine)), false);
+          let hasCategory = marker_categories.reduce((a, marker_category) => (a || active_categories.includes(marker_category)), false);
+          let hasIngredient = marker_tags.reduce((a, marker_tag) => (a || active_ingredients.includes(marker_tag)), false);
+          // console.log("***hasCuisine", hasCuisine);
+          // console.log("***hasCategory", hasCategory);
+          // console.log("***hasIngredient", hasIngredient);
+          // console.log("***marker_cuisines", marker_cuisines);
+          // console.log("***marker_categories", marker_categories);
+          // console.log("***marker_tags", marker_tags);
+          if (hasCuisine && hasCategory && hasIngredient) {
+            console.log("***item", item);
+            item.marker.addTo(mymap);
+          }
         }
       });
     }
