@@ -1,11 +1,6 @@
 var isSideOpen = false;
 var selected = [];
 var filterNumber = 0;
-//var blueIcon = {url: 'https://maps.google.com/mapfiles/ms/micons/blue-dot.png', scaledSize: new google.maps.Size(45, 45)};
-//var greenIcon = {url: 'https://maps.gstatic.com/mapfiles/markers2/marker_greenV.png', scaledSize: new google.maps.Size(30, 45)};
-//var yellowIcon = {url: 'https://maps.google.com/mapfiles/ms/micons/yellow-dot.png', scaledSize: new google.maps.Size(45, 45)};
-//var couponIcon = {url: "https://img.icons8.com/material-rounded/48/000000/location-marker.png"}
-//var couponIcon2 = {url: "https://img.icons8.com/fluent/48/000000/map.png", scaledSize: new google.maps.Size(40, 40)}
 const areas = [
   //kowloon
   {name: "kwuntong", center: [22.311705, 114.223108], radius: 750},
@@ -274,47 +269,6 @@ class Dish {
   }
 }
 
-class CurrentMarker {
-  constructor(map){
-    this.location = [22.3, 114.15];
-    console.log("making Current marker");
-    this.marker = new google.maps.Marker({
-        position: {lat: 22.3, lng: 114.15},
-        map: map,
-        draggable: true,
-        title: 'here is me',
-        icon: {url: 'https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi.png', scaledSize: new google.maps.Size(20, 35)},
-        zIndex: 1000
-    });
-    this.marker.addListener('dragend', function() {
-        var markcoords = this.getPosition();
-        this.location = [markcoords.lat(), markcoords.lng()];
-        locationInput.value = markcoords;
-        map.setCenter(markcoords);
-        //the function below need to pay.
-        //getLocationAddress(markcoords);
-    });
-  }
-
-  getLocation() {
-    return this.location;
-  }
-
-  //set the location of the marker
-  setLocation(lat, lng) {
-    this.location = [lat, lng];
-    this.marker.setPosition({lat, lng});
-  }
-
-  lat() {
-    return this.location[0];
-  }
-
-  lng() {
-    return this.location[1];
-  }
-}
-
 //show the side bar
 function toggleSidebar() {
     document.getElementById("sidebar-wrapper").classList.toggle('open');
@@ -429,18 +383,6 @@ function searchRestaurantDemo(input, mode, selected = []) {
           }
         })
     }
-    // if(mode === "search"){}
-    // if(isFilter){
-    //   document.getElementById('restSearch').innerText = count + ' restaurant found under the filter requirment(s)';
-    // }else{
-    //   document.getElementById('restSearch').innerText = count + ' restaurant found';
-    // }
-    // if(count > 0){
-    //     document.getElementById('restSearch').style.color = 'rgb(0,255,0)'
-    // }else{
-    //     document.getElementById('restSearch').style.color = 'rgb(255,0,0)'
-    //     markers.forEach(item => item.marker.setVisible(true));
-    // };
 }
 
 //add the marker on a restaurant and create a Restaurant object
@@ -458,7 +400,6 @@ function addRestMarker(restaurant) {
     })
   }); //.addTo(mymap);
   marker.on('click', (e) => {
-    let feature = geoJson.features[0];
     var images = restaurant.dishes;
     var slideshowContent = '';
     for(var i = 0; i < images.length; i++) {
@@ -550,135 +491,11 @@ function showDishes(name, location, dishes) {
   })
 }
 
-//Ricardo: get the location of the restaurant
-function addMarker(restaurant, iconUse) {
-    var img = "<img src='" + restaurant.fileURL + "' style='width: 125px;'>";
-    var tags = restaurant.tags;
-    var tagString = '';
-    let name = restaurant.restaurant;
-    var makeTagString = tags.forEach((tags) => {
-      if(tags.value == true){
-        tagString += '#' + tags.name + '  ';
-      };
-    });
-    var marker = new google.maps.Marker({
-        position: {lat: restaurant.location[0], lng: restaurant.location[1]},
-        map: map,
-        icon: iconUse,
-    });
-
-    marker.addListener('click', function() {
-      var infowindow = new google.maps.InfoWindow({
-        content:'<div><h6> Restaurant: ' +
-                name +
-                '</h6><h6> Dish: ' +
-                restaurant.dish +
-                '<h6></div>' +
-                '<div>' +
-                img +
-                '</div>' +
-                '<div style="width: 150px;overflow: auto;"><h6>Tags : ' +
-                tagString +
-                '<h6></div>'
-      });
-      infowindow.open(map, marker);
-      map.setCenter(this.position);
-      currentLocation = [this.position.lat() ,this.position.lng()];
-      if(current)current.setPosition(this.position);
-      document.getElementById('restaurantInput').value = name;
-      console.log(restaurant.location)
-    });
-    markers.push({marker, name});
-}
-
-//called from setLocation
-function addCurrentMarker(pos) {
-  //create the red marker that represent the current prosition
-    console.log("adding Current marker");
-    current = new google.maps.Marker({
-        position: pos,
-        map: map,
-        draggable: true,
-        title: 'here is me',
-        icon: {url: 'https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi.png', scaledSize: new google.maps.Size(20, 35)},
-        zIndex: 1000,
-    });
-
-    //var restaurants = [...(new Set(markers.map(el => el.name)))].sort();
-    autocomplete(document.getElementById("restaurantInput"), markers);
-    current.addListener('dragend', function() {
-        var markcoords = this.getPosition();
-        current.setPosition(markcoords);
-        locationInput.value = markcoords;
-        currentLocation = [markcoords.lat(), markcoords.lng()];
-        map.setCenter(markcoords);
-        //the function below need to pay.
-        //getLocationAddress(markcoords);
-    });
-}
-
-function error(err) {
-    console.warn(`ERROR(${err.code}): ${err.message}`);
-  //  locationInput.value = currentLocation;
-    var pos = new google.maps.LatLng(defaultLocation[0], defaultLocation[1]);
-    addCurrentMarker(pos);
-    map.setCenter(pos);
-    map.setZoom(18);
-    locationInput.value = pos;
-    document.getElementById('after-location-loaded').style.display = 'block';
-    console.log("location get");
-};
-
 var options = {
     enableHighAccuracy: true,
     timeout: 5000,
     maximumAge: 0
 };
-
-function getCurrentLocation(map) {
-    console.log("updating location");
-    navigator.geolocation.getCurrentPosition(setLocation, error, options);
-    document.getElementById('mapSection').style.display = 'block';
-    //document.getElementById('locationInput').style.display = 'block';
-    document.getElementById('instruction').style.display = 'block';
-    document.getElementById('locationLabel').style.display = 'none';
-    document.getElementById('address').style.display = 'none';
-    document.getElementById('addressConfirm').style.display = 'none';
-    // document.getElementById('restaurantInput').style.display = 'block';
-    // document.getElementById('dishInput').style.display = 'block';
-    // document.getElementById('helloMessageInput').style.display = 'block';
-    // document.getElementById('uploadLabel').style.display = 'block';
-    //document.getElementById('after-location-loaded').style.display = 'block';
-    return true;
-}
-
-function setLocation(position) {
-  console.log("location set");
-  currentLocation = [position.coords.latitude, position.coords.longitude];
-  var currentLocationLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-  locationInput.value = currentLocationLatLng;
-  addCurrentMarker(currentLocationLatLng);
-  map.setCenter(currentLocationLatLng);
-  map.setZoom(18);
-  document.getElementById('after-location-loaded').style.display = 'block';
-  console.log("location get");
-}
-
-function getLocationAddress(pos) {
-  geocoder = new google.maps.Geocoder();
-  geocoder.geocode(
-    {
-      location: pos
-    }
-    ,function (result, status){
-      if(status == google.maps.GeocoderStatus.OK){
-        document.getElementById('address').value = result[0].formatted_address;
-      }else{
-        console.log('connot format the address');
-      }
-    }
-  );
-}
 
   //refresh map function
   function refreshMap() {
@@ -914,7 +731,7 @@ function getLocationAddress(pos) {
 //$('#indexIngredients').tagsinput('refresh');
 // $('#indexIngredients').tagsinput('add', 'some tag2');
 //$('#indexIngredients').tagsinput('refresh');
-console.log("***select.val refresh before add jquery", $('#indexIngredients').val());
+
 //$('#indexIngredientsInput').tagsinput('add', "jQuery", false);
 //console.log("***select.val refresh after add jquery", $('#indexIngredients').val());
 //$('#indexIngredientsInput').tagsinput('add', "hi", false);
@@ -992,9 +809,10 @@ console.log("***select.val refresh before add jquery", $('#indexIngredients').va
 
       checkedBoxes = [...document.querySelectorAll('input[name=ingredients]:checked')];
       var active_ingredients = checkedBoxes.map(el => el.id.toUpperCase());
-       // console.log("****active_cuisines", active_cuisines);
-       // console.log("****active_categories", active_categories);
-       // console.log("***active_ingredients", active_ingredients);
+        console.log("****active_cuisines", active_cuisines);
+        console.log("****active_categories", active_categories);
+        console.log("***active_ingredients", active_ingredients);
+        console.log("***markers", markers);
       markers.forEach((item, i) => {
         item.marker.remove();
         if (active_cuisines.length > 0 || active_categories.length > 0 || active_ingredients.length > 0) {
@@ -1005,12 +823,12 @@ console.log("***select.val refresh before add jquery", $('#indexIngredients').va
           let hasCuisine = marker_cuisines.reduce((a, marker_cuisine) => (a || active_cuisines.includes(marker_cuisine)), false);
           let hasCategory = marker_categories.reduce((a, marker_category) => (a || active_categories.includes(marker_category)), false);
           let hasIngredient = marker_tags.reduce((a, marker_tag) => (a || active_ingredients.includes(marker_tag)), false);
-          // console.log("***hasCuisine", hasCuisine);
-          // console.log("***hasCategory", hasCategory);
-          // console.log("***hasIngredient", hasIngredient);
-          // console.log("***marker_cuisines", marker_cuisines);
-          // console.log("***marker_categories", marker_categories);
-          // console.log("***marker_tags", marker_tags);
+           console.log("***hasCuisine", hasCuisine);
+           console.log("***hasCategory", hasCategory);
+           console.log("***hasIngredient", hasIngredient);
+           console.log("***marker_cuisines", marker_cuisines);
+           console.log("***marker_categories", marker_categories);
+           console.log("***marker_tags", marker_tags);
           if (hasCuisine && hasCategory && hasIngredient) {
             console.log("***item", item);
             item.marker.addTo(mymap);
@@ -1036,65 +854,6 @@ console.log("***select.val refresh before add jquery", $('#indexIngredients').va
         })
       }
     }
-
-    var geoJson = {
-      "type": "FeatureCollection",
-      features: [{
-        type: 'Feature',
-        "geometry": { "type": "Point", "coordinates": [22.263204, 114.141855]},
-        "properties": {
-          'Title': 'LOVING HUT 愛家國際餐飲',
-          'Head': '77 NGAU TAU KOK ROAD, KOWLOON',
-          'Description': 'Winner of VegNews 2010 Favorite Vegan Restaurant award.',
-          'URL': 'http://www.lovinghut.com/portal/hk/',
-          'images': [
-            ['https://firebasestorage.googleapis.com/v0/b/pay-a-vegan.appspot.com/o/images%2FMon%20Oct%2012%202020%2006%3A40%3A19%20GMT-0400%20(Eastern%20Daylight%20Time).jpg?alt=media&token=acc68f1a-1eb8-4f5f-825c-2ce2382188fe','Fresh Ingredients.'],
-            ['https://firebasestorage.googleapis.com/v0/b/pay-a-vegan.appspot.com/o/images%2FMon%20Sep%2007%202020%2005%3A40%3A36%20GMT-0400%20(Eastern%20Daylight%20Time).jpg?alt=media&token=b6b73a68-a30d-4ba0-98d1-28370834702b', 'Comtemporary brunch and meals'],
-            ['https://firebasestorage.googleapis.com/v0/b/pay-a-vegan.appspot.com/o/images%2FWed%20Sep%2009%202020%2004%3A00%3A27%20GMT-0400%20(Eastern%20Daylight%20Time).jpg?alt=media&token=0e417833-9709-4c74-b1d9-6fabfc1b24d0', 'Convenient Location. Nice atmosphere.']
-          ]
-        }
-      }, {
-        type: 'Feature',
-        "geometry": { "type": "Point", "coordinates": [22.261456, 114.176531]},
-        "properties": {
-          'Title': 'LOCK CHA TEA HOUSE',
-          'Head': '10 HOLLYWOOD ROAD, CENTRAL, HONG KONG',
-          'Description': 'The best teahouse in Hong Kong',
-          'URL': 'https://www.lockcha.com/en/',
-          'images': [
-            ['https://firebasestorage.googleapis.com/v0/b/pay-a-vegan.appspot.com/o/images%2FFri%20Sep%2025%202020%2019%3A02%3A47%20GMT%2B0800%20(HKT).jpg?alt=media&token=02d087ab-a91e-4d6f-a2f4-5d1597a8d97f','Tasty.'],
-            ['https://firebasestorage.googleapis.com/v0/b/pay-a-vegan.appspot.com/o/images%2FSun%20Oct%2018%202020%2000%3A14%3A39%20GMT-0400%20(Eastern%20Daylight%20Time).jpg?alt=media&token=28cdf0ff-71fb-46e4-b266-8e27b4a8c222', 'Good breakfast.'],
-            ['https://firebasestorage.googleapis.com/v0/b/pay-a-vegan.appspot.com/o/images%2FTue%20Sep%2029%202020%2011%3A34%3A18%20GMT%2B0800%20(HKT).jpg?alt=media&token=b80d6e8b-b07b-4918-8574-070fd99b34df','Friendly service. Good dessert.']
-          ]
-
-        }
-      }]};
-
-
-      //var map = L.map('map').setView([52.105, -0.09], 9);
-
-      //L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      // attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      // subdomains: ['a','b','c']
-      //}).addTo( map );
-
-      var geojsonMarkerOptions = {
-        radius: 8,
-        fillColor: "#ff7800",
-        color: "#000",
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8
-      };
-      var sitis =  L.geoJson(geoJson, {
-        pointToLayer: function (feature, latlng) {
-          feature.properties.myKey = feature.properties.Title + ', ' + feature.properties.Head
-          return L.circleMarker(latlng, geojsonMarkerOptions);
-        },
-        onEachFeature: onEachFeature
-      }).addTo(mymap);
-
-    //L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="openstreetmap.org/copyright">OpenStreetMap</a>', subdomains: ['a','b','c'] }).addTo( map )
 
     function onEachFeature(feature, layer) {
       // does this feature have a property named popupContent?
