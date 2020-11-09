@@ -17,11 +17,12 @@ function autocomplete2(inp, arr) {
       this.parentNode.appendChild(a);
       let displayCount = 0;
       for (i = 0; i < arr.length; i++) {
-        //console.log("***arr[i].substr(0, val.length).toUpperCase()", arr[i].substr(0, val.length).toUpperCase());
-        //console.log("***val.toUpperCase()", val.toUpperCase());
+        console.log("***arr[i].substr(0, val.length).toUpperCase()", arr[i].substr(0, val.length).toUpperCase());
+        console.log("***val.toUpperCase()", val.toUpperCase());
         /*check if the item starts with the same letters as the text field value:*/
         if ((displayCount < 10) && (arr[i].substr(0, val.length).toUpperCase() === val.toUpperCase())) {
           displayCount++;
+          console.log("***displayCount", displayCount);
           /*create a DIV element for each matching element:*/
           b = document.createElement("DIV");
           /*make the matching letters bold:*/
@@ -35,10 +36,10 @@ function autocomplete2(inp, arr) {
               inp.value = this.getElementsByTagName("input")[0].value;
               /*close the list of autocompleted values,
               (or any other open lists of autocompleted values:*/
-              closeAllLists();
+              //closeAllLists();
           });
-          console.log("***a.", a);
           a.appendChild(b);
+          console.log("***appendChild");
         }
       }
   });
@@ -85,6 +86,8 @@ function autocomplete2(inp, arr) {
   });
   /*execute a function presses a key on the keyboard:*/
   inp.addEventListener("keydown", function(e) {
+    console.log("****this.id", this.id);
+    console.log("****currentFocus", currentFocus);
       var x = document.getElementById(this.id + "autocomplete-list");
       if (x) x = x.getElementsByTagName("div");
       if (e.keyCode == 40) {
@@ -116,6 +119,11 @@ function autocomplete2(inp, arr) {
     if (currentFocus >= x.length) currentFocus = 0;
     if (currentFocus < 0) currentFocus = (x.length - 1);
     /*add class "autocomplete-active":*/
+    console.log(x);
+    // console.log("x");
+    // console.log(x);
+    // console.log(currentFocus);
+    // console.log(x[currentFocus]);
     x[currentFocus].classList.add("autocomplete-active");
   }
   function removeActive(x) {
@@ -127,6 +135,7 @@ function autocomplete2(inp, arr) {
   function closeAllLists(elmnt) {
     /*close all autocomplete lists in the document,
     except the one passed as an argument:*/
+    console.log("***closeAllLists");
     var x = document.getElementsByClassName("autocomplete-items");
     for (var i = 0; i < x.length; i++) {
       if (elmnt != x[i] && elmnt != inp) {

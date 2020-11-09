@@ -31,7 +31,7 @@
       </p>
       <h1 class="text-center">Hello!</h1>
       <p class="text-center">
-        A simple hello could lead to wonderful things <small>v1.2.0</small>
+        A simple hello could lead to wonderful things <small>v1.3.0</small>
       </p>
     </div>
 
@@ -330,14 +330,12 @@ $(document).ready(function(){
 window.addEventListener('load', initializeRestaurantsOnLoad);
 
 
-
 var mymap = L.map('mapid');
 L.tileLayer('https://b.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxNativeZoom: 18,
     maxZoom: 20,
     attribution: '&copy; <a target="_blank" rel="noopener" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(mymap);
-
 var browserGeolocationSuccess = function(position) {
   currentLocation = [position.coords.latitude, position.coords.longitude];
   onLocationFound("You are here.");
@@ -393,7 +391,6 @@ const db = firebase.firestore();
 var storageRef = firebase.storage().ref();
 var storage = firebase.storage();
 initMap();
-
 // DOM element shortcuts.
 var emailInput = document.getElementById('emailInput');
 var helloMessageInput = document.getElementById('helloMessageInput');
@@ -450,6 +447,7 @@ var circle;
 var current;
 var currentLeaflet;
 var currentUploadRestaurant;
+var isNewRestaurant = false;
 var dishArray = [];
 var restaurantHash = {};
 const mode = "add";
@@ -556,7 +554,6 @@ function ValidateEmail(mail) {
 function initMap() {
   console.log('initializing markers');
   db.collection('restaurants').get().then((snapshot) => {
-    // console.log('snapshot:' + snapshot);
     snapshot.docs.forEach(doc => {
       var restaurantData = doc.data();
       let marker = addRestMarker(restaurantData, doc.id);
@@ -680,16 +677,19 @@ function upload() {
           };
           console.log("***currentUploadRestaurant", currentUploadRestaurant);
           let newRestaurant = {
-            name: currentUploadRestaurant.name,
-            adr: currentUploadRestaurant.adr,
+            name: restaurantInputValue,
+            adr: "",
             location: [currentLat, currentLng],
             dishes: [dishes],
             coupon:  10,
             cuisines: [uploadCuisine]
           };
           //if user has not modified restaurant input field
-          if(`${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}` == restaurantInputValue) {
-            //console.log("***currentUploadRestaurant==", currentUploadRestaurant == "MANA! Starstreet");
+          if(isNewRestaurant) {
+            console.log("***`${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`==", `${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`);
+            console.log("***restaurantInputValue", restaurantInputValue);
+            db.collection("restaurants").add(newRestaurant);
+          } else {
             db.collection("restaurants")
             .where("name", "==", currentUploadRestaurant.name)
             .where("adr", "==", currentUploadRestaurant.adr)
@@ -711,12 +711,13 @@ function upload() {
                     cuisines: firebase.firestore.FieldValue.arrayUnion(uploadCuisine)
                   });
                 } else {
+                  // adding known restaurants on file but not in DB yet
+                  console.log("***currentUploadRestaurant.name", currentUploadRestaurant.name);
+                  console.log("***currentUploadRestaurant.adr", currentUploadRestaurant.adr);
                   db.collection("restaurants").add(newRestaurant);
                 }
               })
             })
-          } else {
-            db.collection("restaurants").add(newRestaurant);
           }
         })
         .catch(function(error) {
@@ -728,17 +729,6 @@ function upload() {
     }
   );
     document.getElementById("addBtn").style.display = "block";
-}
-
-function addRestaurant() {
-  db.collection("restaurants").add({
-    name: currentUploadRestaurant.name,
-    adr: currentUploadRestaurant.adr,
-    location: [currentLat, currentLng],
-    dishes: [dishes],
-    coupon:  couponRemains,
-    cuisines: [uploadCuisine]
-  });
 }
 
 function isAccurate(pos1, pos2) {

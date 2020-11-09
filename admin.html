@@ -378,11 +378,12 @@
                 unknownIngredients = dish.tags.reduce((a, tag) => ((all_ingredients.includes(tag) || a.push(tag)), a), []);
               });
 
-              if (!restaurantData.adr) {
-                console.log("**restaurantData.id", restaurantData.id);
+              //if (!restaurantData.adr) {
+                console.log("**restaurantData.id", doc.id);
                 console.log("**restaurantData.name", restaurantData.name);
-                console.log("**restaurantData.adr", restaurantData.location);
-              }
+                console.log("**restaurantData.adr", restaurantData.adr);
+                console.log("**restaurantData.location", restaurantData.location);
+              //}
 
               console.log("**unknowns");
               if (unknownCuisines?.length || unknownCategories?.length || unknownIngredients?.length) {
@@ -551,6 +552,8 @@
         }
 
         // $(document).ready(fixReceipt());
-          $(document).ready(inspectReceipts());
+        //  $(document).ready(inspectReceipts());
+
+          $(document).ready(inspectRestaurants());
     </script>
 </body>

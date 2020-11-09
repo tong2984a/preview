@@ -13,8 +13,8 @@ function autocomplete(inp, cachedRestaurants) {
   //console.log("sorted_restaurants")
     //console.log(localStorage.getItem('restaurants'));
   var arr = sorted_restaurants.map(el => `${el.name}, ${el.adr}`);
-  console.log("initialize autocomplete with restaurantCount:" + cachedRestaurants.length);
-  console.log(cachedRestaurants);
+  // console.log("initialize autocomplete with restaurantCount:" + cachedRestaurants.length);
+  // console.log(cachedRestaurants);
   var filtered_restaurants = [];
   /*execute a function when someone writes in the text field:*/
   inp.addEventListener("input", function(e) {
@@ -32,6 +32,11 @@ function autocomplete(inp, cachedRestaurants) {
     /*append the DIV element as a child of the autocomplete container:*/
     this.parentNode.appendChild(a);
     let displayCount = 0;
+    if (currentUploadRestaurant) {
+      let dbName = `${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`;
+      isNewRestaurant = !((dbName.substr(0, val.length).toUpperCase() == val.toUpperCase()));
+    }
+
     for (i = 0; i < arr.length; i++) {
       /*check if the item starts with the same letters as the text field value:*/
       if ((displayCount < 10) && (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase())) {

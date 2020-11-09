@@ -97,6 +97,122 @@ var itemsArray;
   });
 
 
+  var options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+  };
+
+      var tagNum = 0;
+      var tagList = [];
+      var category;
+      var unique_categories = [];
+
+      (function() {
+        console.log('categories ready');
+        if (document.getElementById('indexCuisines')) {
+          document.getElementById('indexCuisines').onchange = filterIndexCategories;
+        }
+        if (document.getElementById('indexCategories')) {
+          document.getElementById('indexCategories').onchange = filterIndexIngredients;
+        }
+        if (document.querySelector('#indexCategoryBlock')) {
+          document.querySelector('#indexCategoryBlock').style.display = 'none';
+        }
+        if (document.querySelector('#indexIngredientBlock')) {
+          document.querySelector('#indexIngredientBlock').style.display = 'none';
+        }
+        if (document.getElementById('selectCuisines')) {
+          document.getElementById('selectCuisines').innerHTML = '';
+        }
+        if (document.getElementById('selectCategories')) {
+          document.getElementById('selectCategories').innerHTML = '';
+        }
+        if (document.getElementById('selectTags')) {
+          document.getElementById('selectTags').innerHTML = '';
+        }
+
+          for (var key of Object.keys(CATEGORY_INGREDIENTS)) {
+            unique_categories.push(key);
+          }
+
+          const st = document.getElementById('selectTags'); //search.html only
+          const cats = document.getElementById('indexCategories'); //index.html only
+          const scats = document.getElementById('selectCategories'); //search.html only
+          const icuisines = document.getElementById('indexCuisines'); //index.html only
+          const scuisines = document.getElementById('selectCuisines'); //search.html only
+
+          Object.keys(CUISINE_CATEGORIES)
+          .forEach(ucuisine => {
+            if (icuisines) {
+              var option = document.createElement('option');
+              option.innerText = ucuisine;
+              option.value = ucuisine;
+              icuisines.appendChild(option);
+            }
+            if (scuisines) {
+              var box = document.createElement('input');
+              box.type = 'checkbox';
+              box.id = ucuisine;
+              box.className = 'checkbox';
+              box.name = "cuisines";
+              box.onclick = filterMarkers;
+              var boxLabel = document.createElement('label');
+              boxLabel.innerText = ucuisine;
+              boxLabel.htmlFor = ucuisine;
+              scuisines.appendChild(boxLabel);
+              boxLabel.appendChild(box);
+            }
+          });
+////console.log("***33333");
+          [...(new Set(unique_categories))].sort().forEach(ucat => {
+            if (cats) {
+              var option = document.createElement('option');
+              option.innerText = ucat;
+              option.value = ucat;
+              cats.appendChild(option);
+            }
+            if (scats) {
+              var box = document.createElement('input');
+              box.type = 'checkbox';
+              box.id = ucat;
+              box.className = 'checkbox';
+              box.name = "categories";
+              box.onclick = filterIngredients;
+              var boxLabel = document.createElement('label');
+              boxLabel.innerText = ucat;
+              boxLabel.htmlFor = ucat;
+              scats.appendChild(boxLabel);
+              boxLabel.appendChild(box);
+            }
+          });
+        //console.log("***44444");
+      })();
+
+      var $slideshow = $('.slideshow');
+      $slideshow.find('.active').removeClass('active').hide();
+
+      $('#mapid').on('click', '.popup .cycle a', function() {
+        var $slideshow = $('.slideshow'),
+        $newSlide;
+
+        if ($(this).hasClass('prev')) {
+          $newSlide = $slideshow.find('.active').prev();
+          if ($newSlide.index() < 0) {
+            $newSlide = $('.image').last();
+          }
+        } else {
+          $newSlide = $slideshow.find('.active').next();
+          if ($newSlide.index() < 0) {
+            $newSlide = $('.image').first();
+          }
+        }
+
+        $slideshow.find('.active').removeClass('active').hide();
+        $newSlide.addClass('active').show();
+        return false;
+      });
+
 class Restaurant {
   constructor(marker, name, location, id, dishes, cuisines) {
       this.marker = marker;
@@ -133,18 +249,6 @@ class Restaurant {
 
   setInfoWindow(info) {
     this.infowindow = info;
-  }
-
-  //show the the restaurant details in the side bar
-  showDetails() {
-    document.getElementById("restName").innerText = this.name;
-    //document.getElementById("restLocation").innerText = this.location;
-    var dishSection = document.createElement("div")
-    dishSection.id = "dishSection";
-    document.getElementById("slideContainer").appendChild(dishSection);
-    this.dishes.forEach(element => {
-      element.showDish("dishSection");
-    })
   }
 
   //show or hide the resaturant by screening all the dishes, show the dishes match all the sectleted tags, if no dishes match, hide the marker
@@ -242,22 +346,6 @@ class Dish {
 
   getCategory() {
     return this.category;
-  }
-
-  //show the dish details in the side bar
-  showDish(nodeId) {
-    if(this.show){
-      var name = document.createElement("h5");
-      name.innerText = this.name;
-      document.getElementById(nodeId).appendChild(name)
-      var photo = document.createElement("img");
-      photo.src = this.image;
-      photo.style.width = '150px'
-      document.getElementById(nodeId).appendChild(photo);
-      var tag = document.createElement('h6');
-      tag.innerText = this.tagString;
-      document.getElementById(nodeId).appendChild(tag);
-    }
   }
 
   setShow(boolean) {
@@ -447,55 +535,21 @@ function addRestMarker(restaurant) {
     .setContent(popupContent)
     .openOn(mymap);
   });
-  if(restaurant.coupon > 0){
-    var label = {text: restaurant.coupon.toString(), fontSize: "20px", fontWeight: "bold"}
-    //marker.setIcon(couponIcon2);
-    //marker.setLabel(label);
-    marker.bindTooltip(label,
-        {
-            permanent: true,
-            direction: 'right'
-        }
-    );
-  }
+  // if(restaurant.coupon > 0){
+  //   var label = {text: restaurant.coupon.toString(), fontSize: "20px", fontWeight: "bold"}
+  //   //marker.setIcon(couponIcon2);
+  //   //marker.setLabel(label);
+  //   marker.bindTooltip(label,
+  //       {
+  //           permanent: true,
+  //           direction: 'right'
+  //       }
+  //   );
+  // }
   var restaurantObj = new Restaurant(marker, restaurant.name, restaurant.location, restaurant.id, restaurant.dishes, restaurant.cuisines);
   markers.push(restaurantObj);
   return marker;
 }
-
-function showDishes(name, location, dishes) {
-  $('#dishSection').remove();
-  document.getElementById('restName').innerText = name;
-  document.getElementById('restLocation').innerText = location;
-  var dishSection = document.createElement("div")
-  dishSection.id = "dishSection";
-  document.getElementById("slideContainer").appendChild(dishSection);
-  dishes.forEach((dishes) => {
-    var name = document.createElement("h5");
-    name.innerText = "Dish: " + dishes.dish;
-    document.getElementById('dishSection').appendChild(name)
-    var photo = document.createElement("img");
-    photo.src = dishes.fileURL;
-    photo.style.width = '150px'
-    document.getElementById('dishSection').appendChild(photo);
-    var tags = dishes.tags;
-    var tagString = 'Tags: ';
-    var makeTagString = tags.forEach((tags) => {
-        if(tags.value == true){
-            tagString += '#' + tags.name + '  ';
-        };
-    });
-    var tag = document.createElement('h6');
-    tag.innerText = tagString;
-    document.getElementById('dishSection').appendChild(tag);
-  })
-}
-
-var options = {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0
-};
 
   //refresh map function
   function refreshMap() {
@@ -552,19 +606,16 @@ var options = {
         case "vegan":
             isVeganShown = !isVeganShown;
             isClicked = isVeganShown;
-            //tag = /vegan/;
             tag = 7;
             break;
         case "buddhist_friendly":
             isBuddhistFriendlyShown = !isBuddhistFriendlyShown;
             isClicked = isBuddhistFriendlyShown;
-            //tag = /buddhist_friendly/;
             tag = 8;
             break;
         case "all_natural":
             isAllNaturalShown = !isAllNaturalShown;
             isClicked = isAllNaturalShown;
-            //tag = /all_natural/;
             tag = 9;
             break;
     }
@@ -592,109 +643,11 @@ var options = {
       })
     }
 
-
-    var tagNum = 0;
-    var tagList = [];
-    var category;
-    var unique_categories = [];
-
-    (function() {
-      console.log('categories ready');
-      if (document.getElementById('indexCuisines')) {
-        document.getElementById('indexCuisines').onchange = filterIndexCategories;
-      }
-      if (document.getElementById('indexCategories')) {
-        document.getElementById('indexCategories').onchange = filterIndexIngredients;
-      }
-      if (document.querySelector('#indexCategoryBlock')) {
-        document.querySelector('#indexCategoryBlock').style.display = 'none';
-      }
-      if (document.querySelector('#indexIngredientBlock')) {
-        document.querySelector('#indexIngredientBlock').style.display = 'none';
-      }
-      if (document.getElementById('selectCuisines')) {
-        document.getElementById('selectCuisines').innerHTML = '';
-      }
-      if (document.getElementById('selectCategories')) {
-        document.getElementById('selectCategories').innerHTML = '';
-      }
-      if (document.getElementById('selectTags')) {
-        document.getElementById('selectTags').innerHTML = '';
-      }
-      // db.collection('categories').get().then(docs => {
-      //   docs.forEach(doc => {
-      //     let c = doc.id;
-      //     c = c.charAt(0).toUpperCase() + c.slice(1);
-      //     unique_categories.push(c);
-      //   })
-
-        for (var key of Object.keys(CATEGORY_INGREDIENTS)) {
-          //console.log(key + " -> " + p[key])
-          unique_categories.push(key);
-        }
-
-        //const sb = document.querySelector('#indexList'); //index.html only
-        const st = document.getElementById('selectTags'); //search.html only
-        const cats = document.getElementById('indexCategories'); //index.html only
-        const scats = document.getElementById('selectCategories'); //search.html only
-        const icuisines = document.getElementById('indexCuisines'); //index.html only
-        const scuisines = document.getElementById('selectCuisines'); //search.html only
-
-        Object.keys(CUISINE_CATEGORIES)
-        .forEach(ucuisine => {
-          if (icuisines) {
-            var option = document.createElement('option');
-            option.innerText = ucuisine;
-            option.value = ucuisine;
-            icuisines.appendChild(option);
-          }
-          if (scuisines) {
-            var box = document.createElement('input');
-            box.type = 'checkbox';
-            box.id = ucuisine;
-            box.className = 'checkbox';
-            box.name = "cuisines";
-            box.onclick = filterMarkers;
-            var boxLabel = document.createElement('label');
-            boxLabel.innerText = ucuisine;
-            boxLabel.htmlFor = ucuisine;
-            scuisines.appendChild(boxLabel);
-            boxLabel.appendChild(box);
-          }
-        });
-
-        [...(new Set(unique_categories))].sort().forEach(ucat => {
-          if (cats) {
-            var option = document.createElement('option');
-            option.innerText = ucat;
-            option.value = ucat;
-            cats.appendChild(option);
-          }
-          if (scats) {
-            var box = document.createElement('input');
-            box.type = 'checkbox';
-            box.id = ucat;
-            box.className = 'checkbox';
-            box.name = "categories";
-            box.onclick = filterIngredients;
-            var boxLabel = document.createElement('label');
-            boxLabel.innerText = ucat;
-            boxLabel.htmlFor = ucat;
-            scats.appendChild(boxLabel);
-            boxLabel.appendChild(box);
-          }
-        });
-      //})
-    })();
-
     //index.html only
     function uploadTags() {
       let uploadCuisine = document.getElementById('indexCuisines').value;
       category = document.getElementById('indexCategories').value;
-      //const sb = document.querySelector('#indexIngredients');
       tagList = $('#indexIngredients').val().split(",");
-      //tagList = [...sb.options].map(el => el.value);
-      //console.log("***tagList", tagList);
       db.collection('categories').doc(category).update({
         tags: firebase.firestore.FieldValue.arrayUnion(...tagList)
       })
@@ -712,30 +665,15 @@ var options = {
 
     //index.html Only
     function filterIndexIngredients() {
-      //let indexIngredients = document.querySelector('#indexIngredients');
       $('#indexIngredients').tagsinput('removeAll');
-      // while (indexIngredients.lastChild) {
-      //   indexIngredients.removeChild(indexIngredients.lastChild);
-      // }
 
       let newIngredients = [];
       let indexCategory = document.getElementById('indexCategories').value;
       newIngredients.push(...(CATEGORY_INGREDIENTS[indexCategory] || []));
       [...(new Set(newIngredients))].sort().forEach(tag => {
-        // const option = new Option(tag, tag);
-        // indexIngredients.add(option, undefined);
         $('#indexIngredients').tagsinput('add', tag);
         console.log("***tag", tag);
       })
-//console.log("***newIngredients", newIngredients);
-//$('#indexIngredients').tagsinput('refresh');
-// $('#indexIngredients').tagsinput('add', 'some tag2');
-//$('#indexIngredients').tagsinput('refresh');
-
-//$('#indexIngredientsInput').tagsinput('add', "jQuery", false);
-//console.log("***select.val refresh after add jquery", $('#indexIngredients').val());
-//$('#indexIngredientsInput').tagsinput('add', "hi", false);
-// $('#indexIngredientsInput').tagsinput('add', { "value": 2, "text": "Script"});
 
       if ($('#indexIngredients').val().length > 0) {
         document.querySelector('#indexIngredientBlock').style.display = 'block';
@@ -751,17 +689,7 @@ var options = {
 
       checkedBoxes = [...document.querySelectorAll('input[name=ingredients]:checked')];
       var active_ingredients = checkedBoxes.map(el => el.id);
-            // let searchCuisines = document.getElementById('selectCuisines');
-            // while (searchCuisines.lastChild) {
-            //   searchCuisines.removeChild(searchCuisines.lastChild);
-            // }
 
-            // let searchCategories = document.getElementById('selectCategories');
-            // while (searchCategories.lastChild) {
-            //   searchCategories.removeChild(searchCategories.lastChild);
-            // }
-
-      //let indexIngredients = document.querySelector('#indexList');
       let searchIngredients = document.getElementById('selectTags');
       while (searchIngredients.lastChild) {
         searchIngredients.removeChild(searchIngredients.lastChild);
@@ -773,11 +701,6 @@ var options = {
       });
 
       [...(new Set(newIngredients))].sort().forEach(tag => {
-        // if (indexIngredients) {
-        //   const option = new Option(tag, tag);
-        //   indexIngredients.add(option, undefined);
-        // }
-        //if (searchIngredients) {
           let box = document.createElement('input');
           box.type = 'checkbox';
           box.id = tag;
@@ -790,10 +713,8 @@ var options = {
           let boxLabel = document.createElement('label');
           boxLabel.innerText = tag;
           boxLabel.htmlFor = tag;
-
           searchIngredients.appendChild(boxLabel);
           boxLabel.appendChild(box);
-        //}
       });
 
       filterMarkers();
@@ -809,10 +730,10 @@ var options = {
 
       checkedBoxes = [...document.querySelectorAll('input[name=ingredients]:checked')];
       var active_ingredients = checkedBoxes.map(el => el.id.toUpperCase());
-        console.log("****active_cuisines", active_cuisines);
-        console.log("****active_categories", active_categories);
-        console.log("***active_ingredients", active_ingredients);
-        console.log("***markers", markers);
+        // console.log("****active_cuisines", active_cuisines);
+        // console.log("****active_categories", active_categories);
+        // console.log("***active_ingredients", active_ingredients);
+        // console.log("***markers", markers);
       markers.forEach((item, i) => {
         item.marker.remove();
         if (active_cuisines.length > 0 || active_categories.length > 0 || active_ingredients.length > 0) {
@@ -823,14 +744,13 @@ var options = {
           let hasCuisine = marker_cuisines.reduce((a, marker_cuisine) => (a || active_cuisines.includes(marker_cuisine)), false);
           let hasCategory = marker_categories.reduce((a, marker_category) => (a || active_categories.includes(marker_category)), false);
           let hasIngredient = marker_tags.reduce((a, marker_tag) => (a || active_ingredients.includes(marker_tag)), false);
-           console.log("***hasCuisine", hasCuisine);
-           console.log("***hasCategory", hasCategory);
-           console.log("***hasIngredient", hasIngredient);
-           console.log("***marker_cuisines", marker_cuisines);
-           console.log("***marker_categories", marker_categories);
-           console.log("***marker_tags", marker_tags);
+           // console.log("***hasCuisine", hasCuisine);
+           // console.log("***hasCategory", hasCategory);
+           // console.log("***hasIngredient", hasIngredient);
+           // console.log("***marker_cuisines", marker_cuisines);
+           // console.log("***marker_categories", marker_categories);
+           // console.log("***marker_tags", marker_tags);
           if (hasCuisine && hasCategory && hasIngredient) {
-            console.log("***item", item);
             item.marker.addTo(mymap);
           }
         }
@@ -886,28 +806,3 @@ var options = {
 
       }
     };
-
-
-    var $slideshow = $('.slideshow');
-    $slideshow.find('.active').removeClass('active').hide();
-
-    $('#mapid').on('click', '.popup .cycle a', function() {
-      var $slideshow = $('.slideshow'),
-      $newSlide;
-
-      if ($(this).hasClass('prev')) {
-        $newSlide = $slideshow.find('.active').prev();
-        if ($newSlide.index() < 0) {
-          $newSlide = $('.image').last();
-        }
-      } else {
-        $newSlide = $slideshow.find('.active').next();
-        if ($newSlide.index() < 0) {
-          $newSlide = $('.image').first();
-        }
-      }
-
-      $slideshow.find('.active').removeClass('active').hide();
-      $newSlide.addClass('active').show();
-      return false;
-    });
