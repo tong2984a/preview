@@ -18,6 +18,57 @@
   <script src="js/leaflet.js" ></script>
   <style>
   #mapid { height: 480px; }
+  /*Profile Pic Start*/
+  .picture-container{
+      position: relative;
+      cursor: pointer;
+      text-align: center;
+      margin: 0px auto;
+  }
+  .picture{
+      width: 106px;
+      height: 106px;
+      background-color: #999999;
+      border: 4px solid #CCCCCC;
+      color: #FFFFFF;
+      border-radius: 50%;
+      margin: 0px auto;
+      overflow: hidden;
+      transition: all 0.2s;
+      -webkit-transition: all 0.2s;
+  }
+  .picture:hover{
+      border-color: #2ca8ff;
+  }
+  .content.ct-wizard-green .picture:hover{
+      border-color: #05ae0e;
+  }
+  .content.ct-wizard-blue .picture:hover{
+      border-color: #3472f7;
+  }
+  .content.ct-wizard-orange .picture:hover{
+      border-color: #ff9500;
+  }
+  .content.ct-wizard-red .picture:hover{
+      border-color: #ff3b30;
+  }
+  .picture input[type="file"] {
+      cursor: pointer;
+      display: block;
+      height: 100%;
+      left: 0;
+      opacity: 0 !important;
+      position: absolute;
+      top: 0;
+      width: 100%;
+  }
+
+  .picture-src{
+      width: 100%;
+
+  }
+  /*Profile Pic End*/
+
   </style>
 </head>
 <body>
@@ -35,43 +86,8 @@
       </p>
     </div>
 
-    <!-- Message input field -->
-    <div class="row justify-content-center">
-      <div class="col-sm-6 form-group">
-        <input type="text"
-        class="form-control input-lg"
-        id="emailInput"
-        placeholder="Enter your email here...">
-      </div>
-    </div>
-
 <div id="mapid"></div>
 
-    <!-- Ricardo: input location-->
-    <div id="mapSection" style="display: none;">
-      <div id="sidebar-wrapper">
-        <div id="toggle-btn" onclick="toggleSidebar()">
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-        <div id="sidebar">
-          <h3 id="restaurantName">Restaurant</h3>
-          <h4 id="restName"></h4>
-          <hr>
-          <h3 id="restaurantLocation">location</h3>
-          <h4 id="restLocation"></h4>
-          <h3>Dishes</h3>
-          <div id="restaurantDish">
-            <div id="slideContainer"></div>
-            <div class="dotSection">
-              <span class="dot"></span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="map" style="width: 100%; height: 70vh;"></div>
-    </div>
     <div class="row justify-content-center">
       <div class="col-sm-6">
         <p id="instruction" style="display: none;">Please drag the red pin to the place you want to choose</p>
@@ -116,24 +132,43 @@
       </div>
     </div>
 
+    <span class="glyphicon glyphicon-plus"></span>
     <div class="row justify-content-center">
       <img id="preview" src="" />
-    </div>
-    <div class="row justify-content-center" >
-      <input type="file" id="customFile" accept="image/*" style="display: none;" onChange="readURL(this)">
-      <p><label id="uploadLabel" for="customFile" class="btn btn-primary my-2 btn-default btn-block btn-lg" style="cursor: pointer;">Upload Image</label></p>
+      <div class="picture-container">
+        <div class="picture">
+          <img src="https://mdbootstrap.com/img/Photos/Others/placeholder.jpg" class="picture-src" id="dishPicturePreview" title="">
+          <input type="file" id="dish-picture" class="">
+        </div>
+        <span id="upload-dish" class="badge badge-primary badge-pill">Upload Dish
+          <svg id="upload-dish-checkmark" display="none" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check" fill="green" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
+          </svg>
+        </span>
+      </div>
+      <div class="picture-container">
+        <div class="picture">
+          <img src="https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg" class="picture-src" id="receiptPicturePreview" title="">
+          <input type="file" id="receipt-picture" class="">
+        </div>
+        <span id="upload-receipt" class="badge badge-pill badge-primary">Upload Receipt
+          <svg id="upload-receipt-checkmark" display="none" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check" fill="green" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
+          </svg>
+        </span>
+      </div>
     </div>
   </div>
 
     <!-- Ricardo Re-upload button -->
-    <div class="row justify-content-center">
+    <!-- <div class="row justify-content-center">
       <div class="col-xs-12">
         <button id="reUploadBtn" class="btn btn-success my-2 btn-default btn-block btn-lg" style="display: none;" onClick="reUpload()">
           Re-Upload Photo
         </button>
 
       </div>
-    </div>
+    </div> -->
 
     <div class="row justify-content-center">
       <div class="col-xs-12" id="tags" style="display: none;">
@@ -153,88 +188,10 @@
 
             <span id="indexIngredientBlock">
               <label for="name">Ingredient:</label>
-              <!--
-              <input type="text" id="name" placeholder="Enter an ingredient">
-
-              <button id="btnAdd">Add</button>
-
-
-              <label for="indexList">Ingredient List:</label>
-            --><input id="indexIngredients" type="text" data-role="tagsinput" value="">
-            <!-- <select id="indexIngredients" name="indexIngredients" multiple data-role="tagsinput">
-  <option value="Amsterdam">Amsterdam</option>
-  <option value="Washington">Washington</option>
-  <option value="Sydney">Sydney</option>
-  <option value="Beijing">Beijing</option>
-  <option value="Cairo">Cairo</option>
-</select> -->
-              <!-- <select id="indexList" name="indexList" multiple>
-
-              </select> -->
-              <!--
-              <button id="btnRemove">Remove Selected Ingredient</button>
-            -->
+              <input id="indexIngredients" type="text" data-role="tagsinput" value="">
             </span>
           </form>
         </div>
-
-        <script>
-          // const btnAdd = document.querySelector('#btnAdd');
-          // const btnRemove = document.querySelector('#btnRemove');
-          // const sb = document.querySelector('#indexList');
-          // const name = document.querySelector('#name');
-          // //Regex for Valid Characters i.e. Alphabets and Numbers.
-          // const regex = /^[A-Za-z\s]+$/
-          //
-          // if (btnAdd) {
-          //   btnAdd.onclick = (e) => {
-          //     e.preventDefault();
-          //
-          //     // validate the option
-          //     if (name.value == '') {
-          //       alert('Please enter the name.');
-          //       return;
-          //     }
-          //
-          //     //Validate TextBox value against the Regex.
-          //     var isValid = regex.test(name.value);
-          //     if (!isValid) {
-          //       alert("Only Alphabets and Numbers allowed.");
-          //     }
-          //
-          //     // create a new option
-          //     const option = new Option(name.value, name.value);
-          //     // add it to the list
-          //     sb.add(option, undefined);
-          //
-          //     // reset the value of the input
-          //     name.value = '';
-          //     name.focus();
-          //   };
-          // };
-          //
-          // // remove selected option
-          // if (btnRemove) {
-          //   btnRemove.onclick = (e) => {
-          //     e.preventDefault();
-          //
-          //     // save the selected option
-          //     let selected = [];
-          //
-          //     for (let i = 0; i < sb.options.length; i++) {
-          //       selected[i] = sb.options[i].selected;
-          //     }
-          //
-          //     // remove all selected option
-          //     let index = sb.options.length;
-          //     while (index--) {
-          //       if (selected[index]) {
-          //         sb.remove(index);
-          //       }
-          //     }
-          //   }
-          // };
-        </script>
       </div>
     </div>
 
@@ -320,15 +277,61 @@
 <script src="js/leaflet-search.src.js"></script>
 <script defer src="js/mapHelper.js" type="text/javascript"></script>
 <script>
-//Ricardo: testing
+
 $(document).ready(function(){
   $('[data-toggle="popover"]').popover({
     trigger: 'focus'
+  });
+  // Prepare the preview for profile picture
+  $("#receipt-picture").change(function(){
+    readPreviewURL(this, document.getElementById('receiptPicturePreview'), document.getElementById('upload-receipt'), document.getElementById('upload-receipt-checkmark'), "receipt");
+  });
+  $("#dish-picture").change(function(){
+    readPreviewURL(this, document.getElementById('dishPicturePreview'), document.getElementById('upload-dish'), document.getElementById('upload-dish-checkmark'), "dish");
   });
 });
 
 window.addEventListener('load', initializeRestaurantsOnLoad);
 
+function readPreviewURL(input, preview, label, checkmark, miniFile) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    var filesize = ((input.files[0].size/1024)/1024).toFixed(4);
+    reader.onload = function (e) {
+      var quality = 30;
+      var output_format = "image/png";
+      var img = new Image();
+      img.src = e.target.result;
+      img.onload = function() {
+        //preview.attr('src', jic.compress(img,quality,output_format).src).fadeIn('slow');
+        preview.src = jic.compress(img,quality,output_format).src;
+        var dateTime = new Date();
+        imageFileName = dateTime + ".jpg";
+        srcToFile(
+          preview.src,
+          imageFileName,
+          'jpg'
+        )
+        .then(function(file){
+          miniFiles[miniFile] = file;
+            console.log("***miniFiles", miniFiles);
+              console.log("***miniFiles receipt", miniFiles['receipt']);
+                console.log("***miniFiles kyeys", Object.keys(miniFiles));
+          filesize = ((file.size/1024)/1024).toFixed(4);
+          console.log(`Finished compressing : ${filesize} MB`);
+        })
+
+        preview.onload = function() {
+          document.getElementById('sendBtn').style.display = "block";
+          document.getElementById('tags').style.display = "block";
+          label.classList = "badge badge-pill badge-light";
+          checkmark.style.display = "inline";
+        }
+      }
+    }
+    reader.readAsDataURL(input.files[0]);
+  }
+}
 
 var mymap = L.map('mapid');
 L.tileLayer('https://b.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -392,13 +395,11 @@ var storageRef = firebase.storage().ref();
 var storage = firebase.storage();
 initMap();
 // DOM element shortcuts.
-var emailInput = document.getElementById('emailInput');
 var helloMessageInput = document.getElementById('helloMessageInput');
 var helloMessageOutput= document.getElementById('helloMessageOutput');
 var preview= document.getElementById('preview');
 var bar= document.getElementById('progressBar');
-var miniFile = '';
-// added in 15/7
+var miniFiles = [];
 var dishInput = document.getElementById('dishInput');
 var searchInput = document.getElementById('searchInput');
 var restaurantInput = document.getElementById('restaurantInput');
@@ -452,102 +453,17 @@ var dishArray = [];
 var restaurantHash = {};
 const mode = "add";
 
-if (typeof(Storage) !== "undefined") {
-  emailInput.innerHTML = localStorage.getItem("email");
-  emailInput.addEventListener("input", function(e) {
-    var val = this.value;
-    if (ValidateEmail(emailInput)) {
-      localStorage.setItem("email", emailInput.value.trim());
-    }
-  });
-}
-
 function makeProgress(i){
   bar.style.width = i+'%';
   bar.innerText = i+'%';
   bar.setAttribute('aria-valuenow', i);
 }
 
-function srcToFile(src, fileName, mimeType){
-  return (fetch(src)
-  .then(function(res){return res.arrayBuffer();})
-  .then(function(buf){return new File([buf], fileName, {type:mimeType});})
-);
-}
-
-function readURL(input) {
-  if (input.files && input.files[0]) {
-    var reader = new FileReader();
-    var filesize = ((input.files[0].size/1024)/1024).toFixed(4);
-    console.log(`Initial File : ${filesize} MB`);
-    reader.onload = function(e) {
-      var quality = 30;
-      var output_format = "image/png";
-      console.log("Quality >>" + quality);
-
-      console.log("process start...");
-      var time_start = new Date().getTime();
-
-      var img = new Image();
-      img.src = e.target.result;
-      img.onload = function() {
-        preview.src = jic.compress(img,quality,output_format).src;
-        //15/7 fixing bug of same file name will caused replacing old image in firebase
-        var dateTime = new Date();
-        imageFileName = dateTime + ".jpg";
-        srcToFile(
-          preview.src,
-          imageFileName,
-          'jpg'
-        )
-        .then(function(file){
-          miniFile = file;
-          filesize = ((file.size/1024)/1024).toFixed(4);
-          console.log(`Finished compressing : ${filesize} MB`)
-        })
-
-        preview.onload = function(){
-          var image_width = preview.style.width,
-          image_height = preview.style.height;
-
-          if(image_width > image_height){
-            preview.style.width="320px";
-          }else{
-            preview.style.height="300px";
-          }
-          preview.style.display = "block";
-          document.getElementById('uploadLabel').style.display = "none";
-          document.getElementById('sendBtn').style.display = "block";
-          //Ricardo add re-upload button
-          document.getElementById('reUploadBtn').style.display = "block";
-          document.getElementById('tags').style.display = "block";
-        }
-        var duration = new Date().getTime() - time_start;
-
-        console.log('Processed in: ' + duration + 'ms');
-      }
-    }
-
-    reader.readAsDataURL(input.files[0]);
-  } else {
-    console.log("You must load an image first!");
-  }
-}
-
-//Ricardo: re-upload
-function reUpload() {
-  document.getElementById('uploadLabel').style.display = "block";
-  document.getElementById('sendBtn').style.display = "none";
-  document.getElementById('reUploadBtn').style.display = "none";
-  document.getElementById('tags').style.display = "none";
-  preview.style.display = "none";
-  console.log(preview);
-}
-
-//Ricardo: email validation
-function ValidateEmail(mail) {
-  var emailFormat = /^(?:[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+\.)*[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+@(?:(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!\.)){0,61}[a-zA-Z0-9]?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!$)){0,61}[a-zA-Z0-9]?)|(?:\[(?:(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\]))$/;
-  return emailFormat.test(mail.value);
+function srcToFile(src, fileName, mimeType) {
+    return (fetch(src)
+    .then(function(res){return res.arrayBuffer();})
+    .then(function(buf){return new File([buf], fileName, {type:mimeType});})
+  );
 }
 
 //create the map
@@ -591,15 +507,6 @@ function initializeRestaurantsOnLoad() {
 
 function upload() {
   uploadTags();
-  if (emailInput.value.length == 0) {
-    helloMessageOutput.innerText = "Looks like you haven't provided an email";
-    return;
-  }
-  //Ricardo: check for invalid email
-  if (!ValidateEmail(emailInput)) {
-    helloMessageOutput.innerText = "You have entered an invalid email address!";
-    return;
-  }
   if (helloMessageInput.value.length == 0) {
     helloMessageOutput.innerText = "Looks like you haven't provided a review";
     return;
@@ -607,128 +514,143 @@ function upload() {
   else {
     helloMessage = helloMessageInput.value;
   }
-
   var metadata = {
     contentType: 'image/jpeg'
   };
+  const imagePaths = [];
+  const storageRef = storage.ref();
+  for (let key of Object.keys(miniFiles)) {
+    let img = miniFiles[key];
+    let fileRef = storageRef.child(img.name);
+    fileRef.put(img).on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+      function(snapshot) {
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        helloMessageOutput.innerText = `Uploading Receipt ...`;
+        console.log('Upload is ' + progress + '% done');
+        makeProgress(Math.round(progress));
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED: // or 'paused'
+          console.log('Upload is paused');
+          break;
+          case firebase.storage.TaskState.RUNNING: // or 'running'
+          console.log('Upload is running');
+          break;
+        }
+      }, function(error) {
+        switch (error.code) {
+          case 'storage/unauthorized':
+          // User doesn't have permission to access the object
+          break;
 
-  var uploadTask = storageRef.child('images/' + miniFile.name).put(miniFile, metadata);
+          case 'storage/canceled':
+          // User canceled the upload
+          break;
 
-  // Listen for state changes, errors, and completion of the upload.
-  uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-    function(snapshot) {
-      // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-      var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      helloMessageOutput.innerText = `Uploading Receipt ...`;
-      console.log('Upload is ' + progress + '% done');
-      makeProgress(Math.round(progress));
-      switch (snapshot.state) {
-        case firebase.storage.TaskState.PAUSED: // or 'paused'
-        console.log('Upload is paused');
-        break;
-        case firebase.storage.TaskState.RUNNING: // or 'running'
-        console.log('Upload is running');
-        break;
-      }
-    }, function(error) {
-      switch (error.code) {
-        case 'storage/unauthorized':
-        // User doesn't have permission to access the object
-        break;
-
-        case 'storage/canceled':
-        // User canceled the upload
-        break;
-
-        case 'storage/unknown':
-        // Unknown error occurred, inspect error.serverResponse
-        break;
-      }
-    }, function() {
-      // Upload completed successfully, now we can get the download URL
-      console.log("currentLeaflet getLatLng");
-      console.log(currentLeaflet.getLatLng());
-      let currentLat = currentLeaflet.getLatLng().lat;
-      let currentLng = currentLeaflet.getLatLng().lng;
-      let uploadCuisine = document.getElementById('indexCuisines').value;
-      let restaurantInputValue = restaurantInput.value.trim();
-      uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-        db.collection("receipts").add({
-          email: emailInput.value,
-          helloMessage: helloMessage,
-          fileURL: imgURL = downloadURL,
-          dish: dishInput.value,
-          location: [currentLat, currentLng],
-          restaurant: restaurantInputValue,
-          imageName: imageFileName,
-          tags: ($('#indexIngredients').val().split(",")),
-          approved: false,
-          category: category,
-          cuisine: uploadCuisine
-        })
-        .then(function(docRef) {
-          console.log("Receipt written with ID: ", docRef.id);
-          helloMessageOutput.innerText = `File received with ID: ${docRef.id}`;
-          var dishes = {
-            dish: dishInput.value,
-            fileURL: imgURL,
-            category: category,
-            tags: ($('#indexIngredients').val().split(","))
-          };
-          console.log("***currentUploadRestaurant", currentUploadRestaurant);
-          let newRestaurant = {
-            name: restaurantInputValue,
-            adr: "",
-            location: [currentLat, currentLng],
-            dishes: [dishes],
-            coupon:  10,
-            cuisines: [uploadCuisine]
-          };
-          //if user has not modified restaurant input field
-          if(isNewRestaurant) {
-            console.log("***`${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`==", `${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`);
-            console.log("***restaurantInputValue", restaurantInputValue);
-            db.collection("restaurants").add(newRestaurant);
-          } else {
-            db.collection("restaurants")
-            .where("name", "==", currentUploadRestaurant.name)
-            .where("adr", "==", currentUploadRestaurant.adr)
-            .get().then(querySnapshot => {
-              querySnapshot.forEach(function(doc) {
-                var restaurantData = doc.data();
-                console.log("***restaurantData", restaurantData);
-                if(doc.exists) {
-                  var couponRemains = doc.data().coupon;
-                  var getCoupon = false;
-                  if(couponRemains > 0){
-                    couponRemains -= 1;
-                    getCoupon = true;
-                  }
-                  console.log('accurate');
-                  db.collection("restaurants").doc(doc.id).update({
-                    dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
-                    coupon:  couponRemains,
-                    cuisines: firebase.firestore.FieldValue.arrayUnion(uploadCuisine)
-                  });
-                } else {
-                  // adding known restaurants on file but not in DB yet
-                  console.log("***currentUploadRestaurant.name", currentUploadRestaurant.name);
-                  console.log("***currentUploadRestaurant.adr", currentUploadRestaurant.adr);
-                  db.collection("restaurants").add(newRestaurant);
-                }
-              })
-            })
+          case 'storage/unknown':
+          // Unknown error occurred, inspect error.serverResponse
+          break;
+        }
+      }, function() {
+        fileRef.getDownloadURL().then(function(singleImgPath) {
+          imagePaths[key] = singleImgPath;
+          if (imagePaths.length == miniFiles.length) {
+            console.log("got all paths here now: ", imagePaths);
+            addReceiptToDB(imagePaths);
+            addRestaurantToDB(imagePaths['dish'] || "");
           }
-        })
-        .catch(function(error) {
-          console.error("Error adding document: ", error);
-          helloMessageOutput.innerText = `Error adding document: ${error}`;
         });
+      }
+    )
+  }
+}
 
-      });
-    }
-  );
-    document.getElementById("addBtn").style.display = "block";
+function addRestaurantToDB(dishImgURL) {
+  let restaurantInputValue = restaurantInput.value.trim();
+  let currentLat = currentLeaflet.getLatLng().lat;
+  let currentLng = currentLeaflet.getLatLng().lng;
+  let uploadCuisine = document.getElementById('indexCuisines').value;
+  let dishes = {
+    dish: dishInput.value,
+    fileURL: dishImgURL,
+    category: category,
+    tags: ($('#indexIngredients').val().split(","))
+  };
+  let newRestaurant = {
+    name: restaurantInputValue,
+    adr: "",
+    location: [currentLat, currentLng],
+    dishes: [dishes],
+    coupon:  10,
+    cuisines: [uploadCuisine]
+  };
+  //if user has not modified restaurant input field
+  if(isNewRestaurant) {
+    //console.log("***`${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`==", `${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`);
+    //console.log("***restaurantInputValue", restaurantInputValue);
+    db.collection("restaurants").add(newRestaurant);
+  } else {
+    db.collection("restaurants")
+    .where("name", "==", currentUploadRestaurant.name)
+    .where("adr", "==", currentUploadRestaurant.adr)
+    .get().then(querySnapshot => {
+      querySnapshot.forEach(function(doc) {
+        var restaurantData = doc.data();
+        console.log("***restaurantData", restaurantData);
+        if(doc.exists) {
+          var couponRemains = doc.data().coupon;
+          var getCoupon = false;
+          if(couponRemains > 0){
+            couponRemains -= 1;
+            getCoupon = true;
+          }
+          console.log('accurate');
+          db.collection("restaurants").doc(doc.id).update({
+            dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
+            coupon:  couponRemains,
+            cuisines: firebase.firestore.FieldValue.arrayUnion(uploadCuisine)
+          });
+        } else {
+          // adding known restaurants on file but not in DB yet
+          console.log("***currentUploadRestaurant.name", currentUploadRestaurant.name);
+          console.log("***currentUploadRestaurant.adr", currentUploadRestaurant.adr);
+          db.collection("restaurants").add(newRestaurant);
+        }
+      })
+    })
+  }
+}
+
+function addReceiptToDB(imagePaths) {
+  let currentLat = currentLeaflet.getLatLng().lat;
+  let currentLng = currentLeaflet.getLatLng().lng;
+  let uploadCuisine = document.getElementById('indexCuisines').value;
+  let restaurantInputValue = restaurantInput.value.trim();
+  let receiptImgURL = imagePaths["receipt"] || "";
+  let dishImgURL = imagePaths["dish"] || "";
+
+  db.collection("receipts").add({
+    //email: emailInput.value,
+    helloMessage: helloMessage,
+    fileURL: dishImgURL,
+    receiptImgURL: receiptImgURL,
+    dish: dishInput.value,
+    location: [currentLat, currentLng],
+    restaurant: restaurantInputValue,
+    imageName: imageFileName,
+    tags: ($('#indexIngredients').val().split(",")),
+    approved: false,
+    category: category,
+    cuisine: uploadCuisine
+  })
+  .then(function(docRef) {
+    console.log("Receipt written with ID: ", docRef.id);
+    helloMessageOutput.innerText = `File received with ID: ${docRef.id}`;
+  })
+  .catch(function(error) {
+    console.error("Error adding document: ", error);
+    helloMessageOutput.innerText = `Error adding document: ${error}`;
+  });
 }
 
 function isAccurate(pos1, pos2) {
@@ -738,7 +660,5 @@ function isAccurate(pos1, pos2) {
 }
 
 </script>
-<!-- make map -->
-
 </body>
 </html>
