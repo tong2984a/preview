@@ -257,7 +257,8 @@
         };
 
         var itemsArray;
-          fetch('/data/sort-veggie.json').then(function(response) {
+        function initItemsArray() {
+          return fetch('/data/sort-veggie.json').then(function(response) {
             return response.json();
           }).then(function(data) {
             itemsArray = data.map(item => {
@@ -289,6 +290,7 @@
             itemsArray.push({name:'NINETYS', dist: '18', adr: "AIA Central, 1 Connaught Road, Central, HONG KONG", lat:22.281333, lng:114.162012});
             itemsArray.push({name:'NINETYS', dist: '12', adr: "SHOP 2, G/F., NO. 222 QUEEN'S ROAD EAST, WAN CHAI, HONG KONG", lat:22.274811, lng:114.172593});
           });
+        }
 
         function initializeRestaurantsCuisines() {
           let x = [];
@@ -379,14 +381,18 @@
               });
 
               //if (!restaurantData.adr) {
+                // console.log("**restaurantData.id", doc.id);
+                // console.log("**restaurantData.name", restaurantData.name);
+                // console.log("**restaurantData.adr", restaurantData.adr);
+                // console.log("**restaurantData.location", restaurantData.location);
+              //}
+
+              if (unknownCuisines?.length || unknownCategories?.length || unknownIngredients?.length) {
+                console.log("**unknowns");
                 console.log("**restaurantData.id", doc.id);
                 console.log("**restaurantData.name", restaurantData.name);
                 console.log("**restaurantData.adr", restaurantData.adr);
                 console.log("**restaurantData.location", restaurantData.location);
-              //}
-
-              console.log("**unknowns");
-              if (unknownCuisines?.length || unknownCategories?.length || unknownIngredients?.length) {
                 console.log("**restaurantData.id", restaurantData.id);
                 console.log("***cuisines known", knownCuisines);
                 console.log("***cuisines unknown", unknownCuisines);
@@ -453,107 +459,124 @@
         }
 
         function inspectReceipts() {
-          console.log(Object.keys(CUISINE_CATEGORIES));
-          console.log(Object.keys(CATEGORY_INGREDIENTS));
-          console.log(itemsArray);
-          db.collection('receipts').get().then((snapshot) => {
-            snapshot.docs.forEach(doc => {
-              var receiptData = doc.data();
-              let category = receiptData.category;
-              let cuisine = receiptData.cuisine;
-              let location = receiptData.location;
-              let restaurant = receiptData.restaurant;
-              let tags = receiptData.tags;
-
-              var unknownCuisine = !Object.keys(CUISINE_CATEGORIES).includes(cuisine);
-
-              var unknownCategory = !Object.keys(CATEGORY_INGREDIENTS).includes(category);
-
-              var unknownLocation = true;
-              itemsArray.forEach((item, i) => {
-                unknownLocation = unknownLocation && (!((item.lat == location[0]) && (item.lng == location[1])))
-              });
-
-              var unknownRestaurant = true;
-              itemsArray.forEach((item, i) => {
-                unknownRestaurant = unknownRestaurant && (!((`${item.name}, ${item.adr}` == restaurant)))
-              });
-
-              var unknownIngredients = [];
-              let all_ingredients = CATEGORY_INGREDIENTS[category] || [];
-              unknownIngredients = tags.reduce((a, tag) => ((all_ingredients.includes(tag) || a.push(tag)), a), []);
-              if (unknownCuisine || unknownRestaurant || unknownCategory || unknownLocation || (unknownIngredients?.length > 0)) {
-                console.log("**receipt", doc.id);
-                console.log("**restaurant", restaurant);
-                unknownCuisine && console.log("***cuisine unknown", cuisine);
-                unknownCategory && console.log("***category unknown", category);
-                unknownLocation && console.log("***location unknown", location);
-                unknownRestaurant && console.log("***restaurant unknown", restaurant);
-                if (unknownIngredients?.length > 0) {
-                  console.log("***ingredients known", tags);
-                  console.log("***ingredients unknown", unknownIngredients);
-                }
-              }
+          initItemsArray().then(() => {
+            console.log(Object.keys(CUISINE_CATEGORIES));
+            console.log(Object.keys(CATEGORY_INGREDIENTS));
+            console.log(itemsArray);
+            db.collection("restaurants")
+            .get().then(querySnapshot => {
+              querySnapshot.forEach(function(doc) {
+                var restaurantData = doc.data();
+                console.log("***db restaurant doc.id", doc.id);
+                console.log("***db restaurant.name", restaurantData.name);
+              })
+            }).catch(function(error) {
+              console.log("Error getting cached document:", error);
             });
-          });
+
+            db.collection('receipts').get().then((snapshot) => {
+              snapshot.docs.forEach(doc => {
+                var receiptData = doc.data();
+                let category = receiptData.category;
+                let cuisine = receiptData.cuisine;
+                let location = receiptData.location;
+                let restaurant = receiptData.restaurant;
+                let tags = receiptData.tags;
+
+                var unknownCuisine = !Object.keys(CUISINE_CATEGORIES).includes(cuisine);
+
+                var unknownCategory = !Object.keys(CATEGORY_INGREDIENTS).includes(category);
+
+                var unknownLocation = true;
+                itemsArray.forEach((item, i) => {
+                  unknownLocation = unknownLocation && (!((item.lat == location[0]) && (item.lng == location[1])))
+                });
+
+                var unknownRestaurant = true;
+                itemsArray.forEach((item, i) => {
+                  unknownRestaurant = unknownRestaurant && (!((`${item.name}, ${item.adr}` == restaurant)))
+                });
+
+                var unknownIngredients = [];
+                let all_ingredients = CATEGORY_INGREDIENTS[category] || [];
+                unknownIngredients = tags.reduce((a, tag) => ((all_ingredients.includes(tag) || a.push(tag)), a), []);
+                if (unknownCuisine || unknownRestaurant || unknownCategory || unknownLocation || (unknownIngredients?.length > 0)) {
+                  console.log("**receipt", doc.id);
+                  //console.log("**restaurant", restaurant);
+                  unknownCuisine && console.log("***cuisine unknown", cuisine);
+                  unknownCategory && console.log("***category unknown", category);
+                  unknownLocation && console.log("***location unknown", location);
+                  unknownRestaurant && console.log("***restaurant unknown", restaurant);
+                  if (unknownIngredients?.length > 0) {
+                    console.log("***ingredients known", tags);
+                    console.log("***ingredients unknown", unknownIngredients);
+                  }
+                }
+              });
+            }).catch(function(error) {
+              console.log("Error getting cached document:", error);
+            });
+          })
         }
 
         function fixReceipt() {
-          var docId = "RrnTMSg0zlkuuU7R7HZa";
+          var docIds = ["aBSIF9dCm9hrm4FdGPea", "kfbC7NPKoC96ULFquKBJ", "qXziPM4I4tMUbdPOohph"];
 
           // var restaurant = "";
           // var location = [];
-          // var restaurant = "NINETYS, SHOP 2, G/F., NO. 222 QUEEN'S ROAD EAST, WAN CHAI, HONG KONG";
-          // var location = [22.274811, 114.172593];
+          var restaurant = "NINETYS, SHOP 2, G/F., NO. 222 QUEEN'S ROAD EAST, WAN CHAI, HONG KONG";
+          var location = [22.274811, 114.172593];
           // var restaurant = "Mana! Fast Slow Food, G/F., 92 WELLINGTON STREET, CENTRAL, HONG KONG";
           // var location = [22.282801, 114.154556];
-          var restaurant = "Feather and Bone, SHOP A, G/F., LUARD ON THE PARK, 5 LUARD ROAD, WAN CHAI, HONG KONG";
-          var location = [22.276861, 114.171361];
+          // var restaurant = "Feather and Bone, SHOP A, G/F., LUARD ON THE PARK, 5 LUARD ROAD, WAN CHAI, HONG KONG";
+          // var location = [22.276861, 114.171361];
 
           // var cuisine = "Western";
           // var cuisine = "Chinese";
-          var cuisine = "Italian";
-          // var cuisine = "";
+          // var cuisine = "Italian";
+          var cuisine = "";
 
-          //var category = "";
-          // var tags = [];
+          var category = "";
+          var tags = [];
           // var category = "Fast Food";
           // var tags = ["Egg Free", "Plant-Based Meat"];
           //  var category = "Appetizer";
           // var tags = ["Egg Free", "Soy Free"];
-          var category = "Main Dish";
-          var tags = ["Egg Free", "Soy Free", "Vegan"];
-
-          if (restaurant.length) {
-            db.collection('receipts').doc(docId).update({
-              restaurant: restaurant
-            });
-          }
-          if (cuisine.length) {
-            db.collection('receipts').doc(docId).update({
-              cuisine: cuisine
-            });
-          }
-          if (category.length) {
-            db.collection('receipts').doc(docId).update({
-              category: category
-            });
-          }
-          if (location.length) {
-            db.collection('receipts').doc(docId).update({
-              location: location
-            });
-          }
-          if (tags.length) {
-            db.collection('receipts').doc(docId).update({
-              tags: tags
-            });
-          }
-        }
+          // var category = "Main Dish";
+          // var tags = ["Egg Free", "Soy Free", "Vegan"];
+          docIds.forEach((docId, i) => {
+            if (restaurant.length) {
+              db.collection('receipts').doc(docId).update({
+                restaurant: restaurant
+              });
+            }
+            if (cuisine.length) {
+              db.collection('receipts').doc(docId).update({
+                cuisine: cuisine
+              });
+            }
+            if (category.length) {
+              db.collection('receipts').doc(docId).update({
+                category: category
+              });
+            }
+            if (location.length) {
+              db.collection('receipts').doc(docId).update({
+                location: location
+              });
+            }
+            if (tags.length) {
+              db.collection('receipts').doc(docId).update({
+                tags: tags
+              });
+            }
+          })
+        };
 
         // $(document).ready(fixReceipt());
-        //  $(document).ready(inspectReceipts());
+          $(document).ready(inspectReceipts());
 
-          $(document).ready(inspectRestaurants());
+        //  $(document).ready(inspectRestaurants());
+      //    $(document).ready(inspectCategories());
     </script>
 </body>

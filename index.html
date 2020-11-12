@@ -82,7 +82,7 @@
       </p>
       <h1 class="text-center">Hello!</h1>
       <p class="text-center">
-        A simple hello could lead to wonderful things <small>v1.3.0</small>
+        A simple hello could lead to wonderful things <small>v1.4.0</small>
       </p>
     </div>
 
@@ -449,7 +449,6 @@ var current;
 var currentLeaflet;
 var currentUploadRestaurant;
 var isNewRestaurant = false;
-var dishArray = [];
 var restaurantHash = {};
 const mode = "add";
 
@@ -469,10 +468,11 @@ function srcToFile(src, fileName, mimeType) {
 //create the map
 function initMap() {
   console.log('initializing markers');
+  let dishArray = [];
   db.collection('restaurants').get().then((snapshot) => {
     snapshot.docs.forEach(doc => {
       var restaurantData = doc.data();
-      let marker = addRestMarker(restaurantData, doc.id);
+      let marker = addRestMarker(restaurantData);
       marker.addTo(mymap);
       let restaurantDishes = restaurantHash[restaurantData.name];
       restaurantDishes = restaurantDishes || [];
@@ -484,9 +484,24 @@ function initMap() {
     });
   }).then(() => {
     dishArray = [...(new Set(dishArray))].sort();
-    console.log("dishArray:", dishArray);
     autocomplete2(document.getElementById("dishInput"), dishArray);
   });
+}
+
+function initNewMarker(restaurantData) {
+  console.log("****initNewMarker", restaurantData);
+  let dishArray = [];
+  let marker = addRestMarker(restaurantData);
+  marker.addTo(mymap);
+  let restaurantDishes = restaurantHash[restaurantData.name];
+  restaurantDishes = restaurantDishes || [];
+  restaurantData.dishes.forEach(data => {
+    dishArray.push(data.dish);
+    restaurantDishes.push(data.dish);
+  });
+  restaurantHash[restaurantData.name] = [...(new Set(restaurantDishes))].sort();
+  dishArray = [...(new Set(dishArray))].sort();
+  autocomplete2(document.getElementById("dishInput"), dishArray);
 }
 
 function initializeRestaurantsOnLoad() {
@@ -588,16 +603,22 @@ function addRestaurantToDB(dishImgURL) {
   if(isNewRestaurant) {
     //console.log("***`${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`==", `${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`);
     //console.log("***restaurantInputValue", restaurantInputValue);
+    console.log("***isNewRestaurant", isNewRestaurant);
     db.collection("restaurants").add(newRestaurant);
   } else {
+
+
+
+    console.log("***isNewRestaurant", isNewRestaurant);
     db.collection("restaurants")
     .where("name", "==", currentUploadRestaurant.name)
     .where("adr", "==", currentUploadRestaurant.adr)
     .get().then(querySnapshot => {
-      querySnapshot.forEach(function(doc) {
-        var restaurantData = doc.data();
-        console.log("***restaurantData", restaurantData);
-        if(doc.exists) {
+      console.log("***querySnapshot", querySnapshot);
+      if (querySnapshot.length) {
+        querySnapshot.forEach(function(doc) {
+          var restaurantData = doc.data();
+          console.log("***restaurantData", restaurantData);
           var couponRemains = doc.data().coupon;
           var getCoupon = false;
           if(couponRemains > 0){
@@ -610,13 +631,18 @@ function addRestaurantToDB(dishImgURL) {
             coupon:  couponRemains,
             cuisines: firebase.firestore.FieldValue.arrayUnion(uploadCuisine)
           });
-        } else {
-          // adding known restaurants on file but not in DB yet
-          console.log("***currentUploadRestaurant.name", currentUploadRestaurant.name);
-          console.log("***currentUploadRestaurant.adr", currentUploadRestaurant.adr);
-          db.collection("restaurants").add(newRestaurant);
-        }
-      })
+        })
+      } else {
+        // adding known restaurants on file but not in DB yet
+        db.collection("restaurants").add(newRestaurant)
+        .then(function(docRef) {
+          console.log("Adding restaurant on file:", docRef.id);
+          initNewMarker(newRestaurant);
+        })
+        .catch(function(error) {
+          console.error("Error adding document: ", error);
+        });
+      }
     })
   }
 }
