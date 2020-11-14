@@ -39,6 +39,7 @@
         <button onclick="mergeRestaurants()">Merge Restaurants</button>
     </div>
     <div id="myData"></div>
+    <div id="newDbRestaurants"></div>
 
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
@@ -46,50 +47,6 @@
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-analytics.js"></script>
 
     <script>
-    function initializeRestaurantsFromFile() {
-      fetch("/data/sort-veggie.json")
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (data) {
-        fetch("/data/api-response101.json")
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (geocodes) {
-          appendResults(data, geocodes.results);
-        })
-        .catch(function (err) {
-          console.log('error: ' + err);
-        });
-      })
-      .catch(function (err) {
-        console.log('error: ' + err);
-      });
-    }
-
-    function appendResults(data, results) {
-      console.log("data:", data.length);
-      console.log("results:", results.length);
-      var mainContainer = document.getElementById("myData");
-
-      var div = document.createElement("div");
-      div.innerHTML = '[';
-      mainContainer.appendChild(div);
-      for (var i = 0; i < results.length; i++) {
-        data[i].lat = results[i].locations[0].latLng.lat;
-        data[i].lng = results[i].locations[0].latLng.lng;
-        div = document.createElement("div");
-        div.innerHTML = `{"SS":"${data[i].SS}", "ADR":"${data[i].ADR}", "DIST":"${data[i].DIST}", "lat":${data[i].lat}, "lng":${data[i].lng}},`;
-        mainContainer.appendChild(div);
-      }
-      div = document.createElement("div");
-      div.innerHTML = ']';
-      mainContainer.appendChild(div);
-      console.log(data);
-    }
-
-
         const firebaseConfig = {
             apiKey: "AIzaSyBg34hCq_jGHdj-HNWi2ZjfqhM2YgWq4ek",
             authDomain: "pay-a-vegan.firebaseapp.com",
@@ -264,32 +221,92 @@
             itemsArray = data.map(item => {
               return { "name": item.SS, "dist": item.DIST, "adr": item.ADR, "lat": item.lat, "lng": item.lng }
             })
-
-            itemsArray.push({name:'LOVING HUT 愛家國際餐飲 - 淘大店', dist: '51', adr: 'SHOP NOS. G242-245, G/F, AMOY PLAZA , PHASE II, 77 NGAU TAU KOK ROAD, KOWLOON', lat:22.323897, lng:114.216543});
-            itemsArray.push({name:'LOVING HUT 愛家 - Port 33 分店', dist: '53', adr: 'SHOP 103A, 1/F, PORT 33, 33 TSEUK LUK STREET, SAN PO KONG, KOWLOON', lat:22.3355, lng:114.197718});
-            itemsArray.push({name:'Vegan Seven Days', dist: '52', adr: 'G/F, 22C SUNG KIT STREET, HUNG HOM, KOWLOON', lat:22.311779, lng:114.188552});
-            itemsArray.push({name:'POP Vegan', dist: '18', adr: 'SHOP 1, 1ST FLOOR, MILLION CITY, NO. 28 ELGIN STREET, CENTRAL, HONG KONG', lat:22.281855, lng:114.152563});
-            itemsArray.push({name:'10 ST. FRANCIS', dist: '12', adr: 'G/F., 10 ST. FRANCIS STREET, WANCHAI, HONG KONG', lat:22.276165, lng:114.169578});
-            itemsArray.push({name:'MANA! Starstreet', dist: '12', adr: 'G/F., 6 HENNESSY ROAD, HONG KONG', lat:22.27774, lng:114.16842});
-            itemsArray.push({name:'MANA! SOHO', dist: '18', adr: 'G/F., NO. 6-8 STAUNTON STREET, CENTRAL, HONG KONG', lat:22.28162, lng:114.153091});
-            itemsArray.push({name:'Feather and Bone', dist: '18', adr: 'SHOP 1A ON G/F., COMMERCIAL ACCOMMODATION, BOHEMIAN HOUSE, 321 DES VOEUX ROAD WEST, HONG KONG', lat:22.287606, lng:114.138868});
-            itemsArray.push({name:'Feather and Bone', dist: '12', adr: 'THE PORTION A OF SHOP A &amp; C, G/F., WINNER BUILDING, NO. 11 WONG NAI CHUNG ROAD, HAPPY VALLEY, HONG KONG', lat:22.269535, lng:114.184088});
-            itemsArray.push({name:'Feather and Bone', dist: '12', adr: 'SHOP A, G/F., LUARD ON THE PARK, 5 LUARD ROAD, WAN CHAI, HONG KONG', lat:22.276861, lng:114.171361});
-            itemsArray.push({name:'Feather and Bone', dist: '92', adr: 'MAJOR PORTION OF SHOP NOS. G09 AND GO9A, G/F, OP MALL, 100 TAI HO ROAD, TSUEN WAN, NEW TERRITORIES', lat:22.368085, lng:114.110658});
-            itemsArray.push({name:'Feather and Bone', dist: '18', adr: 'SHOP ON SHOP LEVEL 1 FLOOR, SOHO 38, NO. 38 SHELLEY STREET, HONG KONG', lat:22.280023, lng:114.151251});
-            itemsArray.push({name:'Mana! Fast Slow Food', dist: '18', adr: 'G/F., 92 WELLINGTON STREET, CENTRAL, HONG KONG', lat:22.282801, lng:114.154556});
-            itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'SHOP 3023, LEVEL 3, IFC MALL, CENTRAL, HONG KONG', lat:22.284943, lng:114.157324});
-            itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'LANDMARK ATRIUM, 15 QUEEN&apos;S ROAD CENTRAL, CENTRAL, HONG KONG', lat:22.280676, lng:114.157692});
-            itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'SHOP 206 AND AREA A, LEVEL 2, PACIFIC PLACE, 88 QUEENSWAY, HONG KONG', lat:22.277152, lng:114.164887});
-            itemsArray.push({name:'Fuel Espresso', dist: '18', adr: 'PORTION OF OFFICE LOBBY AT G/F, CHATER HOUSE, 8 CONNAUGHT ROAD CENTRAL, CENTRAL, HONG KO', lat:22.282126, lng:114.15847});
-            itemsArray.push({name:'Fuel Espresso', dist: '11', adr: 'AREA A, G/F., ONE TAIKOO PLACE, TAIKOO PLACE, 979 KING&apos;S ROAD, QUARRY BAY, HONG KONG', lat:22.287192, lng:114.211008});
-            itemsArray.push({name:'Fuel Espresso', dist: '61', adr: 'SHOP B, LOBBY OF SKY OBSERVATION DECK, 2/F, ICC, 1 AUSTIN ROAD WEST, KOWLOON', lat:22.303381, lng:114.160231});
-            itemsArray.push({name:'FUEL ESPRESSO QUAYSIDE', dist: '51', adr: 'SHOP NO.2, GROUND FLOOR, TOWER 1 AND TOWER 2, THE QUAYSIDE, 77 HOI BUN ROAD, KWUN TONG, KOWLOON', lat:22.316534, lng:114.213709});
-            itemsArray.push({name:'LOCK CHA TEA HOUSE', dist: '18', adr: 'SHOP 01-G07 AND THE OUTSIDE SEATING ACCOMMODATION AT SIDE, G/F., HEADQUARTERS BLOCK, CENTRAL POLICE STATION, NO. 10 HOLLYWOOD ROAD, CENTRAL, HONG KONG', lat:22.281361, lng:114.153974});
-            itemsArray.push({name:'NINETYS', dist: '18', adr: 'G/F., NO. 2-4 SHELLEY STREET, CENTRAL, HONG KONG', lat:22.281898, lng:114.153399});
-            itemsArray.push({name:'NINETYS', dist: '18', adr: "AIA Central, 1 Connaught Road, Central, HONG KONG", lat:22.281333, lng:114.162012});
-            itemsArray.push({name:'NINETYS', dist: '12', adr: "SHOP 2, G/F., NO. 222 QUEEN'S ROAD EAST, WAN CHAI, HONG KONG", lat:22.274811, lng:114.172593});
           });
+        }
+
+        //manual merge geolocation mapquest with addresses
+        function initializeRestaurantsFromFile() {
+          fetch("/data/sort-veggie.json")
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (data) {
+            fetch("/data/api-response101.json")
+            .then(function (response) {
+              return response.json();
+            })
+            .then(function (geocodes) {
+              appendResults(data, geocodes.results);
+            })
+            .catch(function (err) {
+              console.log('error: ' + err);
+            });
+          })
+          .catch(function (err) {
+            console.log('error: ' + err);
+          });
+        }
+
+        function appendResults(data, results) {
+          console.log("data:", data.length);
+          console.log("results:", results.length);
+          var mainContainer = document.getElementById("myData");
+
+          var div = document.createElement("div");
+          div.innerHTML = '[';
+          mainContainer.appendChild(div);
+          for (var i = 0; i < results.length; i++) {
+            data[i].lat = results[i].locations[0].latLng.lat;
+            data[i].lng = results[i].locations[0].latLng.lng;
+            div = document.createElement("div");
+            div.innerHTML = `{"SS":"${data[i].SS}", "ADR":"${data[i].ADR}", "DIST":"${data[i].DIST}", "lat":${data[i].lat}, "lng":${data[i].lng}},`;
+            mainContainer.appendChild(div);
+          }
+          div = document.createElement("div");
+          div.innerHTML = ']';
+          mainContainer.appendChild(div);
+          console.log(data);
+        }
+        //manual merge geolocation mapquest with addresses
+
+        function reportRestaurants() {
+          fetch("/data/sort-veggie.json")
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (data) {
+            let newDbRestaurants = [];
+            let similarOnFile = [];
+            db.collection('restaurants').get().then((snapshot) => {
+              snapshot.docs.forEach(doc => {
+                let restaurantData = doc.data();
+                let match = data.find(item => {
+                  return (restaurantData.name.trim() == item.SS.trim()) && (restaurantData.adr.trim() == item.ADR.trim())
+                })
+                if (match) {
+                  console.log("found match", restaurantData.name.trim(), restaurantData.adr.trim());
+                } else {
+                  console.log("found new from db", doc.id, restaurantData.name.trim(), restaurantData.adr.trim());
+                  //console.log("found new from file", data);
+                  let similarOnFile = data.reduce((a, item) => (((restaurantData.name.includes(item.SS.substring(0, 4))) && a.push(item)), a), []);
+                  //console.log("similaries", similars);
+                  newDbRestaurants.push({"SS":restaurantData.name, "ADR":restaurantData.adr, "DIST":"", "lat":restaurantData.location[0], "lng":restaurantData.location[1]});
+                }
+              })
+            });
+            var mainContainer = document.getElementById("newDbRestaurants");
+            var div = document.createElement("div");
+            div.innerHTML = '[';
+            mainContainer.appendChild(div);
+            newDbRestaurants.forEach((dbItem, i) => {
+              div = document.createElement("div");
+              div.innerHTML = `{"SS":"${dbItem.name}", "ADR":"${dbItem.adr}", "lat":${dbItem.location.lat}, "lng":${dbItem.location.lng}},`;
+              mainContainer.appendChild(div);
+            });
+            div = document.createElement("div");
+            div.innerHTML = ']';
+            mainContainer.appendChild(div);
+          })
         }
 
         function initializeRestaurantsCuisines() {
@@ -363,6 +380,7 @@
         }
 
         function inspectRestaurants() {
+          let dbRestaurants = [];
           db.collection('restaurants').get().then((snapshot) => {
             snapshot.docs.forEach(doc => {
               var restaurantData = doc.data();
@@ -380,13 +398,6 @@
                 unknownIngredients = dish.tags.reduce((a, tag) => ((all_ingredients.includes(tag) || a.push(tag)), a), []);
               });
 
-              //if (!restaurantData.adr) {
-                // console.log("**restaurantData.id", doc.id);
-                // console.log("**restaurantData.name", restaurantData.name);
-                // console.log("**restaurantData.adr", restaurantData.adr);
-                // console.log("**restaurantData.location", restaurantData.location);
-              //}
-
               if (unknownCuisines?.length || unknownCategories?.length || unknownIngredients?.length) {
                 console.log("**unknowns");
                 console.log("**restaurantData.id", doc.id);
@@ -400,15 +411,23 @@
                 console.log("***categories unknown", unknownCategories);
                 console.log("***ingredients known", knownIngredients);
                 console.log("***ingredients unknown", unknownIngredients);
+              } else {
+                dbRestaurants.push({
+                  name: restaurantData.name,
+                  adr: restaurantData.adr,
+                  location: restaurantData.location
+                })
               }
             });
           });
+          console.log("**dbRestaurants", dbRestaurants.sort);
         }
 
         function fixRestaurant() {
-          var docId = "G3xY8gtPk011lHrjSnHk";
+          var docId = "XR44JSfMKEBdWZGLcKex";
           var dishes = [];
-          var adr = "G/F., 6 HENNESSY ROAD, HONG KONG";
+          var name = "Fuel Espresso QUAYSIDE";
+          var adr = "SHOP NO.2, GROUND FLOOR, TOWER 1 AND TOWER 2, THE QUAYSIDE, 77 HOI BUN ROAD, KWUN TONG, KOWLOON";
           var newCategory = "";
           var oldTag = "";
           var newTag = "";
@@ -418,6 +437,13 @@
           db.collection('restaurants').doc(docId).get().then(doc => {
             var restaurantData = doc.data();
             dishes = restaurantData.dishes;
+
+            if (name.length) {
+              console.log("change name");
+              db.collection('restaurants').doc(docId).update({
+                name: name
+              });
+            }
 
             if (adr.length) {
               console.log("change adr");
@@ -454,21 +480,17 @@
               });
             }
 
-            console.log("new dishes:", dishes);
+            //console.log("new dishes:", dishes);
           })
         }
 
         function inspectReceipts() {
           initItemsArray().then(() => {
-            console.log(Object.keys(CUISINE_CATEGORIES));
-            console.log(Object.keys(CATEGORY_INGREDIENTS));
-            console.log(itemsArray);
             db.collection("restaurants")
             .get().then(querySnapshot => {
               querySnapshot.forEach(function(doc) {
                 var restaurantData = doc.data();
-                console.log("***db restaurant doc.id", doc.id);
-                console.log("***db restaurant.name", restaurantData.name);
+                console.log("***db restaurant", doc.id, restaurantData.name, restaurantData.adr);
               })
             }).catch(function(error) {
               console.log("Error getting cached document:", error);
@@ -520,14 +542,18 @@
         }
 
         function fixReceipt() {
-          var docIds = ["aBSIF9dCm9hrm4FdGPea", "kfbC7NPKoC96ULFquKBJ", "qXziPM4I4tMUbdPOohph"];
+          var docIds = ["5qwKTJcKotGukirgaOmY","7yttttjd3sPCXakwnaXT", "CLTgA0A3uI21mIRn5D3d",
+         "DwPOkYKtc6ppEdBlDuBC", "FRBCXC0shPU3DqUBhX3w", "IE7PIxWSBRGgPq6oKGE7", "Nyg1PajnDLPwXn0RXESW",
+         "W6rKZY8ZXkj3n320Op4P", "WpOIpYkQwFSYt95vbFPM", "bOHbpHRs6SPJL51ActEf"];
 
           // var restaurant = "";
           // var location = [];
-          var restaurant = "NINETYS, SHOP 2, G/F., NO. 222 QUEEN'S ROAD EAST, WAN CHAI, HONG KONG";
-          var location = [22.274811, 114.172593];
-          // var restaurant = "Mana! Fast Slow Food, G/F., 92 WELLINGTON STREET, CENTRAL, HONG KONG";
-          // var location = [22.282801, 114.154556];
+          var restaurant = "Fuel Espresso QUAYSIDE, SHOP NO.2, GROUND FLOOR, TOWER 1 AND TOWER 2, THE QUAYSIDE, 77 HOI BUN ROAD, KWUN TONG, KOWLOON";
+          var location = [];
+          // var restaurant = "NINETYS, SHOP 2, G/F., NO. 222 QUEEN'S ROAD EAST, WAN CHAI, HONG KONG";
+          // var location = [22.274811, 114.172593];
+          // var restaurant = "MANA! Starstreet, G/F, GENERALI TOWER, 8-10 QUEEN'S ROAD EAST, WAN CHAI";
+          // var location = [22.27774, 114.16842];
           // var restaurant = "Feather and Bone, SHOP A, G/F., LUARD ON THE PARK, 5 LUARD ROAD, WAN CHAI, HONG KONG";
           // var location = [22.276861, 114.171361];
 
@@ -574,9 +600,12 @@
         };
 
         // $(document).ready(fixReceipt());
-          $(document).ready(inspectReceipts());
+        //  $(document).ready(inspectReceipts());
 
-        //  $(document).ready(inspectRestaurants());
+          $(document).ready(inspectRestaurants());
       //    $(document).ready(inspectCategories());
+
+    //  $(document).ready(reportRestaurants());
+    //    $(document).ready(fixRestaurant());
     </script>
 </body>
