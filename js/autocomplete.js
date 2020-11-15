@@ -42,12 +42,14 @@ function autocomplete(inp, cachedRestaurants) {
       if ((displayCount < 10) && (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase())) {
         displayCount++;
         /*create a DIV element for each matching element:*/
+        console.log("input build DIV before substr", arr[i]);
         b = document.createElement("DIV");
         /*make the matching letters bold:*/
         b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
         b.innerHTML += arr[i].substr(val.length);
         /*insert a input field that will hold the current array item's value:*/
-        b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+        b.innerHTML += "<input type='hidden' value='" + arr[i].replace(/'/g,'&#x27;') + "'>";
+        console.log("input build DIV after substr", arr[i]);
         /*execute a function when someone clicks on the item value (DIV element):*/
         let ri = sorted_restaurants[i];
         //let activeLocation = {lat:sorted_restaurants[i].lat, lng:sorted_restaurants[i].lng};
@@ -59,7 +61,7 @@ function autocomplete(inp, cachedRestaurants) {
           /*close the list of autocompleted values,
           (or any other open lists of autocompleted values:*/
           closeAllLists();
-          console.log("****b click***");
+          console.log("****b click***", inp.value);
           currentUploadRestaurant = ri;
           let restaurantDishes = restaurantHash[inp.value] || [];
           console.log("restaurantHash", restaurantHash);
@@ -136,15 +138,19 @@ function autocomplete(inp, cachedRestaurants) {
         /*create a DIV element for each matching element:*/
         b = document.createElement("DIV");
         /*make the matching letters bold:*/
+        console.log("before substr", arr[i]),
         b.innerHTML = "<strong>" + arr[i].substr(0, valLength) + "</strong>";
         b.innerHTML += arr[i].substr(valLength);
         /*insert a input field that will hold the current array item's value:*/
-        b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+        b.innerHTML += "<input type='hidden' value='" + arr[i].replace(/'/g,'&#x27;') + "'>";
+        console.log("after substr", arr[i]),
         /*execute a function when someone clicks on the item value (DIV element):*/
 
         b.addEventListener("click", function(e) {
           inp.value = this.getElementsByTagName("input")[0].value;
           closeAllLists();
+          console.log("******click on dropdown", inp.value);
+          console.log(this.getElementsByTagName("input"));
           currentUploadRestaurant = ri;
           let activeLeafletLocation = [ri.lat, ri.lng];
           let activeLeaflet = L.marker(activeLeafletLocation, {icon:
