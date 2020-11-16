@@ -280,23 +280,17 @@
             db.collection('restaurants').get().then((snapshot) => {
               snapshot.docs.forEach(doc => {
                 let restaurantData = doc.data();
-                // if (restaurantData.adr.trim() == "SHOP 2, G/F., NO. 222 QUEEN'S ROAD EAST, WAN CHAI, HONG KONG") {
-                //   console.log("*******restaurantData.adr is nint");
-                // }
                 let match = data.find(item => {
-                  if (item.ADR.trim() == "SHOP 2, G/F., NO. 222 QUEEN'S ROAD EAST, WAN CHAI, HONG KONG") {
-                    // console.log("*******item.SS.trim()", item.SS.trim());
-                    // console.log("*****restaurantData.name.trim()", restaurantData.name.trim());
-                  }
                   return (restaurantData.name.trim() == item.SS.trim()) && (restaurantData.adr.trim() == item.ADR.trim())
                 })
                 if (match) {
                   console.log("found match", restaurantData.name.trim(), restaurantData.adr.trim());
                 } else {
-                  console.log("found new from db", doc.id, restaurantData.name.trim(), restaurantData.adr.trim());
+                  console.log("found new from db", doc.id, restaurantData.name.trim());
+                  console.log("found new from db", doc.id, restaurantData.adr.trim());
                   //console.log("found new from file", data);
                   let similarOnFile = data.reduce((a, item) => (((restaurantData.name.includes(item.SS.substring(0, 4))) && a.push(item)), a), []);
-                  //console.log("similaries", similars);
+                  console.log("similaries", similarOnFile);
                   newDbRestaurants.push({"SS":restaurantData.name, "ADR":restaurantData.adr, "DIST":"", "lat":restaurantData.location[0], "lng":restaurantData.location[1]});
                 }
               })
@@ -605,12 +599,12 @@
         };
 
         // $(document).ready(fixReceipt());
-      //    $(document).ready(inspectReceipts());
+          $(document).ready(inspectReceipts());
 
         //  $(document).ready(inspectRestaurants());
       //    $(document).ready(inspectCategories());
 
-      $(document).ready(reportRestaurants());
+    //  $(document).ready(reportRestaurants());
     //    $(document).ready(fixRestaurant());
     </script>
 </body>

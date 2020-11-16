@@ -634,6 +634,8 @@ function addRestaurantToDB(dishImgURL) {
         })
       } else {
         // adding known restaurants on file but not in DB yet
+        newRestaurant.name = currentUploadRestaurant.name;
+        newRestaurant.adr = currentUploadRestaurant.adr;
         db.collection("restaurants").add(newRestaurant)
         .then(function(docRef) {
           console.log("Adding restaurant on file:", docRef.id);
