@@ -82,7 +82,7 @@
       </p>
       <h1 class="text-center">Hello!</h1>
       <p class="text-center">
-        A simple hello could lead to wonderful things <small>v1.7.0</small>
+        A simple hello could lead to wonderful things <small>v1.8.0</small>
       </p>
     </div>
 
@@ -296,7 +296,6 @@ window.addEventListener('load', initializeRestaurantsOnLoad);
 function readPreviewURL(input, preview, label, checkmark, miniFile) {
   if (input.files && input.files[0]) {
     var reader = new FileReader();
-    var filesize = ((input.files[0].size/1024)/1024).toFixed(4);
     reader.onload = function (e) {
       var quality = 30;
       var output_format = "image/png";
@@ -317,7 +316,7 @@ function readPreviewURL(input, preview, label, checkmark, miniFile) {
             console.log("***miniFiles", miniFiles);
               console.log("***miniFiles receipt", miniFiles['receipt']);
                 console.log("***miniFiles kyeys", Object.keys(miniFiles));
-          filesize = ((file.size/1024)/1024).toFixed(4);
+          let filesize = ((file.size/1024)/1024).toFixed(4);
           console.log(`Finished compressing : ${filesize} MB`);
         })
 
