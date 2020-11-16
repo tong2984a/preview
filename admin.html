@@ -280,7 +280,14 @@
             db.collection('restaurants').get().then((snapshot) => {
               snapshot.docs.forEach(doc => {
                 let restaurantData = doc.data();
+                // if (restaurantData.adr.trim() == "SHOP 2, G/F., NO. 222 QUEEN'S ROAD EAST, WAN CHAI, HONG KONG") {
+                //   console.log("*******restaurantData.adr is nint");
+                // }
                 let match = data.find(item => {
+                  if (item.ADR.trim() == "SHOP 2, G/F., NO. 222 QUEEN'S ROAD EAST, WAN CHAI, HONG KONG") {
+                    // console.log("*******item.SS.trim()", item.SS.trim());
+                    // console.log("*****restaurantData.name.trim()", restaurantData.name.trim());
+                  }
                   return (restaurantData.name.trim() == item.SS.trim()) && (restaurantData.adr.trim() == item.ADR.trim())
                 })
                 if (match) {
@@ -490,7 +497,7 @@
             .get().then(querySnapshot => {
               querySnapshot.forEach(function(doc) {
                 var restaurantData = doc.data();
-                console.log("***db restaurant", doc.id, restaurantData.name, restaurantData.adr);
+                console.log("***db restaurant", doc.id, restaurantData.name, restaurantData.adr, restaurantData.location);
               })
             }).catch(function(error) {
               console.log("Error getting cached document:", error);
@@ -598,7 +605,7 @@
         };
 
         // $(document).ready(fixReceipt());
-        //  $(document).ready(inspectReceipts());
+      //    $(document).ready(inspectReceipts());
 
         //  $(document).ready(inspectRestaurants());
       //    $(document).ready(inspectCategories());
