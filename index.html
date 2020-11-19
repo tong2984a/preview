@@ -82,7 +82,7 @@
       </p>
       <h1 class="text-center">Hello!</h1>
       <p class="text-center">
-        A simple hello could lead to wonderful things <small>v1.12.0</small>
+        A simple hello could lead to wonderful things <small>v1.13.0</small>
       </p>
     </div>
 
@@ -159,16 +159,6 @@
       </div>
     </div>
   </div>
-
-    <!-- Ricardo Re-upload button -->
-    <!-- <div class="row justify-content-center">
-      <div class="col-xs-12">
-        <button id="reUploadBtn" class="btn btn-success my-2 btn-default btn-block btn-lg" style="display: none;" onClick="reUpload()">
-          Re-Upload Photo
-        </button>
-
-      </div>
-    </div> -->
 
     <div class="row justify-content-center">
       <div class="col-xs-12" id="tags" style="display: none;">
@@ -594,17 +584,6 @@ function initializeRestaurantsOnLoad() {
   }
 }
 
-function upload8() {
-  for (let key of Object.keys(miniFiles)) {
-    localStorage.removeItem(key);
-  }
-  delete miniFiles["dish"];
-  delete miniFiles["receipt"];
-
-  document.getElementById('dishPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder.jpg";
-  document.getElementById('receiptPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg";
-}
-
 function upload() {
   uploadTags();
   if (helloMessageInput.value.length == 0) {
@@ -658,16 +637,16 @@ function upload() {
             console.log("got all paths here now: ", imagePaths);
             addReceiptToDB(imagePaths);
             addRestaurantToDB(imagePaths['dish'] || "");
-
-            if (storageAvailable('localStorage')) {
-              localStorage.removeItem("dish");
-              localStorage.removeItem("receipt");
-            }
-
-            delete miniFiles["dish"];
-            delete miniFiles["receipt"];
-            document.getElementById('dishPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder.jpg";
-            document.getElementById('receiptPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg";
+            //
+            // if (storageAvailable('localStorage')) {
+            //   localStorage.removeItem("dish");
+            //   localStorage.removeItem("receipt");
+            // }
+            //
+            // delete miniFiles["dish"];
+            // delete miniFiles["receipt"];
+            // document.getElementById('dishPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder.jpg";
+            // document.getElementById('receiptPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg";
           }
         });
       }
