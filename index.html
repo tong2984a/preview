@@ -82,7 +82,7 @@
       </p>
       <h1 class="text-center">Hello!</h1>
       <p class="text-center">
-        A simple hello could lead to wonderful things <small>v1.9.0</small>
+        A simple hello could lead to wonderful things <small>v1.10.0</small>
       </p>
     </div>
 
@@ -282,18 +282,69 @@ $(document).ready(function(){
   $('[data-toggle="popover"]').popover({
     trigger: 'focus'
   });
+
   // Prepare the preview for profile picture
+  if(localStorage.getItem("dish")) {
+    let currentImage = localStorage.getItem('dish');
+    document.getElementById('dishPicturePreview').src = currentImage;
+    var dateTime = new Date();
+    dishImageFileName = dateTime + ".jpg";
+    srcToFile(
+      currentImage,
+      dishImageFileName,
+      'jpg'
+    )
+    .then(function(file){
+      miniFiles["dish"] = file;
+      console.log("miniFiles", miniFiles);
+      let miniFileDish = miniFiles["dish"];
+      let miniFileReceipt = miniFiles["receipt"];
+      console.log("miniFileDish", miniFileDish);
+      console.log("miniFileReceipt", miniFileReceipt);
+      if (miniFileDish || miniFileReceipt) {
+        document.getElementById('sendBtn').style.display = "block";
+        document.getElementById('tags').style.display = "block";
+      }
+    })
+  };
+  if(localStorage.getItem("receipt")) {
+    let currentImage = localStorage.getItem('receipt');
+    document.getElementById('receiptPicturePreview').src = currentImage;
+    var dateTime = new Date();
+    receiptImageFileName = dateTime + ".jpg";
+    srcToFile(
+      currentImage,
+      receiptImageFileName,
+      'jpg'
+    )
+    .then(function(file){
+      miniFiles["receipt"] = file;
+      console.log("miniFiles", miniFiles);
+      let miniFileDish = miniFiles["dish"];
+      let miniFileReceipt = miniFiles["receipt"];
+      console.log("miniFileDish", miniFileDish);
+      console.log("miniFileReceipt", miniFileReceipt);
+      if (miniFileDish || miniFileReceipt) {
+        document.getElementById('sendBtn').style.display = "block";
+        document.getElementById('tags').style.display = "block";
+      }
+    })
+  };
   $("#receipt-picture").change(function(){
-    readPreviewURL(this, document.getElementById('receiptPicturePreview'), document.getElementById('upload-receipt'), document.getElementById('upload-receipt-checkmark'), "receipt");
+    let dateTime = new Date();
+    receiptImageFileName = dateTime + ".jpg";
+    readPreviewURL(this, document.getElementById('receiptPicturePreview'), document.getElementById('upload-receipt'), document.getElementById('upload-receipt-checkmark'), "receipt", receiptImageFileName);
   });
   $("#dish-picture").change(function(){
-    readPreviewURL(this, document.getElementById('dishPicturePreview'), document.getElementById('upload-dish'), document.getElementById('upload-dish-checkmark'), "dish");
+    let dateTime = new Date();
+    dishImageFileName = dateTime + ".jpg";
+    readPreviewURL(this, document.getElementById('dishPicturePreview'), document.getElementById('upload-dish'), document.getElementById('upload-dish-checkmark'), "dish", dishImageFileName);
   });
 });
 
 window.addEventListener('load', initializeRestaurantsOnLoad);
 
-function readPreviewURL(input, preview, label, checkmark, miniFile) {
+function readPreviewURL(input, preview, label, checkmark, miniFile, imageFileName) {
   if (input.files && input.files[0]) {
     var reader = new FileReader();
     reader.onload = function (e) {
@@ -304,8 +355,7 @@ function readPreviewURL(input, preview, label, checkmark, miniFile) {
       img.onload = function() {
         //preview.attr('src', jic.compress(img,quality,output_format).src).fadeIn('slow');
         preview.src = jic.compress(img,quality,output_format).src;
-        var dateTime = new Date();
-        imageFileName = dateTime + ".jpg";
+        localStorage.setItem(miniFile, preview.src);
         srcToFile(
           preview.src,
           imageFileName,
@@ -313,9 +363,6 @@ function readPreviewURL(input, preview, label, checkmark, miniFile) {
         )
         .then(function(file){
           miniFiles[miniFile] = file;
-            console.log("***miniFiles", miniFiles);
-              console.log("***miniFiles receipt", miniFiles['receipt']);
-                console.log("***miniFiles kyeys", Object.keys(miniFiles));
           let filesize = ((file.size/1024)/1024).toFixed(4);
           console.log(`Finished compressing : ${filesize} MB`);
         })
@@ -416,9 +463,9 @@ var contentString = '<div>' +
                 '<div>' +
                 preview.value +
                 '</div>' ;
-// added in 17/7
-var imageFileName;
-// added in 20/7
+
+var dishImageFileName;
+var receiptImageFileName;
 var isGlutenFree;
 var isEggFree;
 var isDairyFree;
@@ -520,6 +567,17 @@ function initializeRestaurantsOnLoad() {
 }
 
 function upload() {
+  for (let key of Object.keys(miniFiles)) {
+    localStorage.removeItem(key);
+  }
+  delete miniFiles["dish"];
+  delete miniFiles["receipt"];
+
+  document.getElementById('dishPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder.jpg";
+  document.getElementById('receiptPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg";
+}
+
+function upload3() {
   uploadTags();
   if (helloMessageInput.value.length == 0) {
     helloMessageOutput.innerText = "Looks like you haven't provided a review";
@@ -572,6 +630,14 @@ function upload() {
             console.log("got all paths here now: ", imagePaths);
             addReceiptToDB(imagePaths);
             addRestaurantToDB(imagePaths['dish'] || "");
+
+            localStorage.removeItem("dish");
+            localStorage.removeItem("receipt");
+
+            delete miniFiles["dish"];
+            delete miniFiles["receipt"];
+            document.getElementById('dishPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder.jpg";
+            document.getElementById('receiptPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg";
           }
         });
       }
@@ -664,7 +730,8 @@ function addReceiptToDB(imagePaths) {
     dish: dishInput.value,
     location: [currentLat, currentLng],
     restaurant: restaurantInputValue,
-    imageName: imageFileName,
+    dishImageName: dishImageFileName,
+    receiptImageName: receiptImageFileName,
     tags: ($('#indexIngredients').val().split(",")),
     approved: false,
     category: category,
