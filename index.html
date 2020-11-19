@@ -82,7 +82,7 @@
       </p>
       <h1 class="text-center">Hello!</h1>
       <p class="text-center">
-        A simple hello could lead to wonderful things <small>v1.10.0</small>
+        A simple hello could lead to wonderful things <small>v1.11.0</small>
       </p>
     </div>
 
@@ -284,51 +284,53 @@ $(document).ready(function(){
   });
 
   // Prepare the preview for profile picture
-  if(localStorage.getItem("dish")) {
-    let currentImage = localStorage.getItem('dish');
-    document.getElementById('dishPicturePreview').src = currentImage;
-    var dateTime = new Date();
-    dishImageFileName = dateTime + ".jpg";
-    srcToFile(
-      currentImage,
-      dishImageFileName,
-      'jpg'
-    )
-    .then(function(file){
-      miniFiles["dish"] = file;
-      console.log("miniFiles", miniFiles);
-      let miniFileDish = miniFiles["dish"];
-      let miniFileReceipt = miniFiles["receipt"];
-      console.log("miniFileDish", miniFileDish);
-      console.log("miniFileReceipt", miniFileReceipt);
-      if (miniFileDish || miniFileReceipt) {
-        document.getElementById('sendBtn').style.display = "block";
-        document.getElementById('tags').style.display = "block";
-      }
-    })
-  };
-  if(localStorage.getItem("receipt")) {
-    let currentImage = localStorage.getItem('receipt');
-    document.getElementById('receiptPicturePreview').src = currentImage;
-    var dateTime = new Date();
-    receiptImageFileName = dateTime + ".jpg";
-    srcToFile(
-      currentImage,
-      receiptImageFileName,
-      'jpg'
-    )
-    .then(function(file){
-      miniFiles["receipt"] = file;
-      console.log("miniFiles", miniFiles);
-      let miniFileDish = miniFiles["dish"];
-      let miniFileReceipt = miniFiles["receipt"];
-      console.log("miniFileDish", miniFileDish);
-      console.log("miniFileReceipt", miniFileReceipt);
-      if (miniFileDish || miniFileReceipt) {
-        document.getElementById('sendBtn').style.display = "block";
-        document.getElementById('tags').style.display = "block";
-      }
-    })
+  if (storageAvailable('localStorage')) {
+    if(localStorage.getItem("dish")) {
+      let currentImage = localStorage.getItem('dish');
+      document.getElementById('dishPicturePreview').src = currentImage;
+      var dateTime = new Date();
+      dishImageFileName = dateTime + ".jpg";
+      srcToFile(
+        currentImage,
+        dishImageFileName,
+        'jpg'
+      )
+      .then(function(file){
+        miniFiles["dish"] = file;
+        console.log("miniFiles", miniFiles);
+        let miniFileDish = miniFiles["dish"];
+        let miniFileReceipt = miniFiles["receipt"];
+        console.log("miniFileDish", miniFileDish);
+        console.log("miniFileReceipt", miniFileReceipt);
+        if (miniFileDish || miniFileReceipt) {
+          document.getElementById('sendBtn').style.display = "block";
+          document.getElementById('tags').style.display = "block";
+        }
+      })
+    };
+    if(localStorage.getItem("receipt")) {
+      let currentImage = localStorage.getItem('receipt');
+      document.getElementById('receiptPicturePreview').src = currentImage;
+      var dateTime = new Date();
+      receiptImageFileName = dateTime + ".jpg";
+      srcToFile(
+        currentImage,
+        receiptImageFileName,
+        'jpg'
+      )
+      .then(function(file){
+        miniFiles["receipt"] = file;
+        console.log("miniFiles", miniFiles);
+        let miniFileDish = miniFiles["dish"];
+        let miniFileReceipt = miniFiles["receipt"];
+        console.log("miniFileDish", miniFileDish);
+        console.log("miniFileReceipt", miniFileReceipt);
+        if (miniFileDish || miniFileReceipt) {
+          document.getElementById('sendBtn').style.display = "block";
+          document.getElementById('tags').style.display = "block";
+        }
+      })
+    }
   };
   $("#receipt-picture").change(function(){
     let dateTime = new Date();
@@ -355,7 +357,9 @@ function readPreviewURL(input, preview, label, checkmark, miniFile, imageFileNam
       img.onload = function() {
         //preview.attr('src', jic.compress(img,quality,output_format).src).fadeIn('slow');
         preview.src = jic.compress(img,quality,output_format).src;
-        localStorage.setItem(miniFile, preview.src);
+        if (storageAvailable('localStorage')) {
+          localStorage.setItem(miniFile, preview.src);
+        }
         srcToFile(
           preview.src,
           imageFileName,
@@ -424,7 +428,31 @@ function onMapClick(e) {
     mymap.on('click', onMapClick);
 	}
 
-//Ricardo: current
+  function storageAvailable(type) {
+      var storage;
+      try {
+          storage = window[type];
+          var x = '__storage_test__';
+          storage.setItem(x, x);
+          storage.removeItem(x);
+          return true;
+      }
+      catch(e) {
+          return e instanceof DOMException && (
+              // everything except Firefox
+              e.code === 22 ||
+              // Firefox
+              e.code === 1014 ||
+              // test name field too, because code might not be present
+              // everything except Firefox
+              e.name === 'QuotaExceededError' ||
+              // Firefox
+              e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+              // acknowledge QuotaExceededError only if there's something already stored
+              (storage && storage.length !== 0);
+      }
+  }
+
 const firebaseConfig = {
     apiKey: "AIzaSyBg34hCq_jGHdj-HNWi2ZjfqhM2YgWq4ek",
     authDomain: "pay-a-vegan.firebaseapp.com",
@@ -464,8 +492,8 @@ var contentString = '<div>' +
                 preview.value +
                 '</div>' ;
 
-var dishImageFileName;
-var receiptImageFileName;
+var dishImageFileName = "";
+var receiptImageFileName = "";
 var isGlutenFree;
 var isEggFree;
 var isDairyFree;
@@ -631,8 +659,10 @@ function upload() {
             addReceiptToDB(imagePaths);
             addRestaurantToDB(imagePaths['dish'] || "");
 
-            localStorage.removeItem("dish");
-            localStorage.removeItem("receipt");
+            if (storageAvailable('localStorage')) {
+              localStorage.removeItem("dish");
+              localStorage.removeItem("receipt");
+            }
 
             delete miniFiles["dish"];
             delete miniFiles["receipt"];
