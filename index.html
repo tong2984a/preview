@@ -566,7 +566,7 @@ function initializeRestaurantsOnLoad() {
   }
 }
 
-function upload() {
+function upload8() {
   for (let key of Object.keys(miniFiles)) {
     localStorage.removeItem(key);
   }
@@ -577,7 +577,7 @@ function upload() {
   document.getElementById('receiptPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg";
 }
 
-function upload3() {
+function upload() {
   uploadTags();
   if (helloMessageInput.value.length == 0) {
     helloMessageOutput.innerText = "Looks like you haven't provided a review";
