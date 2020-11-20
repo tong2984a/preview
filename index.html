@@ -82,7 +82,7 @@
       </p>
       <h1 class="text-center">Hello!</h1>
       <p class="text-center">
-        A simple hello could lead to wonderful things <small>v1.13.0</small>
+        A simple hello could lead to wonderful things <small>v1.14.0</small>
       </p>
     </div>
 
@@ -633,8 +633,7 @@ function upload() {
       }, function() {
         fileRef.getDownloadURL().then(function(singleImgPath) {
           imagePaths[key] = singleImgPath;
-          if (imagePaths.length == miniFiles.length) {
-            console.log("got all paths here now: ", imagePaths);
+          if (Object.keys(imagePaths).length == Object.keys(miniFiles).length) {
             addReceiptToDB(imagePaths);
             addRestaurantToDB(imagePaths['dish'] || "");
             //
