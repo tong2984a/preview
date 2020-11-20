@@ -82,7 +82,7 @@
       </p>
       <h1 class="text-center">Hello!</h1>
       <p class="text-center">
-        A simple hello could lead to wonderful things <small>v1.14.0</small>
+        A simple hello could lead to wonderful things <small>v1.15.0</small>
       </p>
     </div>
 
@@ -679,26 +679,21 @@ function addRestaurantToDB(dishImgURL) {
     console.log("***isNewRestaurant", isNewRestaurant);
     db.collection("restaurants").add(newRestaurant);
   } else {
-
-
-
     console.log("***isNewRestaurant", isNewRestaurant);
     db.collection("restaurants")
-    .where("name", "==", currentUploadRestaurant.name)
-    .where("adr", "==", currentUploadRestaurant.adr)
+    .where("name", "==", currentUploadRestaurant.name.trim())
+    .where("adr", "==", currentUploadRestaurant.adr.trim())
     .get().then(querySnapshot => {
-      console.log("***querySnapshot", querySnapshot);
-      if (querySnapshot.length) {
+      console.log("***querySnapshot", querySnapshot.docs.length);
+      if (querySnapshot.docs.length) {
         querySnapshot.forEach(function(doc) {
           var restaurantData = doc.data();
-          console.log("***restaurantData", restaurantData);
           var couponRemains = doc.data().coupon;
           var getCoupon = false;
           if(couponRemains > 0){
             couponRemains -= 1;
             getCoupon = true;
           }
-          console.log('accurate');
           db.collection("restaurants").doc(doc.id).update({
             dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
             coupon:  couponRemains,
@@ -707,8 +702,8 @@ function addRestaurantToDB(dishImgURL) {
         })
       } else {
         // adding known restaurants on file but not in DB yet
-        newRestaurant.name = currentUploadRestaurant.name;
-        newRestaurant.adr = currentUploadRestaurant.adr;
+        newRestaurant.name = currentUploadRestaurant.name.trim();
+        newRestaurant.adr = currentUploadRestaurant.adr.trim();
         db.collection("restaurants").add(newRestaurant)
         .then(function(docRef) {
           console.log("Adding restaurant on file:", docRef.id);
