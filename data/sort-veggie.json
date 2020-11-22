@@ -508,6 +508,118 @@
       "DIST": "",
       "lat": 22.3030546,
       "lng": 114.1631319
+    },
+    {
+      "SS": "NOC Coffee Co.",
+      "ADR": "SHOP 3A, G/F., 2-4 TAI WONG STREET EAST, WAN CHAI, HONG KONG",
+      "DIST": "",
+      "lat": 22.2756841,
+      "lng": 114.1712844
+    },
+    {
+      "SS": "NOC Coffee Co.",
+      "ADR": "SHOP G23, G/F., LEE GARDEN THREE, 1 SUNNING ROAD, CAUSEWAY BAY, HONG KONG",
+      "DIST": "",
+      "lat": 22.2775109,
+      "lng": 114.1852856
+    },
+    {
+      "SS": "NOC Coffee",
+      "ADR": "G/F., THE MERCURY, 23 MERCURY STREET, NORTH POINT, HONG KONG",
+      "DIST": "",
+      "lat": 22.2856814,
+      "lng": 114.192034
+    },
+    {
+      "SS": "NOC Roastery",
+      "ADR": "SHOP 4, GROUND FLOOR, 321 DES VOEUX ROAD WEST, SAI YING PUN, HONG KONG",
+      "DIST": "",
+      "lat": 22.2876371,
+      "lng": 114.1390872
+    },
+    {
+      "SS": "NOC Coffee",
+      "ADR": "SHOP 42, G/F., SITE 9 OF WHAMPOA GARDEN, TAK FUNG STREET, KOWLOON CITY, KOWLOON",
+      "DIST": "",
+      "lat": 22.3021302,
+      "lng": 114.1908324
+    },
+    {
+      "SS": "SHAKE SHACK",
+      "ADR": "SHOP 105A, LEVEL 1, PACIFIC PLACE, 88 QUEENSWAY, ADMIRALTY, HONG KONG",
+      "DIST": "",
+      "lat": 22.2776449,
+      "lng": 114.1653943
+    },
+    {
+      "SS": "SHAKE SHACK",
+      "ADR": "SHOP NOS. B217-B219, BASEMENT 2, TIMES SQUARE, 1 MATHESON STREET, CAUSEWAY BAY, HONG KONG",
+      "DIST": "",
+      "lat": 22.2780693,
+      "lng": 114.1818228
+    },
+    {
+      "SS": "SHAKE SHACK",
+      "ADR": "SHOP NO. 4018, LEVEL FOUR, TWO IFC, 8 FINANCE STREET, CENTRAL, HONG KONG",
+      "DIST": "",
+      "lat": 22.2853737,
+      "lng": 114.1589302
+    },
+    {
+      "SS": "SHAKE SHACK",
+      "ADR": "SHOP OT G53, G/F, OCEAN TERMINAL, HARBOUR CITY, TSIM SHA TSUI, KOWLOON",
+      "DIST": "",
+      "lat": 22.2948218,
+      "lng": 114.167186
+    },
+    {
+      "SS": "SHAKE SHACK",
+      "ADR": "SHOP 1005-1006 AND OPEN SEATING AREA FOR SHOP 1005-1006, 1/F, ELEMENTS, 1 AUSTIN ROAD WEST, KOWLOON",
+      "DIST": "",
+      "lat": 22.3049666,
+      "lng": 114.1615936
+    },
+    {
+      "SS": "SHAKE SHACK",
+      "ADR": "SHOP 153-154, LEVEL 1, NEW TOWN PLAZA, 18 SHATIN CENTRE STREET, SHA TIN, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.3814484,
+      "lng": 114.1883111
+    },
+    {
+      "SS": "MA and The Seeds of Life",
+      "ADR": "SHOP NO. 11, 1/F, H18 CONET, 23 GRAHAM STREET, CENTRAL, HONG KONG",
+      "DIST": "",
+      "lat": 22.2834075,
+      "lng": 114.1537878
+    },
+    {
+      "SS": "DEAR LILLY, BAR & RESTAURANT",
+      "ADR": "SHOP 4010, LEVEL 4, IFC MALL, 8 FINANCE STREET, CENTRAL, HONG KONG",
+      "DIST": "",
+      "lat": 22.2851589,
+      "lng": 114.1588412
+    },
+    {
+      "SS": "ISOLA BAR & GRILL",
+      "ADR": "SHOP NO. 2075, PODIUM LEVEL TWO, IFC MALL, 8 FINANCE STREET, CENTRAL, HONG KONG",
+      "DIST": "",
+      "lat": 22.2858103,
+      "lng": 114.1583472
+    },
+    {
+      "SS": "Namaste Kitchen",
+      "ADR": "SHOP 1, G/F., MEDAL COURT, NO. 38 QUEEN'S ROAD WEST, SHEUNG WAN, HONG KONG",
+      "DIST": "",
+      "lat": 22.28669,
+      "lng": 114.1479
+    },
+    {
+      "SS": "WOODLANDS INDIAN VEG RESTAURANT",
+      "ADR": "SHOP NOS. 16 & 17, UG/F, WING ON PLAZA, 62 MODY ROAD, TSIM SHA TSUI, KOWLOON",
+      "DIST": "",
+      "lat": 22.2966713,
+      "lng": 114.1763546
     }
 
 
