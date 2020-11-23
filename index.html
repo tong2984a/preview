@@ -82,7 +82,7 @@
       </p>
       <h4 class="text-center">Plant forward. Support our Patreon, or Shop with Us !</h4>
       <p class="text-center">
-        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.18.0</small>
+        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.19.0</small>
       </p>
       <p class="text-left font-weight-normal">
         Technical Instructions for Beta Users<br/>
@@ -649,8 +649,10 @@ function upload() {
         fileRef.getDownloadURL().then(function(singleImgPath) {
           imagePaths[key] = singleImgPath;
           if (Object.keys(imagePaths).length == Object.keys(miniFiles).length) {
-            addReceiptToDB(imagePaths);
             addRestaurantToDB(imagePaths['dish'] || "");
+            //add receipt must follow add restaurant
+            //use whatever currentLocation resulting from it
+            addReceiptToDB(imagePaths);
             //
             // if (storageAvailable('localStorage')) {
             //   localStorage.removeItem("dish");
@@ -670,8 +672,9 @@ function upload() {
 
 function addRestaurantToDB(dishImgURL) {
   let restaurantInputValue = restaurantInput.value.trim();
-  let currentLat = currentLeaflet.getLatLng().lat;
-  let currentLng = currentLeaflet.getLatLng().lng;
+  //current location is by default set to map center
+  //currentLeaflet is undefined if start typing new restaurant without selecting
+  currentLocation = [mymap.getCenter().lat, mymap.getCenter().lng];
   let uploadCuisine = document.getElementById('indexCuisines').value;
   let dishes = {
     dish: dishInput.value,
@@ -682,7 +685,7 @@ function addRestaurantToDB(dishImgURL) {
   let newRestaurant = {
     name: restaurantInputValue,
     adr: "",
-    location: [currentLat, currentLng],
+    location: currentLocation,
     dishes: [dishes],
     coupon:  10,
     cuisines: [uploadCuisine]
@@ -692,7 +695,11 @@ function addRestaurantToDB(dishImgURL) {
     //console.log("***`${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`==", `${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`);
     //console.log("***restaurantInputValue", restaurantInputValue);
     console.log("***isNewRestaurant", isNewRestaurant);
-    db.collection("restaurants").add(newRestaurant);
+    db.collection("restaurants").add(newRestaurant)
+    .then(function(docRef) {
+      console.log("Adding new restaurant not on file:", docRef.id);
+      initNewMarker(newRestaurant);
+    })
   } else {
     console.log("***isNewRestaurant", isNewRestaurant);
     db.collection("restaurants")
@@ -719,6 +726,10 @@ function addRestaurantToDB(dishImgURL) {
         // adding known restaurants on file but not in DB yet
         newRestaurant.name = currentUploadRestaurant.name.trim();
         newRestaurant.adr = currentUploadRestaurant.adr.trim();
+        //should be using currentLeaflet location instead of map center
+        //currentLeaflet should already be defined from either keydown or clicking on active options
+        currentLocation = [currentLeaflet.getLatLng().lat, currentLeaflet.getLatLng().lng];
+        newRestaurant.location = currentLocation;
         db.collection("restaurants").add(newRestaurant)
         .then(function(docRef) {
           console.log("Adding restaurant on file:", docRef.id);
@@ -733,8 +744,6 @@ function addRestaurantToDB(dishImgURL) {
 }
 
 function addReceiptToDB(imagePaths) {
-  let currentLat = currentLeaflet.getLatLng().lat;
-  let currentLng = currentLeaflet.getLatLng().lng;
   let uploadCuisine = document.getElementById('indexCuisines').value;
   let restaurantInputValue = restaurantInput.value.trim();
   let receiptImgURL = imagePaths["receipt"] || "";
@@ -746,7 +755,7 @@ function addReceiptToDB(imagePaths) {
     fileURL: dishImgURL,
     receiptImgURL: receiptImgURL,
     dish: dishInput.value,
-    location: [currentLat, currentLng],
+    location: currentLocation,
     restaurant: restaurantInputValue,
     dishImageName: dishImageFileName,
     receiptImageName: receiptImageFileName,

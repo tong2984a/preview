@@ -35,6 +35,8 @@ function autocomplete(inp, cachedRestaurants) {
     if (currentUploadRestaurant) {
       let dbName = `${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`;
       isNewRestaurant = !((dbName.substr(0, val.length).toUpperCase() == val.toUpperCase()));
+    } else {
+      isNewRestaurant = true;
     }
 
     for (i = 0; i < arr.length; i++) {
