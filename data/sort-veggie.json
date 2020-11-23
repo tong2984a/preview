@@ -620,8 +620,168 @@
       "DIST": "",
       "lat": 22.2966713,
       "lng": 114.1763546
+    },
+    {
+      "SS": "Hale & Hearty",
+      "ADR": "859 Bourke Street Waterloo 2017",
+      "DIST": "",
+      "lat": -33.8970782,
+      "lng": 151.2127887
+    },
+    {
+      "SS": "Mon Chou Bondi",
+      "ADR": "197 Old South Head Road, Bondi Junction 2022",
+      "DIST": "",
+      "lat": -33.8896741,
+      "lng": 151.2588547
+    },
+    {
+      "SS": "Gigi pizzeria",
+      "ADR": "379 King Street, Newtown 2042",
+      "DIST": "",
+      "lat": -33.899248,
+      "lng": 151.1776294
+    },
+    {
+      "SS": "Yulli's",
+      "ADR": "417 Crown Street, Surry Hills 2010",
+      "DIST": "",
+      "lat": -33.8863646,
+      "lng": 151.2136958
+    },
+    {
+      "SS": "Kindness Thai Vegan Cafe",
+      "ADR": "Republic 2 Court Yard, 6/248 Palmer Street, Darlinghurst 2010",
+      "DIST": "",
+      "lat": -33.878136,
+      "lng": 151.216791
+    },
+    {
+      "SS": "Bodhi Restaurant",
+      "ADR": "2/4 College Street, Sydney 2000",
+      "DIST": "",
+      "lat": -33.8722041,
+      "lng": 151.213429
+    },
+    {
+      "SS": "Green Gourmet Vegan St leonards",
+      "ADR": "538 Pacific Hwy, St leonards, 2065",
+      "DIST": "",
+      "lat": -33.8233843,
+      "lng": 151.195811
+    },
+    {
+      "SS": "Khamsa Cafe",
+      "ADR": "Shop 3/612-622 King street, Erskineville 2043",
+      "DIST": "",
+      "lat": -33.9049204,
+      "lng": 151.1807277
+    },
+    {
+      "SS": "Lentil as anything",
+      "ADR": "391 King street, Newtown, 2042",
+      "DIST": "",
+      "lat": -33.8996402,
+      "lng": 151.1776861
+    },
+    {
+      "SS": "Yellow",
+      "ADR": "57 Macleay street, Potts point 2011",
+      "DIST": "",
+      "lat": -33.8686979,
+      "lng": 151.2254334
+    },
+    {
+      "SS": "Soul burger Glebe",
+      "ADR": "111 Glebe point Road, Glebe 2037",
+      "DIST": "",
+      "lat": -33.8821202,
+      "lng": 151.1899475
+    },
+    {
+      "SS": "Soul burger Randwick",
+      "ADR": "49 Perouse Road, Randwick NSW 2031",
+      "DIST": "",
+      "lat": -33.9199232,
+      "lng": 151.2427948
+    },
+    {
+      "SS": "Soul burger Newtown",
+      "ADR": "229A King street, Newtown, 2042",
+      "DIST": "",
+      "lat": -33.8953665,
+      "lng": 151.18138
+    },
+    {
+      "SS": "Cairo Takeaway",
+      "ADR": "81 Enmore Rd, Newtown NSW 2042",
+      "DIST": "",
+      "lat": -33.8985868,
+      "lng": 151.1749042
+    },
+    {
+      "SS": "Vina Vegan Restaurant",
+      "ADR": "395 King St, Newtown NSW 2042",
+      "DIST": "",
+      "lat": -33.8997494,
+      "lng": 151.1778295
+    },
+    {
+      "SS": "Brainwave cafe",
+      "ADR": "94/732 Harris St, Ultimo NSW 2007",
+      "DIST": "",
+      "lat": -33.8835689,
+      "lng": 151.2022658
+    },
+    {
+      "SS": "Hartsyard",
+      "ADR": "33 Enmore Rd, Newtown NSW 2042",
+      "DIST": "",
+      "lat": -33.8982585,
+      "lng": 151.176855
+    },
+    {
+      "SS": "Green mushroom",
+      "ADR": "163 Glebe Point Rd, Glebe NSW 2037",
+      "DIST": "",
+      "lat": -33.8811638,
+      "lng": 151.1886308
+    },
+    {
+      "SS": "Harvest Vegetarian Restaurant",
+      "ADR": "71 Evans St, Rozelle NSW 2039",
+      "DIST": "",
+      "lat": -33.861874,
+      "lng": 151.173852
+    },
+    {
+      "SS": "Cafe Nowa",
+      "ADR": "109 Crystal St, Petersham NSW 2049",
+      "DIST": "",
+      "lat": -33.8951,
+      "lng": 151.1571778
+    },
+    {
+      "SS": "Nalinis Wholefood Streetfood",
+      "ADR": "263 Bronte Rd, Waverley NSW 2024",
+      "DIST": "",
+      "lat": -33.9019766,
+      "lng": 151.254367
+    },
+    {
+      "SS": "Mother Chu's Vegetarian Kitchen",
+      "ADR": "367 Pitt St, Sydney NSW 2000",
+      "DIST": "",
+      "lat": -33.875925,
+      "lng": 151.207771
+    },
+    {
+      "SS": "Maya Vegetarian",
+      "ADR": "470 Cleveland St, Surry Hills NSW 2010",
+      "DIST": "",
+      "lat": -33.8915357,
+      "lng": 151.2138754
     }
-
 
 
 
