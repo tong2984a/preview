@@ -28,7 +28,7 @@
               </p>
               <h1 class="text-center">Hello World!</h1>
               <p class="text-center">
-                A simple hello could lead to wonderful things <small>v1.19.0</small>
+                A simple hello could lead to wonderful things <small>v1.20.0</small>
               </p>
             </div>
 
@@ -236,6 +236,15 @@
             }
 
             function initMap() {
+              console.log("initializing from file");
+              fetch('/data/sort-veggie.json').then(function(response) {
+                return response.json();
+              }).then(function(data) {
+                itemsArray = data.map(item => {
+                  return { "name": item.SS, "dist": item.DIST, "adr": item.ADR, "lat": item.lat, "lng": item.lng }
+                })
+              });
+
               console.log('initializing map');
               db.collection('restaurants').get().then((snapshot) => {
                 snapshot.docs.forEach(doc => {

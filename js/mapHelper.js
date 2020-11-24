@@ -58,18 +58,6 @@ const CATEGORY_INGREDIENTS = {
 };
 
 var itemsArray;
-  fetch('/data/sort-veggie.json').then(function(response) {
-    return response.json();
-  }).then(function(data) {
-    itemsArray = data.map(item => {
-      return { "name": item.SS, "dist": item.DIST, "adr": item.ADR, "lat": item.lat, "lng": item.lng }
-    })
-    //index.html only
-    if (document.getElementById("restaurantInput")) {
-      autocomplete(document.getElementById("restaurantInput"), itemsArray);
-    }
-  });
-
 
   var options = {
       enableHighAccuracy: true,
@@ -452,6 +440,7 @@ function searchRestaurantDemo(input, mode, selected = []) {
 function addRestMarker(restaurant) {
   let lat = restaurant.location[0];
   let lng =  restaurant.location[1];
+  console.log("****addRestMarker lat", lat);
   var marker = L.marker([lat, lng], {icon: new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -461,6 +450,7 @@ function addRestMarker(restaurant) {
     shadowSize: [41, 41]
     })
   }); //.addTo(mymap);
+  console.log("****addRestMarker marker", marker);
   marker.on('click', (e) => {
     var images = restaurant.dishes;
     var slideshowContent = '';
@@ -522,6 +512,7 @@ function addRestMarker(restaurant) {
   // }
   var restaurantObj = new Restaurant(marker, restaurant.name, restaurant.location, restaurant.id, restaurant.dishes, restaurant.cuisines);
   markers.push(restaurantObj);
+  console.log("****restaurantObj", restaurantObj);
   return marker;
 }
 

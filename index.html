@@ -82,7 +82,7 @@
       </p>
       <h4 class="text-center">Plant forward. Support our Patreon, or Shop with Us !</h4>
       <p class="text-center">
-        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.19.0</small>
+        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.20.0</small>
       </p>
       <p class="text-left font-weight-normal">
         Technical Instructions for Beta Users<br/>
@@ -546,6 +546,15 @@ function srcToFile(src, fileName, mimeType) {
 
 //create the map
 function initMap() {
+  console.log("initializing from file");
+  fetch('/data/sort-veggie.json').then(function(response) {
+    return response.json();
+  }).then(function(data) {
+    itemsArray = data.map(item => {
+      return { "name": item.SS, "dist": item.DIST, "adr": item.ADR, "lat": item.lat, "lng": item.lng }
+    })
+  });
+
   console.log('initializing markers');
   let dishArray = [];
   db.collection('restaurants').get().then((snapshot) => {
@@ -560,9 +569,20 @@ function initMap() {
         restaurantDishes.push(data.dish);
       });
       restaurantHash[restaurantData.name] = [...(new Set(restaurantDishes))].sort();
+
+      console.log("****itemsArray", itemsArray);
+      if (! itemsArray.some(item => ((restaurantData.name === item.name) && (restaurantData.adr === item.adr)))) {
+        console.log("***itemsArray.push", restaurantData);
+        let newItem = { "name": restaurantData.name, "dist": "", "adr": restaurantData.adr, "lat": restaurantData.location[0], "lng": restaurantData.location[1] };
+
+        console.log("newItem", newItem);
+        itemsArray.push(newItem);
+      };
     });
   }).then(() => {
     dishArray = [...(new Set(dishArray))].sort();
+    //index.html only
+    autocomplete(document.getElementById("restaurantInput"), itemsArray);
     autocomplete2(document.getElementById("dishInput"), dishArray);
   });
 }
@@ -699,6 +719,11 @@ function addRestaurantToDB(dishImgURL) {
     .then(function(docRef) {
       console.log("Adding new restaurant not on file:", docRef.id);
       initNewMarker(newRestaurant);
+      let newItem = { "name": newRestaurant.name, "dist": "", "adr": newRestaurant.adr, "lat": currentLocation[0], "lng": currentLocation[1] };
+
+      console.log("newItem", newItem);
+      itemsArray.push(newItem);
+      autocomplete(document.getElementById("restaurantInput"), itemsArray);
     })
   } else {
     console.log("***isNewRestaurant", isNewRestaurant);
