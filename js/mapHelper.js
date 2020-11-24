@@ -461,24 +461,25 @@ function addRestMarker(restaurant) {
       '<div class="caption">' + img.dish + '</div>' +
       '</div>';
     }
-    let best_distance = null;
-    let best_adr = '';
-    for(var i = 0; i < itemsArray.length; i++)
-    {
-      if(itemsArray[i].name === restaurant.name)
-      {
-        let distance = calcCrow(itemsArray[i].lat, itemsArray[i].lng, lat, lng).toFixed(1);
-        if (!best_distance || distance < best_distance) {
-          best_distance = distance;
-          best_adr = itemsArray[i].adr;
-        }
-      }
-    }
-    sList = best_adr.split(",");
-    num = sList.length;
-    if (num > 2) {
-      best_adr = sList[num-2] + "," + sList[num-1]
-    }
+    let best_adr = restaurant.adr;
+    // let best_distance = null;
+    // let best_adr = '';
+    // for(var i = 0; i < itemsArray.length; i++)
+    // {
+    //   if(itemsArray[i].name === restaurant.name)
+    //   {
+    //     let distance = calcCrow(itemsArray[i].lat, itemsArray[i].lng, lat, lng).toFixed(1);
+    //     if (!best_distance || distance < best_distance) {
+    //       best_distance = distance;
+    //       best_adr = itemsArray[i].adr;
+    //     }
+    //   }
+    // }
+    // sList = best_adr.split(",");
+    // num = sList.length;
+    // if (num > 2) {
+    //   best_adr = sList[num-2] + "," + sList[num-1]
+    // }
     var popupContent =  '<div id="' + restaurant.name + '" class="popup">' +
     "<h6><font>"+restaurant.name+
     "</font></h6><p>" +best_adr+

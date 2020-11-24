@@ -28,7 +28,7 @@
               </p>
               <h1 class="text-center">Hello World!</h1>
               <p class="text-center">
-                A simple hello could lead to wonderful things <small>v1.20.0</small>
+                A simple hello could lead to wonderful things <small>v1.21.0</small>
               </p>
             </div>
 
@@ -249,6 +249,15 @@
               db.collection('restaurants').get().then((snapshot) => {
                 snapshot.docs.forEach(doc => {
                   var restaurantData = doc.data();
+                  console.log("***restaurantData", restaurantData);
+                  let dbAdr = restaurantData.adr;
+                  let dbName = restaurantData.name;
+                  console.log("***(dbAdr === )", (dbAdr === ""));
+                  if (dbAdr === "") {
+                    restaurantData.adr = dbName.substring(dbName.indexOf(",") + 1);
+                    restaurantData.name = dbName.substring(0, dbName.indexOf(","));
+                  }
+                  console.log("***restaurantData", restaurantData);
                   let marker = addRestMarker(restaurantData, doc.id);
                 });
               });

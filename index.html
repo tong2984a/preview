@@ -82,7 +82,7 @@
       </p>
       <h4 class="text-center">Plant forward. Support our Patreon, or Shop with Us !</h4>
       <p class="text-center">
-        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.20.0</small>
+        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.21.0</small>
       </p>
       <p class="text-left font-weight-normal">
         Technical Instructions for Beta Users<br/>
@@ -573,7 +573,13 @@ function initMap() {
       console.log("****itemsArray", itemsArray);
       if (! itemsArray.some(item => ((restaurantData.name === item.name) && (restaurantData.adr === item.adr)))) {
         console.log("***itemsArray.push", restaurantData);
-        let newItem = { "name": restaurantData.name, "dist": "", "adr": restaurantData.adr, "lat": restaurantData.location[0], "lng": restaurantData.location[1] };
+        let dbAdr = restaurantData.adr;
+        let dbName = restaurantData.name;
+        if (dbAdr === "") {
+          dbAdr = dbName.substring(dbName.indexOf(",") + 1);
+          dbName = dbName.substring(0, dbName.indexOf(","));
+        }
+        let newItem = { "name": dbName, "dist": "", "adr": dbAdr, "lat": restaurantData.location[0], "lng": restaurantData.location[1] };
 
         console.log("newItem", newItem);
         itemsArray.push(newItem);
