@@ -82,7 +82,7 @@
       </p>
       <h4 class="text-center">Plant forward. Support our Patreon, or Shop with Us !</h4>
       <p class="text-center">
-        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.21.0</small>
+        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.22.0</small>
       </p>
       <p class="text-left font-weight-normal">
         Technical Instructions for Beta Users<br/>
@@ -484,8 +484,6 @@ var searchInput = document.getElementById('searchInput');
 var restaurantInput = document.getElementById('restaurantInput');
 var locationInput = document.getElementById('locationInput');
 var map;
-// added in 16/7
-var defaultLocation = [22.3, 114.16];
 var currentLocation = [22.276, 114.173];
 var contentString = '<div>' +
                 restaurantInput.value +
@@ -675,10 +673,34 @@ function upload() {
         fileRef.getDownloadURL().then(function(singleImgPath) {
           imagePaths[key] = singleImgPath;
           if (Object.keys(imagePaths).length == Object.keys(miniFiles).length) {
-            addRestaurantToDB(imagePaths['dish'] || "");
+            //current location is by default set to map center
+            //currentLeaflet is undefined if start typing new restaurant without selecting
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  console.log("navigator.geolocation.getCurrentPosition failed");
+                  currentLocation = [position.coords.latitude, position.coords.longitude];
+                  addRestaurantToDB(imagePaths['dish'] || "");
+                  addReceiptToDB(imagePaths);
+                },
+                (error) => {
+                  console.log("navigator.geolocation.getCurrentPosition failed");
+                  currentLocation = [mymap.getCenter().lat, mymap.getCenter().lng];
+                  addRestaurantToDB(imagePaths['dish'] || "");
+                  addReceiptToDB(imagePaths);
+                },
+                {maximumAge: 70000, timeout: 40000, enableHighAccuracy: true}
+              );
+            } else {
+              console.log("navigator.geolocation not accessible");
+              currentLocation = [mymap.getCenter().lat, mymap.getCenter().lng];
+              addRestaurantToDB(imagePaths['dish'] || "");
+              addReceiptToDB(imagePaths);
+            }
+            //addRestaurantToDB(imagePaths['dish'] || "");
             //add receipt must follow add restaurant
             //use whatever currentLocation resulting from it
-            addReceiptToDB(imagePaths);
+            //addReceiptToDB(imagePaths);
             //
             // if (storageAvailable('localStorage')) {
             //   localStorage.removeItem("dish");
@@ -696,11 +718,9 @@ function upload() {
   }
 }
 
+//only called from upload()
 function addRestaurantToDB(dishImgURL) {
   let restaurantInputValue = restaurantInput.value.trim();
-  //current location is by default set to map center
-  //currentLeaflet is undefined if start typing new restaurant without selecting
-  currentLocation = [mymap.getCenter().lat, mymap.getCenter().lng];
   let uploadCuisine = document.getElementById('indexCuisines').value;
   let dishes = {
     dish: dishInput.value,
