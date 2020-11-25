@@ -781,14 +781,224 @@
       "DIST": "",
       "lat": -33.8915357,
       "lng": 151.2138754
+    },
+    {
+      "SS": "MOU MOU CLUB",
+      "ADR": "SHOP NOS. 8B, 9 & 10, UG/F., ISLAND RESORT MALL, 28 SIU SAI WAN ROAD, SIU SAI WAN, HONG KONG",
+      "DIST": "",
+      "lat": 22.2662223,
+      "lng": 114.2507315
+    },
+    {
+      "SS": "Let Go Vegetarian",
+      "ADR": "3/F., CIRCLE TOWER, 28 TANG LUNG STREET, CAUSEWAY BAY, HONG KONG",
+      "DIST": "",
+      "lat": 22.2792646,
+      "lng": 114.1820324
+    },
+    {
+      "SS": "Three Virtues Vegetarian Restaurant",
+      "ADR": "EAST WING, 1/F, 395 KING'S ROAD, NORTH POINT, HONG KONG",
+      "DIST": "",
+      "lat": 22.2911718,
+      "lng": 114.199455
+    },
+    {
+      "SS": "SARAVANA INDIAN VEGETARIAN RESAURANT",
+      "ADR": "SHOP 105, 1/F, CHUNG KING MANSION, 36-44 NATHAN ROAD, TSIM SHA TSUI, KOWLOON",
+      "DIST": "",
+      "lat": 22.296375,
+      "lng": 114.172725
+    },
+    {
+      "SS": "QI-NINE DRAGONS",
+      "ADR": "20/F, PRINCE TOWER, NO. 12A PEKING ROAD, TSIM SHA TSUI, KOWLOON",
+      "DIST": "",
+      "lat": 22.2965354,
+      "lng": 114.1712995
+    },
+    {
+      "SS": "Cute Fei Vegetarian",
+      "ADR": "UNIT A1, A2 & B1, 2/F, BO FUNG BUILDING, 32-34 HAIPHONG ROAD, TSIM SHA TSUI, KOWLOON",
+      "DIST": "",
+      "lat": 22.2978972,
+      "lng": 114.1703687
+    },
+    {
+      "SS": "MOU MOU CLUB GYUKAKU JAPANESE YAKINIKU RESTAURANT",
+      "ADR": "SHOPS G1, G2 AND G2A ON THE GROUND FLOOR OF THE COMMERCIAL PODIUM OF SITE 4 OF WHAMPOA GARDEN, HUNG HOM, KOWLOON",
+      "DIST": "",
+      "lat": 22.3042246,
+      "lng": 114.1882682
+    },
+    {
+      "SS": "THREE VIRTUES VEGETARIAN RESTAURANT",
+      "ADR": "4/F, J D MALL, 233-239 NATHAN ROAD, KOWLOON",
+      "DIST": "",
+      "lat": 22.3049412,
+      "lng": 114.1714849
+    },
+    {
+      "SS": "LUK YUNG VEGETARIAN RESTAURANT",
+      "ADR": "G/F & M/F, 38 JORDAN ROAD, KOWLOON",
+      "DIST": "",
+      "lat": 22.305348,
+      "lng": 114.168934
+    },
+    {
+      "SS": "LIGHT VEGETARIAN RESTAURANT",
+      "ADR": "SHOP H, I OF G/F AND SHOP I OF M/F, NEW LUCKY HOUSE, 13 JORDAN ROAD, JORDAN, KOWLOON",
+      "DIST": "",
+      "lat": 22.305674,
+      "lng": 114.17197
+    },
+    {
+      "SS": "PAK BO VEGETARIAN KITCHEN",
+      "ADR": "SHOP A&B, G/F, LAI YING BUILDING, 780-782 NATHAN ROAD, MONG KOK, KOWLOON",
+      "DIST": "",
+      "lat": 22.305975,
+      "lng": 114.170339
+    },
+    {
+      "SS": "AMITABHA VEGETARIAN RESTAURANT",
+      "ADR": "G/F, 41-43 STATION LANE, HUNG HOM, KOWLOON",
+      "DIST": "",
+      "lat": 22.3079035,
+      "lng": 114.1855366
+    },
+    {
+      "SS": "M Garden Vegetarian",
+      "ADR": "WHOLE OF 2/F, OMEGA PLAZA, 32-34A DUNDAS STREET, MONG KOK, KOWLOON",
+      "DIST": "",
+      "lat": 22.3150086,
+      "lng": 114.1693731
+    },
+    {
+      "SS": "MOU MOU CLUB GYUKAKU JAPANESE YAKINIKU RESTAURANT",
+      "ADR": "SHOP 128A, FIRST FLOOR, OLYMPIAN CITY 2, 18 HOI TING ROAD, KOWLOON",
+      "DIST": "",
+      "lat": 22.3174853,
+      "lng": 114.1627604
+    },
+    {
+      "SS": "MAN BO VEGETARIAN RESTAURANT",
+      "ADR": "G/F (PORTION), 1/F & 2/F, 67A WATERLOO ROAD, HOMANTIN, KOWLOON CITY, KOWLOON",
+      "DIST": "",
+      "lat": 22.3178694,
+      "lng": 114.1747587
+    },
+    {
+      "SS": "Yuan Shan Vegetarian",
+      "ADR": "G/F., 434 MA TAU WAI ROAD, KOWLOON",
+      "DIST": "",
+      "lat": 22.3194702,
+      "lng": 114.1873846
+    },
+    {
+      "SS": "My Meat Run Buddy",
+      "ADR": "SHOP NO. 6, G/F, 28-44 POK MAN STREET, TAI KOK TSUI, KOWLOON",
+      "DIST": "",
+      "lat": 22.319564,
+      "lng": 114.160796
+    },
+    {
+      "SS": "MOU MOU CLUB",
+      "ADR": "G131 - 136, GROUND FLOOR, PHASE I AMOY PLAZA OF AMOY GARDENS, 77 NGAU TAU KOK ROAD, KOWLOON",
+      "DIST": "",
+      "lat": 22.3253061,
+      "lng": 114.2160559
+    },
+    {
+      "SS": "Tin Yu Vegetarian",
+      "ADR": "G/F, 141 UN CHAU STREET, SHAM SHUI PO, KOWLOON",
+      "DIST": "",
+      "lat": 22.3340751,
+      "lng": 114.1609755
+    },
+    {
+      "SS": "My Meat Run Laboratory",
+      "ADR": "SHOP 302 ON THE 3RD FLOOR OF D2 PLACE ONE, NO. 9 CHEUNG YEE STREET, CHEUNG SHA WAN, KOWLOON",
+      "DIST": "",
+      "lat": 22.3361026,
+      "lng": 114.1482024
+    },
+    {
+      "SS": "TSUI LIN VEGETARIAN FOOD",
+      "ADR": "G/F, NO. 81 CHUNG ON STREET, TSUEN WAN, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.3691661,
+      "lng": 114.1162777
+    },
+    {
+      "SS": "MOU MOU CLUB",
+      "ADR": "SHOP 315, LEVEL 3, TSUEN WAN PLAZA, 4-30 TAI PA STREET, TSUEN WAN, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.3710313,
+      "lng": 114.1115677
+    },
+    {
+      "SS": "S Z VEGETARIAN RESTAURANT",
+      "ADR": "SHOP F4-F6, 1/F, ELDO COURT SHOPPING CENTRE, 112-140 TUEN MUN HEUNG SZE WUI ROAD, TUEN MUN, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.3986862,
+      "lng": 113.9755992
+    },
+    {
+      "SS": "MOU MOU CLUB",
+      "ADR": "SHOP NO. 364A, LEVEL 3,  MA ON SHAN PLAZA, 608 SAI SHA ROAD, MA ON SHAN, SHA TIN, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.4257071,
+      "lng": 114.2315912
+    },
+    {
+      "SS": "LUEN WO VEGETARIAN LIMITED",
+      "ADR": "SHOP A, G/F, TAI CHEONG HOUSE, 55 WO TAI STREET, LUEN WO HUI, FANLING, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.5001723,
+      "lng": 114.1425884
+    },
+    {
+      "SS": "Shuk Bondi",
+      "ADR": "2 Mitchell Street, North Bondi NSW 2026",
+      "DIST": "",
+      "lat": -33.882285312844274,
+      "lng": 151.27687814662954
+    },
+    {
+      "SS": "Little turtle",
+      "ADR": "10 Stanmore Road, Enmore NSW 2042",
+      "DIST": "",
+      "lat": -33.899316225068254,
+      "lng": 151.1702743765018
+    },
+    {
+      "SS": "Nour",
+      "ADR": "3/490 Crown Street, Surry Hills, NSW 2010",
+      "DIST": "",
+      "lat": -33.88646506709087,
+      "lng": 151.21392905072315
+    },
+    {
+      "SS": "Neko Neko Newtown",
+      "ADR": "381 King Street, Newtown NSW 2042",
+      "DIST": "",
+      "lat": -33.89917285272941,
+      "lng": 151.17770628161801
+    },
+    {
+      "SS": "Alem's House",
+      "ADR": "134 Parramatta Road, Camperdown NSW 2045",
+      "DIST": "",
+      "lat": -33.8861893187514,
+      "lng": 151.17768493716343
+    },
+    {
+      "SS": "Umu",
+      "ADR": "81 Gould Street, Bondi NSW 2026",
+      "DIST": "",
+      "lat": -33.89042884678841,
+      "lng": 151.27355230898314
     }
-
-
-
-
-
-
-
 
 
 

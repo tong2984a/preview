@@ -82,7 +82,7 @@
       </p>
       <h4 class="text-center">Plant forward. Support our Patreon, or Shop with Us !</h4>
       <p class="text-center">
-        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.22.0</small>
+        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.23.0</small>
       </p>
       <p class="text-left font-weight-normal">
         Technical Instructions for Beta Users<br/>
@@ -524,8 +524,6 @@ var showing = [];
 var circle;
 var current;
 var currentLeaflet;
-var currentUploadRestaurant;
-var isNewRestaurant = false;
 var restaurantHash = {};
 const mode = "add";
 
@@ -558,6 +556,14 @@ function initMap() {
   db.collection('restaurants').get().then((snapshot) => {
     snapshot.docs.forEach(doc => {
       var restaurantData = doc.data();
+      //split name and adr in popup if new db restaurant
+      let dbAdr = restaurantData.adr;
+      let dbName = restaurantData.name;
+      if ((dbAdr === "") && dbName.includes(",")) {
+        restaurantData.adr = dbName.substring(dbName.indexOf(",") + 1);
+        restaurantData.name = dbName.substring(0, dbName.indexOf(","));
+      }
+      console.log("***restaurantData", restaurantData);
       let marker = addRestMarker(restaurantData);
       marker.addTo(mymap);
       let restaurantDishes = restaurantHash[restaurantData.name];
@@ -568,17 +574,15 @@ function initMap() {
       });
       restaurantHash[restaurantData.name] = [...(new Set(restaurantDishes))].sort();
 
-      console.log("****itemsArray", itemsArray);
-      if (! itemsArray.some(item => ((restaurantData.name === item.name) && (restaurantData.adr === item.adr)))) {
-        console.log("***itemsArray.push", restaurantData);
-        let dbAdr = restaurantData.adr;
-        let dbName = restaurantData.name;
-        if (dbAdr === "") {
-          dbAdr = dbName.substring(dbName.indexOf(",") + 1);
-          dbName = dbName.substring(0, dbName.indexOf(","));
-        }
+      //console.log("****itemsArray", itemsArray);
+      //restaurantData may have been changed above
+      //if new db restaurant, check if dbAdr is empty instead
+      //if (! itemsArray.some(item => ((restaurantData.name === item.name) && (restaurantData.adr === item.adr)))) {
+      //design assumption new restaurant not on file has empty adr in db, in-memory itemsArray, and input field
+      let existing = itemsArray.find(item => (`${dbName}, ${dbAdr}` === `${item.name}, ${item.adr}`));
+        console.log("***existing", existing);
+      if (!existing) {
         let newItem = { "name": dbName, "dist": "", "adr": dbAdr, "lat": restaurantData.location[0], "lng": restaurantData.location[1] };
-
         console.log("newItem", newItem);
         itemsArray.push(newItem);
       };
@@ -736,62 +740,71 @@ function addRestaurantToDB(dishImgURL) {
     coupon:  10,
     cuisines: [uploadCuisine]
   };
-  //if user has not modified restaurant input field
-  if(isNewRestaurant) {
-    //console.log("***`${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`==", `${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`);
-    //console.log("***restaurantInputValue", restaurantInputValue);
-    console.log("***isNewRestaurant", isNewRestaurant);
-    db.collection("restaurants").add(newRestaurant)
-    .then(function(docRef) {
-      console.log("Adding new restaurant not on file:", docRef.id);
-      initNewMarker(newRestaurant);
-      let newItem = { "name": newRestaurant.name, "dist": "", "adr": newRestaurant.adr, "lat": currentLocation[0], "lng": currentLocation[1] };
-
-      console.log("newItem", newItem);
-      itemsArray.push(newItem);
-      autocomplete(document.getElementById("restaurantInput"), itemsArray);
-    })
+  //design assumption new restaurant not on file has empty adr in db, in-memory itemsArray, and input field
+  let existing = itemsArray.find(item => {
+    if (item.adr === "") {
+      return restaurantInputValue === item.name;
+    } else {
+      return restaurantInputValue === `${item.name}, ${item.adr}`;
+    }
+  });
+    console.log("***existing", existing);
+  if (existing) {
+    currentLocation = [existing.lat, existing.lng];
+    newRestaurant.name = existing.name;
+    newRestaurant.adr = existing.adr;
+    newRestaurant.location = currentLocation;
   } else {
-    console.log("***isNewRestaurant", isNewRestaurant);
-    db.collection("restaurants")
-    .where("name", "==", currentUploadRestaurant.name.trim())
-    .where("adr", "==", currentUploadRestaurant.adr.trim())
-    .get().then(querySnapshot => {
-      console.log("***querySnapshot", querySnapshot.docs.length);
-      if (querySnapshot.docs.length) {
-        querySnapshot.forEach(function(doc) {
-          var restaurantData = doc.data();
-          var couponRemains = doc.data().coupon;
-          var getCoupon = false;
-          if(couponRemains > 0){
-            couponRemains -= 1;
-            getCoupon = true;
-          }
-          db.collection("restaurants").doc(doc.id).update({
-            dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
-            coupon:  couponRemains,
-            cuisines: firebase.firestore.FieldValue.arrayUnion(uploadCuisine)
-          });
-        })
-      } else {
-        // adding known restaurants on file but not in DB yet
-        newRestaurant.name = currentUploadRestaurant.name.trim();
-        newRestaurant.adr = currentUploadRestaurant.adr.trim();
-        //should be using currentLeaflet location instead of map center
-        //currentLeaflet should already be defined from either keydown or clicking on active options
-        currentLocation = [currentLeaflet.getLatLng().lat, currentLeaflet.getLatLng().lng];
-        newRestaurant.location = currentLocation;
-        db.collection("restaurants").add(newRestaurant)
-        .then(function(docRef) {
-          console.log("Adding restaurant on file:", docRef.id);
-          initNewMarker(newRestaurant);
-        })
-        .catch(function(error) {
-          console.error("Error adding document: ", error);
-        });
-      }
-    })
+    //currentLocation was updated to either device or map center previously
+
+    //split name and adr in popup if new db restaurant
+    // let itemAdr = "";
+    // let itemName = restaurantInputValue;
+    // if (restaurantInputValue.includes(",")) {
+    //   itemAdr = restaurantInputValue.substring(restaurantInputValue.indexOf(",") + 1);
+    //   itemName = restaurantInputValue.substring(0, restaurantInputValue.indexOf(","));
+    // }
+    let newItem = { "name": restaurantInputValue, "dist": "", "adr": "", "lat": currentLocation[0], "lng": currentLocation[1] };
+    itemsArray.push(newItem);
+    autocomplete(document.getElementById("restaurantInput"), itemsArray);
   }
+
+  db.collection("restaurants")
+  .where("name", "==", newRestaurant.name)
+  .where("adr", "==", newRestaurant.adr)
+  .get().then(querySnapshot => {
+    console.log("***querySnapshot", querySnapshot.docs.length);
+    if (querySnapshot.docs.length) {
+      querySnapshot.forEach(function(doc) {
+        var restaurantData = doc.data();
+        var couponRemains = doc.data().coupon;
+        var getCoupon = false;
+        if(couponRemains > 0){
+          couponRemains -= 1;
+          getCoupon = true;
+        }
+        db.collection("restaurants").doc(doc.id).update({
+          dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
+          coupon:  couponRemains,
+          cuisines: firebase.firestore.FieldValue.arrayUnion(uploadCuisine)
+        });
+      })
+    } else {
+      // adding known restaurants on file but not in DB yet
+      //should be using currentLeaflet location instead of map center
+      //currentLeaflet should already be defined from either keydown or clicking on active options
+      //currentLocation = [currentLeaflet.getLatLng().lat, currentLeaflet.getLatLng().lng];
+      //newRestaurant.location = currentLocation;
+      db.collection("restaurants").add(newRestaurant)
+      .then(function(docRef) {
+        console.log("Adding restaurant on file:", docRef.id);
+        initNewMarker(newRestaurant);
+      })
+      .catch(function(error) {
+        console.error("Error adding document: ", error);
+      });
+    }
+  })
 }
 
 function addReceiptToDB(imagePaths) {

@@ -12,13 +12,13 @@ function autocomplete(inp, cachedRestaurants) {
   );
   //console.log("sorted_restaurants")
     //console.log(localStorage.getItem('restaurants'));
-  var arr = sorted_restaurants.map(el => `${el.name}, ${el.adr}`);
+  var arr = sorted_restaurants.map(el => ((el.adr === "") ? el.name : `${el.name}, ${el.adr}`));
   // console.log("initialize autocomplete with restaurantCount:" + cachedRestaurants.length);
   // console.log(cachedRestaurants);
   var filtered_restaurants = [];
   /*execute a function when someone writes in the text field:*/
   inp.addEventListener("input", function(e) {
-    console.log("&&&&&&&input&&&&");
+    //console.log("&&&&&&&input&&&&");
     var a, b, i, val = this.value;
     /*close any already open lists of autocompleted values*/
     closeAllLists();
@@ -32,29 +32,20 @@ function autocomplete(inp, cachedRestaurants) {
     /*append the DIV element as a child of the autocomplete container:*/
     this.parentNode.appendChild(a);
     let displayCount = 0;
-    if (currentUploadRestaurant) {
-      let dbName = `${currentUploadRestaurant.name}, ${currentUploadRestaurant.adr}`;
-      isNewRestaurant = !((dbName.substr(0, val.length).toUpperCase() == val.toUpperCase()));
-    } else {
-      isNewRestaurant = true;
-    }
 
     for (i = 0; i < arr.length; i++) {
       /*check if the item starts with the same letters as the text field value:*/
       if ((displayCount < 10) && (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase())) {
         displayCount++;
         /*create a DIV element for each matching element:*/
-        console.log("input build DIV before substr", arr[i]);
         b = document.createElement("DIV");
         /*make the matching letters bold:*/
         b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
         b.innerHTML += arr[i].substr(val.length);
         /*insert a input field that will hold the current array item's value:*/
         b.innerHTML += "<input type='hidden' value='" + arr[i].replace(/'/g,'&#x27;') + "'>";
-        console.log("input build DIV after substr", arr[i]);
         /*execute a function when someone clicks on the item value (DIV element):*/
         let ri = sorted_restaurants[i];
-        //let activeLocation = {lat:sorted_restaurants[i].lat, lng:sorted_restaurants[i].lng};
 
         //clicking on an option while restaurant field has some text
         b.addEventListener("click", function(e) {
@@ -64,7 +55,6 @@ function autocomplete(inp, cachedRestaurants) {
           (or any other open lists of autocompleted values:*/
           closeAllLists();
           console.log("****b click***", inp.value);
-          currentUploadRestaurant = ri;
           let restaurantDishes = restaurantHash[inp.value] || [];
           console.log("restaurantHash", restaurantHash);
           console.log("restaurantDishes:", restaurantDishes);
@@ -95,7 +85,7 @@ function autocomplete(inp, cachedRestaurants) {
   });
   //when clicking on restaurant input field
   inp.addEventListener("click", function(e) {
-    console.log("&&&&&&&input click&&&&");
+    //console.log("&&&&&&&input click&&&&");
     var a, b, i, val = this.value;
     /*close any already open lists of autocompleted values*/
     closeAllLists();
@@ -153,7 +143,6 @@ function autocomplete(inp, cachedRestaurants) {
           closeAllLists();
           console.log("******click on dropdown", inp.value);
           console.log(this.getElementsByTagName("input"));
-          currentUploadRestaurant = ri;
           let activeLeafletLocation = [ri.lat, ri.lng];
           let activeLeaflet = L.marker(activeLeafletLocation, {icon:
             new L.Icon({
@@ -179,14 +168,14 @@ function autocomplete(inp, cachedRestaurants) {
   });
   /*execute a function presses a key on the keyboard:*/
   inp.addEventListener("keydown", function(e) {
-    console.log("&&&&&&&keydown&&&&");
+    //console.log("&&&&&&&keydown&&&&");
       var x = document.getElementById(this.id + "autocomplete-list");
       if (x) x = x.getElementsByTagName("div");
       if (e.keyCode == 40) {
         /*If the arrow DOWN key is pressed,
         increase the currentFocus variable:*/
         console.log("keyCode 40");
-        console.log(currentFocus);
+        //console.log(currentFocus);
         currentFocus++;
         /*and and make the current item more visible:*/
         addActive(x);
@@ -194,7 +183,7 @@ function autocomplete(inp, cachedRestaurants) {
         /*If the arrow UP key is pressed,
         decrease the currentFocus variable:*/
         console.log("keyCode 38");
-        console.log(currentFocus);
+        //console.log(currentFocus);
         currentFocus--;
         /*and and make the current item more visible:*/
         addActive(x);
@@ -206,12 +195,12 @@ function autocomplete(inp, cachedRestaurants) {
           if (x) x[currentFocus].click();
         } else {
           const data = JSON.parse(localStorage.getItem('restaurants'))
-          console.log(data);
+          //console.log(data);
         }
       }
   });
   function addActive(x) {
-  console.log("&&&&&&&addActive&&&&");
+  //console.log("&&&&&&&addActive&&&&");
     /*a function to classify an item as "active":*/
     if (!x) return false;
     /*start by removing the "active" class on all items:*/
@@ -219,10 +208,6 @@ function autocomplete(inp, cachedRestaurants) {
     if (currentFocus >= x.length) currentFocus = 0;
     if (currentFocus < 0) currentFocus = (x.length - 1);
     /*add class "autocomplete-active":*/
-    console.log("x");
-    console.log(x);
-    console.log(currentFocus);
-    console.log(x[currentFocus]);
     x[currentFocus].classList.add("autocomplete-active");
 
     let activeLeafletLocation = [filtered_restaurants[currentFocus].lat, filtered_restaurants[currentFocus].lng];
