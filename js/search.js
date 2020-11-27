@@ -1,5 +1,6 @@
+var zoom = 11;
 
-  var mymap = L.map('mapid');
+  var mymap = L.map('mapid', {zoom: zoom, worldCopyJump: true});
   L.tileLayer('https://b.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxNativeZoom: 18,
       maxZoom: 20,
@@ -33,7 +34,7 @@
   }
 
     function onLocationFound(message) {
-      mymap.setView(currentLocation, 13);
+      mymap.setView(currentLocation, zoom);
       var radius = 1;
       circle = L.circle(currentLocation, {
           color: 'red',

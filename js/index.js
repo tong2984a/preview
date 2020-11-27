@@ -104,8 +104,18 @@ function readPreviewURL(input, preview, label, checkmark, miniFile, imageFileNam
     reader.readAsDataURL(input.files[0]);
   }
 }
+var zoom = 11;
 
-var mymap = L.map('mapid');
+  if (storageAvailable('localStorage')) {
+    zoom = localStorage.getItem("mapZoom");
+  }
+
+var mymap = L.map('mapid', {zoom: zoom, worldCopyJump: true});
+mymap.on('moveend', function(ev) {
+  if (storageAvailable('localStorage')) {
+    localStorage.setItem("mapZoom", mymap.getZoom());
+  }
+});
 L.tileLayer('https://b.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxNativeZoom: 18,
     maxZoom: 20,
@@ -123,7 +133,7 @@ var browserGeolocationFail = function(error) {
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(
     browserGeolocationSuccess, browserGeolocationFail,
-    {maximumAge: 70000, timeout: 40000, enableHighAccuracy: true}
+    {maximumAge: 70000, timeout: 4000, enableHighAccuracy: true}
   );
 } else {
   onLocationFound("Cannot find your location");
@@ -138,7 +148,7 @@ function onMapClick(e) {
 }
 
 	function onLocationFound(message) {
-    mymap.setView(currentLocation, 13);
+    mymap.setView(currentLocation, zoom);
     var radius = 1;
     circle = L.circle(currentLocation, {
         color: 'red',
