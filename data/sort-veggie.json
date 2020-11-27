@@ -998,8 +998,48 @@
       "DIST": "",
       "lat": -33.89042884678841,
       "lng": 151.27355230898314
+    },
+    {
+      "SS": "人和豆品廠",
+      "ADR": "SHOP G10, G/F., NO. 15 CANAL ROAD WEST, CAUSEWAY BAY, HONG KONG",
+      "DIST": "",
+      "lat": 22.2779623,
+      "lng": 114.1809736
+    },
+    {
+      "SS": "人和豆品廠",
+      "ADR": "G/F., NO. 55 JARDINE'S BAZAAR, CAUSEWAY BAY, HONG KONG",
+      "DIST": "",
+      "lat": 22.2792629,
+      "lng": 114.1856051
+    },
+    {
+      "SS": "TATE Dining Room & Bar",
+      "ADR": "PORTION OF SHOP D ON 1/F., TAI PING MANSION, 208-214 HOLLYWOOD ROAD & 21-27 TAI PING SHAN STREET, SHEUNG WAN, HONG KONG",
+      "DIST": "",
+      "lat": 22.2855237,
+      "lng": 114.1477407
+    },
+    {
+      "SS": "2DP",
+      "ADR": "G/F, THE LAMMA TOWER, 12-12A HAU FOOK STREET, TSIM SHA TSUI, KOWLOON",
+      "DIST": "",
+      "lat": 22.2996,
+      "lng": 114.173891
+    },
+    {
+      "SS": "Sow Vegan",
+      "ADR": "Room 1102,11/F,Hung Tat Industrial Building ,43 Hung To Road, Kwun Tong",
+      "DIST": "",
+      "lat": 22.3119575,
+      "lng": 114.2211551
+    },
+    {
+      "SS": "人和豆品廠",
+      "ADR": "G/F, 28 MONG KOK ROAD, MONG KOK, KOWLOON",
+      "DIST": "",
+      "lat": 22.3211743,
+      "lng": 114.1700781
     }
-
-
 
 ]
