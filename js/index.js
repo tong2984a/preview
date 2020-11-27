@@ -107,7 +107,7 @@ function readPreviewURL(input, preview, label, checkmark, miniFile, imageFileNam
 var zoom = 11;
 
   if (storageAvailable('localStorage')) {
-    zoom = localStorage.getItem("mapZoom");
+    zoom = localStorage.getItem("mapZoom") || zoom;
   }
 
 var mymap = L.map('mapid', {zoom: zoom, worldCopyJump: true});
