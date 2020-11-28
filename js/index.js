@@ -257,6 +257,43 @@ function srcToFile(src, fileName, mimeType) {
   );
 }
 
+function loadExportDB() {
+    console.log("initializing export markers");
+    let dishArray = [];
+    fetch('/data/db-export.json').then(function(response) {
+      return response.json();
+    }).then(function(data) {
+      console.log("*****db export", data);
+      data.forEach(restaurantData => {
+        let dbAdr = restaurantData.adr;
+        let dbName = restaurantData.name;
+        if ((dbAdr === "") && dbName.includes(",")) {
+          restaurantData.adr = dbName.substring(dbName.indexOf(",") + 1);
+          restaurantData.name = dbName.substring(0, dbName.indexOf(","));
+        }
+        let marker = addRestMarker(restaurantData);
+        marker.addTo(mymap);
+        let restaurantDishes = restaurantHash[restaurantData.name];
+        restaurantDishes = restaurantDishes || [];
+        restaurantData.dishes.forEach(data => {
+          dishArray.push(data.dish);
+          restaurantDishes.push(data.dish);
+        });
+        restaurantHash[restaurantData.name] = [...(new Set(restaurantDishes))].sort();
+        let existing = itemsArray.find(item => (`${dbName}, ${dbAdr}` === `${item.name}, ${item.adr}`));
+        if (!existing) {
+          let newItem = { "name": dbName, "dist": "", "adr": dbAdr, "lat": restaurantData.location[0], "lng": restaurantData.location[1] };
+          itemsArray.push(newItem);
+        };
+      })
+    }).then(() => {
+      dishArray = [...(new Set(dishArray))].sort();
+      //index.html only
+      autocomplete(document.getElementById("restaurantInput"), itemsArray);
+      autocomplete2(document.getElementById("dishInput"), dishArray);
+    });
+}
+
 //create the map
 function initMap() {
   console.log("initializing from file");
@@ -268,7 +305,12 @@ function initMap() {
     })
   });
 
-  console.log('initializing markers');
+  loadOnlineDB();
+  //loadExportDB();
+}
+
+function loadOnlineDB() {
+  console.log('initializing online markers');
   let dishArray = [];
   db.collection('restaurants').get().then((snapshot) => {
     snapshot.docs.forEach(doc => {
