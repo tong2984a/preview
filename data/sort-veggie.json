@@ -1040,6 +1040,132 @@
       "DIST": "",
       "lat": 22.3211743,
       "lng": 114.1700781
+    },
+    {
+      "SS": "APT.",
+      "ADR": "SHOP A & B, G/F., NO. 2-12 MOON STREET, WAN CHAI, HONG KONG",
+      "DIST": "",
+      "lat": 22.2761649,
+      "lng": 114.1684939
+    },
+    {
+      "SS": "BASAO TEA",
+      "ADR": "G/F., NO. 17 MOON STREET, WAN CHAI, HONG KONG",
+      "DIST": "",
+      "lat": 22.2762465,
+      "lng": 114.1686273
+    },
+    {
+      "SS": "SALADSTOP",
+      "ADR": "Shop 3, B3/F, Three Pacific Place, 1 Queen's Road East, Admiralty",
+      "DIST": "",
+      "lat": 22.2769797,
+      "lng": 114.1680068
+    },
+    {
+      "SS": "Basao Tea",
+      "ADR": "G/F., 16 PAK SHA ROAD, CAUSEWAY BAY, HONG KONG",
+      "DIST": "",
+      "lat": 22.278973,
+      "lng": 114.184161
+    },
+    {
+      "SS": "APT.",
+      "ADR": "SHOP C, G/F. & COCKLOFT, 30-34 COCHRANE STREET, CENTRAL, HONG KONG",
+      "DIST": "",
+      "lat": 22.2826857,
+      "lng": 114.1542164
+    },
+    {
+      "SS": "SALADSTOP",
+      "ADR": "SHOP 311-312, 3/F., EXCHANGE SQUARE PODIUM, 8 CONNAUGHT PLACE, CENTRAL, HONG KONG",
+      "DIST": "",
+      "lat": 22.2836388,
+      "lng": 114.1583347
+    },
+    {
+      "SS": "SALADSTOP",
+      "ADR": "Shop A, 1/F, Dorset House, Taikoo Place, 979 King's Road, Quarry Bay",
+      "DIST": "",
+      "lat": 22.2866245,
+      "lng": 114.2119789
+    },
+    {
+      "SS": "Ahimsa buffet",
+      "ADR": "SHOP UNITS 8A, 8B AND 8C, G/F, LAI YUEN BUILDING, NOS. 7-8 TAK HING STREET, JORDAN, KOWLOON",
+      "DIST": "",
+      "lat": 22.3046533,
+      "lng": 114.172314
+    },
+    {
+      "SS": "寶光齋",
+      "ADR": "GROUND FLOOR, 29-31 SHUNG YAN STREET, KWUN TONG, KOWLOON",
+      "DIST": "",
+      "lat": 22.316185,
+      "lng": 114.224145
+    },
+    {
+      "SS": "Years 素年",
+      "ADR": "SHOP NO. 1, G/F, FUK LUNG BUILDING, 191-199 FUK WA STREET, SHAM SHUI PO, KOWLOON",
+      "DIST": "",
+      "lat": 22.332573,
+      "lng": 114.160693
+    },
+    {
+      "SS": "健康齋廚",
+      "ADR": "G/F, 34 FEI FUNG STREET, WONG TAI SIN, KOWLOON",
+      "DIST": "",
+      "lat": 22.343793,
+      "lng": 114.196437
+    },
+    {
+      "SS": "妙法齋",
+      "ADR": "79 G/F., HO PUI STREET, TSUEN WAN, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.3682425,
+      "lng": 114.116485
+    },
+    {
+      "SS": "CASA 2084",
+      "ADR": "G/F & M/F, 5 SHA TSUI PATH, SAI KUNG, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.3812218,
+      "lng": 114.2722089
+    },
+    {
+      "SS": "天賜素齋",
+      "ADR": "SHOP NO 20, 2/F, COMMERCIAL COMPLEX, WO CHE ESTATE, SHA TIN, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.3880572,
+      "lng": 114.1955283
+    },
+    {
+      "SS": "妙法齋",
+      "ADR": "G/F, 8 MING NGAI STREET, TUEN MUN, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.397579,
+      "lng": 113.974775
+    },
+    {
+      "SS": "佛慈齋",
+      "ADR": "G/F., NO. 22 FOOK HONG STREET, YUEN LONG, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.4454794,
+      "lng": 114.0288238
+    },
+    {
+      "SS": "南齋",
+      "ADR": "G/F, CANTEEN BLOCK, WUN CHUEN SIN KWOON, 188 PING CHE ROAD, TA KWU LING, FANLING, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.529606,
+      "lng": 114.155482
+    },
+    {
+      "SS": "Social society",
+      "ADR": "7 EbsworthStreet, Zetland, NSW 2017",
+      "DIST": "",
+      "lat": -33.90519375305957,
+      "lng": 151.203709294432
     }
 
 ]

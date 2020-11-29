@@ -304,10 +304,8 @@ function initMap() {
       return { "name": item.SS, "dist": item.DIST, "adr": item.ADR, "lat": item.lat, "lng": item.lng }
     })
     loadOnlineDB();
+    //loadExportDB();
   });
-
-  //loadOnlineDB();
-  //loadExportDB();
 }
 
 function loadOnlineDB() {
