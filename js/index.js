@@ -286,7 +286,7 @@ function loadExportDB() {
           itemsArray.push(newItem);
         };
       })
-    }).then(() => {
+
       dishArray = [...(new Set(dishArray))].sort();
       //index.html only
       autocomplete(document.getElementById("restaurantInput"), itemsArray);
@@ -303,9 +303,10 @@ function initMap() {
     itemsArray = data.map(item => {
       return { "name": item.SS, "dist": item.DIST, "adr": item.ADR, "lat": item.lat, "lng": item.lng }
     })
+    loadExportDB();
   });
 
-  loadOnlineDB();
+  //loadOnlineDB();
   //loadExportDB();
 }
 
