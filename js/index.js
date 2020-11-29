@@ -303,7 +303,7 @@ function initMap() {
     itemsArray = data.map(item => {
       return { "name": item.SS, "dist": item.DIST, "adr": item.ADR, "lat": item.lat, "lng": item.lng }
     })
-    loadExportDB();
+    loadOnlineDB();
   });
 
   //loadOnlineDB();
