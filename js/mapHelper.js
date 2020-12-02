@@ -48,6 +48,7 @@ const CATEGORY_INGREDIENTS = {
   "Fast Food": ["Dairy Free", "Egg Free", "Plant-Based Meat", "MSG Free"],
   "Salad": ["Dairy Free", "Egg Free", "Plant-Based Meat", "Nuts Free", "Garlic Free", "Organic"],
   "Main Dish": ["Vegan", "Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
+  "Buffet": ["Vegan", "Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
   "Dim Sum": ["Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
   "Noodles": ["Dairy Free", "Egg Free", "No Animal Extract", "Rice Noodle", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
   "Appetizer": ["Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],

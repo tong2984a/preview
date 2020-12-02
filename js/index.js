@@ -19,11 +19,8 @@ $(document).ready(function(){
       )
       .then(function(file){
         miniFiles["dish"] = file;
-        console.log("miniFiles", miniFiles);
         let miniFileDish = miniFiles["dish"];
         let miniFileReceipt = miniFiles["receipt"];
-        console.log("miniFileDish", miniFileDish);
-        console.log("miniFileReceipt", miniFileReceipt);
         if (miniFileDish || miniFileReceipt) {
           document.getElementById('sendBtn').style.display = "block";
           document.getElementById('tags').style.display = "block";
@@ -42,11 +39,8 @@ $(document).ready(function(){
       )
       .then(function(file){
         miniFiles["receipt"] = file;
-        console.log("miniFiles", miniFiles);
         let miniFileDish = miniFiles["dish"];
         let miniFileReceipt = miniFiles["receipt"];
-        console.log("miniFileDish", miniFileDish);
-        console.log("miniFileReceipt", miniFileReceipt);
         if (miniFileDish || miniFileReceipt) {
           document.getElementById('sendBtn').style.display = "block";
           document.getElementById('tags').style.display = "block";
@@ -63,6 +57,38 @@ $(document).ready(function(){
     let dateTime = new Date();
     dishImageFileName = dateTime + ".jpg";
     readPreviewURL(this, document.getElementById('dishPicturePreview'), document.getElementById('upload-dish'), document.getElementById('upload-dish-checkmark'), "dish", dishImageFileName);
+  });
+  $("#dish-clear").click(function(){
+    if (storageAvailable('localStorage')) {
+      localStorage.removeItem("dish");
+    }
+    document.getElementById('dishPicturePreview').onload = null;
+    document.getElementById('dishPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder.jpg";
+    document.getElementById('upload-dish-checkmark').style.display = "none";
+    document.getElementById('upload-dish').classList = "badge badge-pill badge-primary";
+    delete miniFiles["dish"];
+    let miniFileDish = miniFiles["dish"];
+    let miniFileReceipt = miniFiles["receipt"];
+    if (!miniFileDish && !miniFileReceipt) {
+      document.getElementById('sendBtn').style.display = "none";
+      document.getElementById('tags').style.display = "none";
+    };
+  });
+  $("#receipt-clear").click(function(){
+    if (storageAvailable('localStorage')) {
+      localStorage.removeItem("receipt");
+    }
+    document.getElementById('receiptPicturePreview').onload = null;
+    document.getElementById('receiptPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg";
+    document.getElementById('upload-receipt-checkmark').style.display = "none";
+    document.getElementById('upload-receipt').classList = "badge badge-pill badge-primary";
+    delete miniFiles["receipt"];
+    let miniFileDish = miniFiles["dish"];
+    let miniFileReceipt = miniFiles["receipt"];
+    if (!miniFileDish && !miniFileReceipt) {
+      document.getElementById('sendBtn').style.display = "none";
+      document.getElementById('tags').style.display = "none";
+    }
   });
 });
 

@@ -44,9 +44,34 @@
     top: 0;
     width: 100%;
 }
-
+.picture-clear {
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.picture-clear:hover {
+  background-color: #ff1414;
+}
+.picture-clear label {
+    font-size: 1.25rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    overflow: hidden;
+    width: 30px;
+    height: 30px;
+    pointer-events: none;
+    cursor: pointer;
+    line-height: 40px;
+    text-align: center;
+}
+.picture-clear label svg {
+    fill: #fff;
+}
 .picture-src{
     width: 100%;
-
 }
 /*Profile Pic End*/
