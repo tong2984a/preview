@@ -1166,6 +1166,118 @@
       "DIST": "",
       "lat": -33.90519375305957,
       "lng": 151.203709294432
+    },
+    {
+      "SS": "Flagship",
+      "ADR": "G/F., 35 SHIP STREET, WAN CHAI, HONG KONG",
+      "DIST": "",
+      "lat": 22.2755529,
+      "lng": 114.1703828
+    },
+    {
+      "SS": "LE PAIN QUOTIDIEN",
+      "ADR": "UNIT 008, LEVEL LG1, PACIFIC PLACE, 88 QUEENSWAY, ADMIRALTY, HONG KONG",
+      "DIST": "",
+      "lat": 22.277375,
+      "lng": 114.1659653
+    },
+    {
+      "SS": "THE CAKERY",
+      "ADR": "SHOP 124, LEE GARDEN TWO, 28 YUNG PING ROAD, CAUSEWAY BAY",
+      "DIST": "",
+      "lat": 22.278655,
+      "lng": 114.18555
+    },
+    {
+      "SS": "Din Tai Fung",
+      "ADR": "G/F (PORTION) & 1/F (PORTION), NO. 68 YEE WO STREET, CAUSEWAY BAY, HONG KONG",
+      "DIST": "",
+      "lat": 22.2793867,
+      "lng": 114.1863917
+    },
+    {
+      "SS": "THE CAKERY",
+      "ADR": "SHOP 303, 3/F, THE LANDMARK, 15 QUEEN'S ROAD CENTRAL, CENTRAL",
+      "DIST": "",
+      "lat": 22.2807611,
+      "lng": 114.1570154
+    },
+    {
+      "SS": "The Missing Piece",
+      "ADR": "PORTION A, G/F., 35 EASTERN STREET, SAI YING PUN, HONG KONG",
+      "DIST": "",
+      "lat": 22.2858492,
+      "lng": 114.1435433
+    },
+    {
+      "SS": "SOIL TO SOUL",
+      "ADR": "SHOP NO. 704 ON LEVEL 7 OF K11 MUSEA, VICTORIA DOCKSIDE, 18 SALISBURY ROAD, TSIM SHA TSUI, KOWLOON",
+      "DIST": "",
+      "lat": 22.2942946,
+      "lng": 114.1745806
+    },
+    {
+      "SS": "BRANTO INDIAN VEGETARIAN RESTAURANT",
+      "ADR": "1/F, 9 LOCK ROAD, TSIM SHA TSUI, KOWLOON",
+      "DIST": "",
+      "lat": 22.2969882,
+      "lng": 114.1713879
+    },
+    {
+      "SS": "LE PAIN QUOTIDIEN",
+      "ADR": "SHOP G38-39 & G45-48, G/F, TSIM SHA TSUI CENTRE, 66 MODY ROAD, TSIM SHA TSUI EAST, KOWLOON",
+      "DIST": "",
+      "lat": 22.2976335,
+      "lng": 114.1774535
+    },
+    {
+      "SS": "Din Tai Fung",
+      "ADR": "SHOP 130 & RESTAURANT C, 3/F, SILVERCORD, 30 CANTON ROAD, TSIM SHA TSUI, KOWLOON",
+      "DIST": "",
+      "lat": 22.2976534,
+      "lng": 114.1695651
+    },
+    {
+      "SS": "Din Tai Fung",
+      "ADR": "SHOP NO. 4F, 4/F, MIRAMAR SHOPPING CENTRE, 132 NATHAN ROAD, TSIM SHA TSUI, KOWLOON",
+      "DIST": "",
+      "lat": 22.3009512,
+      "lng": 114.172173
+    },
+    {
+      "SS": "Vego Coffee",
+      "ADR": "SHOP 7B, G/F, GARDEN MANSION, 154-156 AUSTIN ROAD, TSIM SHA TSUI",
+      "DIST": "",
+      "lat": 22.3032191,
+      "lng": 114.1754722
+    },
+    {
+      "SS": "LE PAIN QUOTIDIEN",
+      "ADR": "SHOP 1089C, FIRST LEVEL, ELEMENTS, 1 AUSTIN ROAD WEST, KOWLOON",
+      "DIST": "",
+      "lat": 22.3050138,
+      "lng": 114.1624868
+    },
+    {
+      "SS": "Din Tai Fung",
+      "ADR": "SHOP NO. 166, LEVEL 1, NEW TOWN PLAZA, PHASE I, SHA TIN, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.3811111,
+      "lng": 114.1880549
+    },
+    {
+      "SS": "DIN TAI FUNG",
+      "ADR": "SHOP NOS. M-37 AND M-38, MTR LEVEL, V CITY, NO. 83 TUEN MUN HEUNG SZE WUI ROAD, TUEN MUN, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.3953878,
+      "lng": 113.9739331
+    },
+    {
+      "SS": "V.W Vegan Cafe",
+      "ADR": "PLOVER COVE GARDEN ARCADE 2/F 227F - 06, TAI PO",
+      "DIST": "",
+      "lat": 22.4493643,
+      "lng": 114.1684636
     }
 
 ]
