@@ -1278,6 +1278,83 @@
       "DIST": "",
       "lat": 22.4493643,
       "lng": 114.1684636
+    },
+    {
+      "SS": "Levain Bakery x CoCo Espresso",
+      "ADR": "SHOP A, G/F., TUNG SING BUILDING, NOS. 138-144 QUEEN'S ROAD EAST, HONG KONG",
+      "DIST": "",
+      "lat": 22.275775,
+      "lng": 114.1707835
+    },
+    {
+      "SS": "CHOTTO MAKI",
+      "ADR": "G/F., NO. 33 AMOY STREET, WAN CHAI, HONG KONG",
+      "DIST": "",
+      "lat": 22.2761937,
+      "lng": 114.1722495
+    },
+    {
+      "SS": "Le Pain Quotidien",
+      "ADR": "SHOP G40, G40A, G41, G/F., THE AVENUE, 200 QUEEN'S ROAD EAST, WAN CHAI, HONG KONG",
+      "DIST": "",
+      "lat": 22.2762753,
+      "lng": 114.172435
+    },
+    {
+      "SS": "NOM NOM DUMPLING",
+      "ADR": "G/F., NO. 44 JOHNSTON ROAD, WAN CHAI, HONG KONG",
+      "DIST": "",
+      "lat": 22.276528,
+      "lng": 114.1709518
+    },
+    {
+      "SS": "Chillax",
+      "ADR": "G/F, Bright Star Mansion, 95-97 Leighton Road, Causeway Bay",
+      "DIST": "",
+      "lat": 22.2774109,
+      "lng": 114.1849625
+    },
+    {
+      "SS": "NOM NOM DUMPLING",
+      "ADR": "G/F., 19 CANNON STREET, CAUSEWAY BAY, HONG KONG",
+      "DIST": "",
+      "lat": 22.2814911,
+      "lng": 114.1835078
+    },
+    {
+      "SS": "NOM NOM DUMPLING",
+      "ADR": "G/F, 55 Wellington Street, Central",
+      "DIST": "",
+      "lat": 22.2827068,
+      "lng": 114.1549022
+    },
+    {
+      "SS": "CHOTTO MAKI",
+      "ADR": "G/F, Li Yuen Street West, Central",
+      "DIST": "",
+      "lat": 22.2829675,
+      "lng": 114.156081
+    },
+    {
+      "SS": "TROIS",
+      "ADR": "G/F., NO. 6 TIT HONG LANE, CENTRAL, HONG KONG",
+      "DIST": "",
+      "lat": 22.2845166,
+      "lng": 114.15538
+    },
+    {
+      "SS": "NOM NOM DUMPLING",
+      "ADR": "SHOP E, G/F, CARPRIO MANSION, NO. 1 LAI CHI KOK ROAD, MONG KOK, KOWLOON",
+      "DIST": "",
+      "lat": 22.3221308,
+      "lng": 114.1684822
+    },
+    {
+      "SS": "NOM NOM DUMPLING",
+      "ADR": "G/F, 30 Boundary Street, Prince Edward",
+      "DIST": "",
+      "lat": 22.3262788,
+      "lng": 114.1668963
     }
 
 ]
