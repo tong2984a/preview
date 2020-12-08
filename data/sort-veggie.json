@@ -1355,6 +1355,20 @@
       "DIST": "",
       "lat": 22.3262788,
       "lng": 114.1668963
+    },
+    {
+      "SS": "On the hill Coffee Bar",
+      "ADR": "G16 G/F HARBOUR NORTH PHASE 2, NORTH POINT, HONG KONG",
+      "DIST": "",
+      "lat": 22.292672,
+      "lng": 114.200887
+    },
+    {
+      "SS": "On the hill Coffee Bar",
+      "ADR": "SHOP 2, G/F, PO FAI BUILDING, 435-439 CHATHAM ROAD NORTH, HUNG HOM, KOWLOON",
+      "DIST": "",
+      "lat": 22.312771,
+      "lng": 114.186363
     }
 
 ]
