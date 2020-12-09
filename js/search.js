@@ -130,15 +130,14 @@ var zoom = 11;
       db.collection('restaurants').get().then((snapshot) => {
         snapshot.docs.forEach(doc => {
           var restaurantData = doc.data();
-          console.log("***restaurantData", restaurantData);
           let dbAdr = restaurantData.adr;
           let dbName = restaurantData.name;
           if (dbAdr === "") {
             restaurantData.adr = dbName.substring(dbName.indexOf(",") + 1);
             restaurantData.name = dbName.substring(0, dbName.indexOf(","));
           }
-          console.log("***restaurantData", restaurantData);
           let marker = addRestMarker(restaurantData, doc.id);
+          marker.addTo(mymap);
         });
       });
     }

@@ -614,7 +614,7 @@ function addReceiptToDB(imagePaths) {
   })
   .then(function(docRef) {
     console.log("Receipt written with ID: ", docRef.id);
-    helloMessageOutput.innerText = `File received with ID: ${docRef.id}`;
+    helloMessageOutput.innerText = 'Upload Finished Thank you!';
   })
   .catch(function(error) {
     console.error("Error adding document: ", error);

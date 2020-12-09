@@ -463,9 +463,11 @@ function addRestMarker(restaurant) {
     var slideshowContent = '';
     for(var i = 0; i < images.length; i++) {
       var img = images[i];
+      let tags = img.tags.map(tag => `<mark>${tag}</mark>`).join(',');
       slideshowContent += '<div class="image' + (i === 0 ? ' ' : '') + '">' +
       '<img src="' + img.fileURL + '" />' +
       '<div class="caption">' + img.dish + '</div>' +
+      '<div>' + tags + '</div>' +
       '</div>';
     }
     let best_adr = restaurant.adr;
