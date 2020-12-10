@@ -173,6 +173,11 @@ function onMapClick(e) {
         .openOn(mymap);
 }
 
+function jumpTo(location) {
+  currentLocation = location;
+  onLocationFound("You are here.");
+}
+
 	function onLocationFound(message) {
     mymap.setView(currentLocation, zoom);
     var radius = 1;
