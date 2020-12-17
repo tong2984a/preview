@@ -1400,7 +1400,7 @@
     },
     {
       "SS": "Pret A Manger",
-      "ADR": "SHOP NO. G12 ON THE GROUND FLOOR, LEE GARDENS TWO, 28 YUN PING ROAD, CAUSEWAY BAY, HONG KONG",
+      "ADR": "SHOP G12, G/F, LEE GARDEN TWO, 28 YUN PING ROAD, CAUSEWAY BAY, HONG KONG",
       "DIST": "",
       "lat": 22.2790454,
       "lng": 114.1849845
@@ -1427,7 +1427,7 @@
       "lng": 114.1757825
     },
     {
-      "SS": "Sophia",
+      "SS": "Sofia",
       "ADR": "SHOP C, G/F, ON FAT BUILDING, 28-32 DAVIS STREET, KENNEDY TOWN, SAI WAN, HONG KONG",
       "DIST": "",
       "lat": 22.2818621,
@@ -1551,6 +1551,62 @@
       "DIST": "",
       "lat": 22.327358,
       "lng": 114.1632242
+    },
+    {
+      "SS": "開餐",
+      "ADR": "SHOP C, G/F, KIU HONG MANSION, 3-5A TIN LOK LANE, WAN CHAI",
+      "DIST": "",
+      "lat": 22.2784331,
+      "lng": 114.1799076
+    },
+    {
+      "SS": "GAIA VEGGIE",
+      "ADR": "SHOP 212, L2, MIRA PLACE ONE, 132 NATHAN ROAD, TSIM SHA TSUI, KOWLOON",
+      "DIST": "",
+      "lat": 22.3008302,
+      "lng": 114.1721749
+    },
+    {
+      "SS": "開餐",
+      "ADR": "SHOP B, GROUND FLOOR, 19 PARKES STREET, JORDAN, KOWLOON",
+      "DIST": "",
+      "lat": 22.3038872,
+      "lng": 114.1705227
+    },
+    {
+      "SS": "Qiao Cuisine",
+      "ADR": "SHOP 106-107, 1/F, SITE 8, WHAMPOA GARDEN, HUNG HOM, KOWLOON",
+      "DIST": "",
+      "lat": 22.3047458,
+      "lng": 114.1908609
+    },
+    {
+      "SS": "印度素食",
+      "ADR": "SHOP 29L, G/F, LOONG KING MANSION 23-35 MA TAU WAI ROAD, HUNG HOM",
+      "DIST": "",
+      "lat": 22.30918,
+      "lng": 114.1880104
+    },
+    {
+      "SS": "開餐",
+      "ADR": "G/F, WAH FAT MANSION, 1M-1T TUNG CHOI STREET, MONGKOK",
+      "DIST": "",
+      "lat": 22.3159403,
+      "lng": 114.1711064
+    },
+    {
+      "SS": "觀自在素食",
+      "ADR": "2/F, BRIGHT WAY TOWER, 33 MONG KOK ROAD, MONGKOK",
+      "DIST": "",
+      "lat": 22.3203484,
+      "lng": 114.1682254
+    },
+    {
+      "SS": "Years 素年",
+      "ADR": "G/F, 20 SAM PEI SQUARE, TSUEN WAN",
+      "DIST": "",
+      "lat": 22.368806,
+      "lng":  114.116699
     }
 
 ]
