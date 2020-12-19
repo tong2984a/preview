@@ -1607,6 +1607,34 @@
       "DIST": "",
       "lat": 22.368806,
       "lng":  114.116699
+    },
+    {
+      "SS": "So High Coffee Bar",
+      "ADR": "G/F., 49 HIGH STREET, SAI YING PUN, HONG KONG",
+      "DIST": "",
+      "lat": 22.2851728,
+      "lng": 114.1421749
+    },
+    {
+      "SS": "Coffeelin",
+      "ADR": "SHOP 3, G/F, 99 HIGH STREET, SAI YING PUN, WESTERN DISTRICT",
+      "DIST": "",
+      "lat": 22.2853448,
+      "lng": 114.1406479
+    },
+    {
+      "SS": "MUM Veggie Cafe",
+      "ADR": "SHOP 8, LG/F, EATON HONG KONG , 380 NATHAN ROAD, JORDAN, KOWLOON",
+      "DIST": "",
+      "lat": 22.308041,
+      "lng": 114.1717102
+    },
+    {
+      "SS": "The Recipe",
+      "ADR": "SHOP G57-58, G/F., E PLAZA, 7 SHING YIP STREET, KWUN TONG, KOWLOON",
+      "DIST": "",
+      "lat": 22.3109879,
+      "lng": 114.2265054
     }
 
 ]
