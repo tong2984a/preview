@@ -1635,6 +1635,20 @@
       "DIST": "",
       "lat": 22.3109879,
       "lng": 114.2265054
+    },
+    {
+      "SS": "SONNE CAD",
+      "ADR": "G/F 16 SAN TSUEN STREET, TAI HANG",
+      "DIST": "",
+      "lat": 22.278049,
+      "lng": 114.1921522
+    },
+    {
+      "SS": "Fat Kee Dining Room",
+      "ADR": "GROUND FLOOR, 7 WUN SHA STREET, TAI HANG, HONG KONG",
+      "DIST": "",
+      "lat": 22.2791219,
+      "lng": 114.1926214
     }
 
 ]
