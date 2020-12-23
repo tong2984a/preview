@@ -22,6 +22,7 @@ const CUISINE_CATEGORIES = {
   "Chinese": [],
   "Japanese": [],
   "Korean": [],
+  "Southeast Asian": [],
   "Singaporean": [],
   "Thai": [],
   "Vietnamese": [],
