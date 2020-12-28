@@ -1656,6 +1656,34 @@
       "DIST": "",
       "lat": 22.2780402,
       "lng": 114.1932688
+    },
+    {
+      "SS": "Passion",
+      "ADR": "LEE TUNG AVENUE, NO. 200 QUEEN’S ROAD EAST, WAN CHAI, HONG KONG",
+      "DIST": "",
+      "lat": 22.2755562,
+      "lng": 114.1721445
+    },
+    {
+      "SS": "Passion",
+      "ADR": "SHOP G12, G/F., LEE GARDEN ONE, 33 HYSAN AVENUE, CAUSEWAY BAY, HONG KONG",
+      "DIST": "",
+      "lat": 22.2785353,
+      "lng": 114.1845889
+    },
+    {
+      "SS": "Passion",
+      "ADR": "SHOP NOS. 308 & 315, 3/F., CITYPLAZA, NO. 18 TAIKOO SHING ROAD, QUARRY BAY, HONG KONG",
+      "DIST": "",
+      "lat": 22.2856963,
+      "lng": 114.2180353
+    },
+    {
+      "SS": "Passion",
+      "ADR": "SHOP NO. 11, LEVEL 4A, LANGHAM PLACE, 8 ARGYLE STREET, MONG KOK, KOWLOON",
+      "DIST": "",
+      "lat": 22.3181113,
+      "lng": 114.1685199
     }
 
 ]
