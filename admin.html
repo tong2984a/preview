@@ -40,7 +40,11 @@
     </div>
     <div id="myData"></div>
     <div id="newDbRestaurants"></div>
-
+    <div class="download-wrapper" onClick="download()">
+      <p><i class="material-icons">file_download</i></p>
+      <p>Download Demo CSV File</p>
+    </div>
+    <script src="js/rawjson_to_csv.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-storage.js"></script>
@@ -529,7 +533,7 @@
                   unknownCuisine && console.log("***cuisine unknown", cuisine);
                   unknownCategory && console.log("***category unknown", category);
                   unknownLocation && console.log("***location unknown", location);
-                  unknownRestaurant && console.log("***restaurant unknown", restaurant);
+                  unknownRestaurant && console.log("***restaurant unknown", restaurant, doc.id);
                   if (unknownIngredients?.length > 0) {
                     console.log("***ingredients known", tags);
                     console.log("***ingredients unknown", unknownIngredients);
@@ -598,13 +602,48 @@
           })
         };
 
-        // $(document).ready(fixReceipt());
-        //  $(document).ready(inspectReceipts());
+        function reportReceipts() {
+          initItemsArray().then(() => {
+            db.collection('receipts').get().then((snapshot) => {
+              var arrayContent = [["id", "name", "tags", "comment", "datetime", "receipt", "dish"]];
 
-        //  $(document).ready(inspectRestaurants());
+              snapshot.docs.forEach(doc => {
+                var receiptData = doc.data();
+                let category = receiptData.category;
+                let cuisine = receiptData.cuisine;
+                let location = receiptData.location;
+                let restaurant = receiptData.restaurant;
+                let tags = receiptData.tags;
+                let dishImageName = receiptData.dishImageName;
+                let fileURL = receiptData.fileURL;
+                let helloMessage = receiptData.helloMessage;
+                let receiptImageName = receiptData.receiptImageName;
+                let receiptImgURL = receiptData.receiptImgURL;
+
+                console.log("**receipt", doc.id);
+                arrayContent.push([doc.id, `"${restaurant}"`, `"${tags}"`, `"${helloMessage}"`, `"${receiptImageName}"`, `"${receiptImgURL}"`, `"${fileURL}"`])
+              });
+
+              var csvContent = arrayContent.join("\n");
+              var link = window.document.createElement("a");
+              link.setAttribute("href", "data:text/csv;charset=utf-8,%EF%BB%BF" + encodeURI(csvContent));
+              link.setAttribute("download", "receipts.csv");
+              link.click();
+            }).catch(function(error) {
+              console.log("Error getting cached document:", error);
+            });
+          })
+        }
+
+        // $(document).ready(fixReceipt());
+          $(document).ready(inspectReceipts());
+        //  $(document).ready(reportReceipts());
+
+      //    $(document).ready(inspectRestaurants());
       //    $(document).ready(inspectCategories());
 
-      $(document).ready(reportRestaurants());
+      //$(document).ready(reportRestaurants());
     //    $(document).ready(fixRestaurant());
     </script>
 </body>
+</html>
