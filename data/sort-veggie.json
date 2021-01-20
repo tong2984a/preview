@@ -1796,6 +1796,125 @@
       "DIST": "",
       "lat": 22.3369319,
       "lng": 114.1763367
+    },
+    {
+      "SS": "Chatkazz Harris park",
+      "ADR": "Shop 4-6/14-20 Station St E, Harris Park NSW 2150",
+      "DIST": "",
+      "lat": -33.82164369497996,
+      "lng": 151.008477358537
+    },
+    {
+      "SS": "Ummarin Thai Restaurant",
+      "ADR": "66 Perouse Rd, Randwick NSW 2031",
+      "DIST": "",
+      "lat": -33.920580382991886,
+      "lng": 151.24273339375839
+    },
+    {
+      "SS": "RAW & WILD Market & Cafe",
+      "ADR": "250 Bong Bong St, Bowral NSW 2576",
+      "DIST": "",
+      "lat": -34.477265953611806,
+      "lng": 150.4184493364487
+    },
+    {
+      "SS": "Cafe Rocca",
+      "ADR": "8 Wingecarribee St, Bowral NSW 2576",
+      "DIST": "",
+      "lat": -34.47885413750408,
+      "lng": 150.41755735874517
+    },
+    {
+      "SS": "Pilgrims Bronte",
+      "ADR": "127 Macpherson St, Bronte NSW 2024",
+      "DIST": "",
+      "lat": -33.906096363914926,
+      "lng": 151.2632423237201
+    },
+    {
+      "SS": "The little kitchen",
+      "ADR": "275 Arden St, Coogee NSW 2034",
+      "DIST": "",
+      "lat": -33.923729799361325,
+      "lng": 151.2563651499011
+    },
+    {
+      "SS": "Mon Chou Bondi",
+      "ADR": "197 Old South Head Rd, Bondi Junction NSW 2022",
+      "DIST": "",
+      "lat": -33.889478125559776,
+      "lng": 151.25887615256386
+    },
+    {
+      "SS": "Herb n Sprout co",
+      "ADR": "331 Maroubra Rd, Maroubra NSW 2035",
+      "DIST": "",
+      "lat": -33.94285724723169,
+      "lng": 151.24757218112393
+    },
+    {
+      "SS": "Alibi Bar & Kitchen",
+      "ADR": "Ovolo Hotel, 6 Cowper Wharf Roadway, Woolloomooloo NSW 2011",
+      "DIST": "",
+      "lat": -33.868800412177606,
+      "lng": 151.22020028030175
+    },
+    {
+      "SS": "Poolside Cafe",
+      "ADR": "1C Mrs Macquaries Rd, Sydney NSW 2000",
+      "DIST": "",
+      "lat": -33.863595740525774,
+      "lng": 151.22155465782023
+    },
+    {
+      "SS": "Govindas Cinema and Restaurant",
+      "ADR": "112 Darlinghurst Rd, Darlinghurst NSW 2010",
+      "DIST": "",
+      "lat": -33.87370833095222,
+      "lng": 151.2212964085713
+    },
+    {
+      "SS": "Shift eatery",
+      "ADR": "Shop 4/241 Commonwealth St, Surry Hills NSW 2010",
+      "DIST": "",
+      "lat": -33.88351877138603,
+      "lng": 151.20958967796722
+    },
+    {
+      "SS": "Bad Hombres",
+      "ADR": "40 Reservoir St, Surry Hills NSW 2010",
+      "DIST": "",
+      "lat": -33.88030287265574,
+      "lng": 151.20912808319432
+    },
+    {
+      "SS": "STONE COFFEE",
+      "ADR": "SHOP P, G/F., FOOK MOON BUILDING, NOS. 56-66, 66A, 68-72 THIRD STREET, SAI YING PUN, HONG KONG",
+      "DIST": "",
+      "lat": 22.2855283,
+      "lng": 114.1420991
+    },
+    {
+      "SS": "NOOD FOOD",
+      "ADR": "FRONT PORTION OF 2/F., KINWICK CENTRE, 32 HOLLYWOOD ROAD, CENTRAL, HONG KONG",
+      "DIST": "",
+      "lat": 22.2821323,
+      "lng": 114.1532707
+    },
+    {
+      "SS": "NOOD FOOD",
+      "ADR": "1/F, LOK MOON MANSION, NOS. 3-11 WING FUNG STREET, WAN CHAI, HONG KONG",
+      "DIST": "",
+      "lat": 22.2767311,
+      "lng": 114.1683229
+    },
+    {
+      "SS": "COFFEE BY ZION",
+      "ADR": "SHOP NOS. 1-3, G/F., CHUN KING COURT, 83 FIRST STREET, SAI YING PUN, HONG KONG",
+      "DIST": "",
+      "lat": 22.286667,
+      "lng": 114.141675
     }
 
 ]
