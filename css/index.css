@@ -75,3 +75,14 @@
     width: 100%;
 }
 /*Profile Pic End*/
+.modal-dismiss {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.modal-dismiss:hover {
+  color: #fff;
+  background-color: #5a6268;
+  border-color: #545b62;
+}

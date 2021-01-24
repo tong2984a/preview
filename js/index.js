@@ -430,6 +430,7 @@ function upload() {
   };
   const imagePaths = [];
   const storageRef = storage.ref();
+  $('#staticProgressBackdrop').modal('show');
   for (let key of Object.keys(miniFiles)) {
     let img = miniFiles[key];
     let fileRef = storageRef.child(img.name);
@@ -490,6 +491,8 @@ function upload() {
               addRestaurantToDB(imagePaths['dish'] || "");
               addReceiptToDB(imagePaths);
             }
+            $('#staticProgressBackdrop').modal('hide');
+            $('#staticBackdrop').modal('show');
             //addRestaurantToDB(imagePaths['dish'] || "");
             //add receipt must follow add restaurant
             //use whatever currentLocation resulting from it
