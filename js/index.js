@@ -517,12 +517,13 @@ function upload() {
 //only called from upload()
 function addRestaurantToDB(dishImgURL) {
   let restaurantInputValue = restaurantInput.value.trim();
-  let uploadCuisine = document.getElementById('indexCuisines').value;
+  let uploadCuisines = $('#indexCuisines').val();
+  let categories = $('#indexCategories').val().join(',');
   let dishes = {
     dish: dishInput.value,
     fileURL: dishImgURL,
-    category: category,
-    tags: ($('#indexIngredients').val().split(","))
+    category: categories,
+    tags: $('#indexIngredients').val()
   };
   let newRestaurant = {
     name: restaurantInputValue,
@@ -530,7 +531,7 @@ function addRestaurantToDB(dishImgURL) {
     location: currentLocation,
     dishes: [dishes],
     coupon:  10,
-    cuisines: [uploadCuisine]
+    cuisines: uploadCuisines
   };
   //design assumption new restaurant not on file has empty adr in db, in-memory itemsArray, and input field
   let existing = itemsArray.find(item => {
@@ -540,7 +541,6 @@ function addRestaurantToDB(dishImgURL) {
       return restaurantInputValue === `${item.name}, ${item.adr}`;
     }
   });
-    console.log("***existing", existing);
   if (existing) {
     currentLocation = [existing.lat, existing.lng];
     newRestaurant.name = existing.name;
@@ -578,7 +578,7 @@ function addRestaurantToDB(dishImgURL) {
         db.collection("restaurants").doc(doc.id).update({
           dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
           coupon:  couponRemains,
-          cuisines: firebase.firestore.FieldValue.arrayUnion(uploadCuisine)
+          cuisines: firebase.firestore.FieldValue.arrayUnion(...uploadCuisines)
         });
       })
     } else {
@@ -600,10 +600,11 @@ function addRestaurantToDB(dishImgURL) {
 }
 
 function addReceiptToDB(imagePaths) {
-  let uploadCuisine = document.getElementById('indexCuisines').value;
+  let uploadCuisine = $('#indexCuisines').val().join(',');
   let restaurantInputValue = restaurantInput.value.trim();
   let receiptImgURL = imagePaths["receipt"] || "";
   let dishImgURL = imagePaths["dish"] || "";
+  let categories = $('#indexCategories').val().join(',');
 
   db.collection("receipts").add({
     //email: emailInput.value,
@@ -615,9 +616,9 @@ function addReceiptToDB(imagePaths) {
     restaurant: restaurantInputValue,
     dishImageName: dishImageFileName,
     receiptImageName: receiptImageFileName,
-    tags: ($('#indexIngredients').val().split(",")),
+    tags: $('#indexIngredients').val(),
     approved: false,
-    category: category,
+    category: categories,
     cuisine: uploadCuisine
   })
   .then(function(docRef) {

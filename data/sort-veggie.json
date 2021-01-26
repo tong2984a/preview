@@ -1915,6 +1915,27 @@
       "DIST": "",
       "lat": 22.286667,
       "lng": 114.141675
+    },
+    {
+      "SS": "Happy Plantarian",
+      "ADR": "LAMMA ISLAND, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.236216,
+      "lng": 114.110214
+    },
+    {
+      "SS": "掌廚黃后",
+      "ADR": "G/F., 192 HOLLYWOOD ROAD, SHEUNG WAN, HONG KONG",
+      "DIST": "",
+      "lat": 22.2739375,
+      "lng": 114.1795940
+    },
+    {
+      "SS": "V Brands",
+      "ADR": "",
+      "DIST": "",
+      "lat": 22.236216,
+      "lng": 114.110214
     }
 
 ]

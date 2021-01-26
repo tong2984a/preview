@@ -48,21 +48,21 @@ const CUISINE_CATEGORIES = {
 };
 const CATEGORY_INGREDIENTS = {
   "Alcohol":["Vegan","Gluten Free", "Organic"],
-  "Bar": ["Vegan", "No Animal Extract", "Non-alcohol", "Dairy Free", "Egg Free"],
-  "Dessert & Fruits": ["Dairy Free", "Egg Free", "Nuts Free", "Sugar Free", "Gluten Free"],
-  "Coffee & Tea": ["Dairy Free", "Organic", "Plant-Based Milk"],
-  "Fast Food": ["Dairy Free", "Egg Free", "Plant-Based Meat", "MSG Free"],
-  "Sandwich": ["Vegan", "Dairy Free", "Egg Free", "Plant-Based Meat", "Nuts Free", "Soy Free", "Garlic Free", "MSG Free", "Organic"],
-  "Soup & Salad": ["Vegan", "Dairy Free", "Egg Free", "Plant-Based Meat", "Nuts Free", "Soy Free", "Garlic Free", "MSG Free", "Organic"],
-  "Main Dish": ["Vegan", "Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
-  "Buffet": ["Vegan", "Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
-  "Dim Sum": ["Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
-  "Noodles": ["Dairy Free", "Egg Free", "No Animal Extract", "Rice Noodle", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
   "Appetizer": ["Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
-  "Sushi": ["Dairy Free", "Egg Free", "Plant-Based Seafood", "Konjac", "Wasabi", "Soy Free", "No Animal Extract"],
-  "Sashimi": ["Dairy Free", "Egg Free", "Plant-Based Seafood", "Konjac", "Wasabi", "Soy Free", "No Animal Extract"],
+  "Bar": ["Vegan", "No Animal Extract", "Non-alcohol", "Dairy Free", "Egg Free"],
+  "Buffet": ["Vegan", "Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
   "Burger": ["Dairy Free", "Egg Free", "Garlic Free", "Honey Free", "Gluten Free", "Soy Free", "Plant-Based Meat", "Impossible Burger", "Mushroom"],
-  "Cheese": ["Dairy Free" , "Egg Free", "Garlic Free", "Honey Free", "Gluten Free", "Soy Free", "Nuts", "Spice", "Herbs"]
+  "Cheese": ["Dairy Free" , "Egg Free", "Garlic Free", "Honey Free", "Gluten Free", "Soy Free", "Nuts", "Spice", "Herbs"],
+  "Coffee & Tea": ["Dairy Free", "Organic", "Plant-Based Milk"],
+  "Dessert & Fruits": ["Dairy Free", "Egg Free", "Nuts Free", "Sugar Free", "Gluten Free"],
+  "Dim Sum": ["Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
+  "Fast Food": ["Dairy Free", "Egg Free", "Plant-Based Meat", "MSG Free"],
+  "Main Dish": ["Vegan", "Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
+  "Noodles": ["Dairy Free", "Egg Free", "No Animal Extract", "Rice Noodle", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
+  "Sandwich": ["Vegan", "Dairy Free", "Egg Free", "Plant-Based Meat", "Nuts Free", "Soy Free", "Garlic Free", "MSG Free", "Organic"],
+  "Sashimi": ["Dairy Free", "Egg Free", "Plant-Based Seafood", "Konjac", "Wasabi", "Soy Free", "No Animal Extract"],
+  "Soup & Salad": ["Vegan", "Dairy Free", "Egg Free", "Plant-Based Meat", "Nuts Free", "Soy Free", "Garlic Free", "MSG Free", "Organic"],
+  "Sushi": ["Dairy Free", "Egg Free", "Plant-Based Seafood", "Konjac", "Wasabi", "Soy Free", "No Animal Extract"]
 };
 
 var itemsArray;
@@ -75,7 +75,7 @@ var itemsArray;
 
       var tagNum = 0;
       var tagList = [];
-      var category;
+      //var category;
       var unique_categories = [];
 
       (function() {
@@ -112,13 +112,21 @@ var itemsArray;
           const icuisines = document.getElementById('indexCuisines'); //index.html only
           const scuisines = document.getElementById('selectCuisines'); //search.html only
 
+          if (icuisines) {
+            $('#indexCuisines').select2({
+              placeholder: 'Select anything',
+              data: Object.keys(CUISINE_CATEGORIES),
+              closeOnSelect: true
+            });
+          }
+
           Object.keys(CUISINE_CATEGORIES)
           .forEach(ucuisine => {
             if (icuisines) {
-              var option = document.createElement('option');
-              option.innerText = ucuisine;
-              option.value = ucuisine;
-              icuisines.appendChild(option);
+              // var option = document.createElement('option');
+              // option.innerText = ucuisine;
+              // option.value = ucuisine;
+              // icuisines.appendChild(option);
             }
             if (scuisines) {
               var box = document.createElement('input');
@@ -134,13 +142,13 @@ var itemsArray;
               boxLabel.appendChild(box);
             }
           });
-////console.log("***33333");
+
           [...(new Set(unique_categories))].sort().forEach(ucat => {
             if (cats) {
-              var option = document.createElement('option');
-              option.innerText = ucat;
-              option.value = ucat;
-              cats.appendChild(option);
+              // var option = document.createElement('option');
+              // option.innerText = ucat;
+              // option.value = ucat;
+              // cats.appendChild(option);
             }
             if (scats) {
               var box = document.createElement('input');
@@ -621,18 +629,29 @@ function addRestMarker(restaurant) {
 
     //index.html only
     function uploadTags() {
-      let uploadCuisine = document.getElementById('indexCuisines').value;
-      category = document.getElementById('indexCategories').value;
-      tagList = $('#indexIngredients').val().split(",");
-      db.collection('categories').doc(category).update({
-        tags: firebase.firestore.FieldValue.arrayUnion(...tagList)
+      tagList = $('#indexIngredients').val();
+      $('#indexCategories').val().forEach(category => {
+        db.collection('categories').doc(category).update({
+          tags: firebase.firestore.FieldValue.arrayUnion(...tagList)
+        })
       })
     }
 
     //index.html Only
     function filterIndexCategories() {
-      let uploadCuisine = document.getElementById('indexCuisines').value;
-      if (uploadCuisine) {
+      $('#indexCategories').empty().trigger('change');
+
+      let newCategories = [];
+      for (var key of Object.keys(CATEGORY_INGREDIENTS)) {
+        newCategories.push(key);
+      }
+      $('#indexCategories').select2({
+        placeholder: 'Select anything',
+        data: newCategories,
+        closeOnSelect: true
+      });
+
+      if ($('#indexCuisines').val().length > 0) {
         document.querySelector('#indexCategoryBlock').style.display = 'block';
       } else {
         document.querySelector('#indexCategoryBlock').style.display = 'none';
@@ -641,17 +660,21 @@ function addRestMarker(restaurant) {
 
     //index.html Only
     function filterIndexIngredients() {
-      $('#indexIngredients').tagsinput('removeAll');
+      $('#indexIngredients').empty().trigger('change');
 
       let newIngredients = [];
-      let indexCategory = document.getElementById('indexCategories').value;
-      newIngredients.push(...(CATEGORY_INGREDIENTS[indexCategory] || []));
-      [...(new Set(newIngredients))].sort().forEach(tag => {
-        $('#indexIngredients').tagsinput('add', tag);
-        console.log("***tag", tag);
-      })
+      $('#indexCategories').val().forEach(indexCategory => {
+        newIngredients.push(...(CATEGORY_INGREDIENTS[indexCategory] || []));
+      });
+      newIngredients = [...(new Set(newIngredients))].sort();
+      $('#indexIngredients').select2({
+        placeholder: 'Select anything',
+        data: newIngredients,
+        tags: true,
+        closeOnSelect: false
+      });
 
-      if ($('#indexIngredients').val().length > 0) {
+      if ($('#indexCategories').val().length > 0) {
         document.querySelector('#indexIngredientBlock').style.display = 'block';
       } else {
         document.querySelector('#indexIngredientBlock').style.display = 'none';
@@ -731,24 +754,6 @@ function addRestMarker(restaurant) {
           }
         }
       });
-    }
-
-    function addFilter(tag, state) {
-      tagRegex = new RegExp(tag)
-      if(state){
-        selected.push(tagRegex);
-        filterNumber++;
-        markers.forEach(element => {
-          element.filterDishes(selected, filterNumber, category);
-        })
-      }else{
-        var i = selected.indexOf(tagRegex);
-        selected.splice(i, 1);
-        filterNumber--;
-        markers.forEach(element => {
-          element.filterDishes(selected, filterNumber, category);
-        })
-      }
     }
 
     function onEachFeature(feature, layer) {
