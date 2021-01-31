@@ -28,7 +28,7 @@
       <h4 class="text-center">Plant forward. </h4>
       <h4 class="text-center">Help us Plant more Green Bubbles on the Map !</h4>
       <p class="text-center">
-        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.32.1</small>
+        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.33.1</small>
       </p>
       <p class="text-left font-weight-normal">
         Technical Instructions<br/>
@@ -45,6 +45,7 @@
       <a href="#" class="badge badge-primary" onclick="jumpTo([22.276, 114.173])">HK</a>
       <a href="#" class="badge badge-warning" onclick="jumpTo([22.276, 114.173])">香港</a>
       <a href="#" class="badge badge-info" onclick="jumpTo([-33.8722041, 151.213429])">Sydney</a>
+      <a href="#" id="bitcoin" class="badge badge-success">Bitcoin</a>
     </div>
 
     <div id="mapid"></div>
@@ -264,7 +265,26 @@
       </div>
       <div class="modal-body">
         <div class="mx-4 my-2">
-          <img src="images/BC_Logo_.png" class="img-responsive" style="margin:0 auto;" alt="Responsive image">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text" id="btnGroupAddon"><img src="images/BC_Logo_.png" class="img-responsive" style="margin:0 auto;" alt="Responsive image"></div>
+            </div>
+            <input id="accountId" type="text" class="form-control" placeholder="Check account balance" aria-label="Check account balance" aria-describedby="btnGroupAddon">
+          </div>
+        </div>
+        <div class="card mx-4 my-2" id="coins" style="display: none;">
+          <div class="row no-gutters">
+            <div class="col-sm-2" style="background: #868e96;">
+            </div>
+            <div class="col-sm-7">
+              <div class="card-body">
+                <h6 class="card-title" id="coinAddress"></h5>
+                <p class="card-text" id="coinBalance"></p>
+                <a href="#" id="viewCoinProfile" class="btn btn-primary stretched-link">View Profile</a>
+                <p><abbr id="coinProfile"></abbr></p>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="mx-4 my-2">
           Click this <a href='#'>link</a> to receive your US$0.10 equivalent of Bitcoin.

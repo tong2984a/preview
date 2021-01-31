@@ -1,4 +1,40 @@
+$('#bitcoin').click(function() {
+  $('#staticBackdrop').modal('show');
+})
 
+$('#btnGroupAddon').click(function() {
+  document.getElementById('coins').style.display = "none";
+  let accountId = $('#accountId').val();
+  let coinBalance = 0;
+  // $.post(`https://block.io/api/v2/get_address_balance/?api_key=dbcb-9043-142a-1280&labels=${accountId}`, function(data, status) {
+  //   console.log(`${data['amnt']} and status is ${status}`);
+  //   balance = data['amnt'];
+  // });
+  db.collection("coins")
+  .where("account", "==", accountId)
+  .get().then(querySnapshot => {
+    if (querySnapshot.docs.length) {
+      querySnapshot.forEach(function(doc) {
+        var restaurantData = doc.data();
+        let coinAddress = restaurantData.address;
+        let coinBalance = restaurantData.balance;
+        $.post('https://cex.io/api/convert/BTC/USD', {"amnt":coinBalance}, function(data, status) {
+          console.log(`${data['amnt']} and status is ${status}`);
+          $('#coinAddress').text(coinAddress);
+          let amnt = (Math.round(data['amnt'] * 100) / 100).toFixed(2);
+          $('#coinBalance').text(`BTC ${coinBalance} / USD $${amnt}`);
+        })
+        $('#coinProfile').text(`Visit https://www.blockchain.com/btc-testnet/address/${coinAddress}`);
+        document.getElementById('coinProfile').style.display = "none";
+        document.getElementById('coins').style.display = "block";
+      })
+    }
+  })
+})
+
+$('#viewCoinProfile').click(function() {
+  document.getElementById('coinProfile').style.display = "block";
+});
 
 $(document).ready(function(){
   $('[data-toggle="popover"]').popover({
