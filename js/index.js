@@ -669,6 +669,9 @@ function addReceiptToDB(imagePaths) {
   let dishImgURL = imagePaths["dish"] || "";
   let categories = $('#indexCategories').val().join(',');
   let accountLoginId = $('#accountLoginId').val() || "";
+  if (storageAvailable('localStorage')) {
+    localStorage.setItem("accountLoginId", accountLoginId);
+  }
 
   db.collection("receipts").add({
     account: accountLoginId,
