@@ -1,26 +1,3 @@
-$('#btnAccountLogin').click(function() {
-  let accountLoginId = $('#accountLoginId').val();
-  let coinBalance = 0;
-  var card = document.querySelector('.card');
-  if (storageAvailable('localStorage')) {
-    localStorage.setItem("accountLoginId", accountLoginId);
-  }
-  $('#accountId').val(accountLoginId);
-  db.collection("coins")
-  .where("account", "==", accountLoginId)
-  .get().then(querySnapshot => {
-    if (querySnapshot.docs.length) {
-      querySnapshot.forEach(function(doc) {
-        var accountData = doc.data();
-        let coinAddress = accountData.address;
-        let coinBalance = accountData.balance;
-        $('#accountBalance').text(coinBalance);
-        card.classList.toggle('is-flipped');
-      })
-    }
-  })
-})
-
 $('#btnGroupAddon').click(function() {
   document.getElementById('coins').style.display = "none";
   let accountId = $('#accountId').val();
@@ -61,10 +38,24 @@ $(document).ready(function(){
   });
 
   if (storageAvailable('localStorage')) {
-    if(localStorage.getItem("accountLoginId")) {
+    if (localStorage.getItem("accountLoginId")) {
       let accountLoginId = localStorage.getItem('accountLoginId');
       $('#accountLoginId').val(accountLoginId);
       $('#accountId').val(accountLoginId);
+      db.collection("coins")
+      .where("account", "==", accountLoginId)
+      .get().then(querySnapshot => {
+        if (querySnapshot.docs.length) {
+          querySnapshot.forEach(function(doc) {
+            var accountData = doc.data();
+            let coinAddress = accountData.address;
+            let coinBalance = accountData.balance;
+            $('#accountBalance').text(coinBalance);
+          })
+        } else {
+          $('#accountBalance').text(0);
+        }
+      })
     }
   }
 
@@ -669,6 +660,7 @@ function addReceiptToDB(imagePaths) {
   let dishImgURL = imagePaths["dish"] || "";
   let categories = $('#indexCategories').val().join(',');
   let accountLoginId = $('#accountLoginId').val() || "";
+  $('#accountId').val(accountLoginId);
   if (storageAvailable('localStorage')) {
     localStorage.setItem("accountLoginId", accountLoginId);
   }
