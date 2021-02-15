@@ -1,5 +1,24 @@
-$('#bitcoin').click(function() {
-  $('#staticBackdrop').modal('show');
+$('#btnAccountLogin').click(function() {
+  let accountLoginId = $('#accountLoginId').val();
+  let coinBalance = 0;
+  var card = document.querySelector('.card');
+  if (storageAvailable('localStorage')) {
+    localStorage.setItem("accountLoginId", accountLoginId);
+  }
+  $('#accountId').val(accountLoginId);
+  db.collection("coins")
+  .where("account", "==", accountLoginId)
+  .get().then(querySnapshot => {
+    if (querySnapshot.docs.length) {
+      querySnapshot.forEach(function(doc) {
+        var accountData = doc.data();
+        let coinAddress = accountData.address;
+        let coinBalance = accountData.balance;
+        $('#accountBalance').text(coinBalance);
+        card.classList.toggle('is-flipped');
+      })
+    }
+  })
 })
 
 $('#btnGroupAddon').click(function() {
@@ -15,9 +34,9 @@ $('#btnGroupAddon').click(function() {
   .get().then(querySnapshot => {
     if (querySnapshot.docs.length) {
       querySnapshot.forEach(function(doc) {
-        var restaurantData = doc.data();
-        let coinAddress = restaurantData.address;
-        let coinBalance = restaurantData.balance;
+        var accountData = doc.data();
+        let coinAddress = accountData.address;
+        let coinBalance = accountData.balance;
         $.post('https://cex.io/api/convert/BTC/USD', {"amnt":coinBalance}, function(data, status) {
           console.log(`${data['amnt']} and status is ${status}`);
           $('#coinAddress').text(coinAddress);
@@ -40,6 +59,14 @@ $(document).ready(function(){
   $('[data-toggle="popover"]').popover({
     trigger: 'focus'
   });
+
+  if (storageAvailable('localStorage')) {
+    if(localStorage.getItem("accountLoginId")) {
+      let accountLoginId = localStorage.getItem('accountLoginId');
+      $('#accountLoginId').val(accountLoginId);
+      $('#accountId').val(accountLoginId);
+    }
+  }
 
   // Prepare the preview for profile picture
   if (storageAvailable('localStorage')) {
@@ -641,9 +668,10 @@ function addReceiptToDB(imagePaths) {
   let receiptImgURL = imagePaths["receipt"] || "";
   let dishImgURL = imagePaths["dish"] || "";
   let categories = $('#indexCategories').val().join(',');
+  let accountLoginId = $('#accountLoginId').val() || "";
 
   db.collection("receipts").add({
-    //email: emailInput.value,
+    account: accountLoginId,
     helloMessage: helloMessage,
     fileURL: dishImgURL,
     receiptImgURL: receiptImgURL,

@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="css/slideshow.css" />
   <link rel="stylesheet" href="css/leaflet-search.src.css" />
   <link rel="stylesheet" href="css/index.css" />
+  <link rel="stylesheet" href="css/flipcard.css" />
 </head>
 <body>
   <div class="container">
@@ -28,24 +29,39 @@
       <h4 class="text-center">Plant forward. </h4>
       <h4 class="text-center">Help us Plant more Green Bubbles on the Map !</h4>
       <p class="text-center">
-        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.33.1</small>
+        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.34.1</small>
       </p>
       <p class="text-left font-weight-normal">
         Technical Instructions<br/>
         a. Allow Browser to use GPS<br/>
         b. For Technical problems, suggestion & privacy concern: <a href='#' onclick='window.open(`mailto:contact@pay-a-vegan.com`, `_self`);'>contact@pay-a-vegan.com</a>
-
         </p>
-        <p class="text-left small">
-
-        </p>
+          <div class="row justify-content-center">
+            <div class="scene scene--card">
+              <div class="card mx-4 my-2">
+                <div class="card__face card__face--front">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text" id="btnAccountLogin"><img src="images/BC_Logo_.png" class="img-responsive" style="margin:0 auto;" alt="Responsive image"></div>
+                    </div>
+                    <input id="accountLoginId" type="text" class="form-control" placeholder="Check account balance" aria-label="Check account balance" aria-describedby="btnGroupAddon">
+                  </div>
+                </div>
+                <div class="card__face card__face--back">
+                  <button type="button" class="btn btn-primary">
+                    Balance
+                    <span id="accountBalance" class="badge badge-light"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
     </div>
 
     <div class="row justify-content-center">
       <a href="#" class="badge badge-primary" onclick="jumpTo([22.276, 114.173])">HK</a>
       <a href="#" class="badge badge-warning" onclick="jumpTo([22.276, 114.173])">香港</a>
       <a href="#" class="badge badge-info" onclick="jumpTo([-33.8722041, 151.213429])">Sydney</a>
-      <a href="#" id="bitcoin" class="badge badge-success">Bitcoin</a>
     </div>
 
     <div id="mapid"></div>
