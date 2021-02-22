@@ -32,16 +32,36 @@ $('#viewCoinProfile').click(function() {
   document.getElementById('coinProfile').style.display = "block";
 });
 
+const searchCoinsButton = document.getElementById('search-coins-button');
+const searchCoinsInput = document.getElementById('search-coins-input');
+searchCoinsButton.addEventListener('click', () => {
+  const inputValue = searchCoinsInput.value;
+  db.collection("coins")
+  .where("account", "==", inputValue)
+  .get().then(querySnapshot => {
+    if (querySnapshot.docs.length) {
+      querySnapshot.forEach(function(doc) {
+        var accountData = doc.data();
+        let coinAddress = accountData.address;
+        let coinBalance = accountData.balance;
+        $('#accountBalance').text(coinBalance);
+      })
+    }
+  })
+});
+
 $(document).ready(function(){
   $('[data-toggle="popover"]').popover({
     trigger: 'focus'
   });
 
+  $('#accountBalance').text('...');
   if (storageAvailable('localStorage')) {
     if (localStorage.getItem("accountLoginId")) {
       let accountLoginId = localStorage.getItem('accountLoginId');
       $('#accountLoginId').val(accountLoginId);
       $('#accountId').val(accountLoginId);
+      $('#search-coins-input').val(accountLoginId);
       db.collection("coins")
       .where("account", "==", accountLoginId)
       .get().then(querySnapshot => {
@@ -52,8 +72,6 @@ $(document).ready(function(){
             let coinBalance = accountData.balance;
             $('#accountBalance').text(coinBalance);
           })
-        } else {
-          $('#accountBalance').text(0);
         }
       })
     }

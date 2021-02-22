@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="css/slideshow.css" />
   <link rel="stylesheet" href="css/leaflet-search.src.css" />
   <link rel="stylesheet" href="css/index.css" />
-  <link rel="stylesheet" href="css/flipcard.css" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 </head>
 <body>
   <div class="container">
@@ -29,7 +29,7 @@
       <h4 class="text-center">Plant forward. </h4>
       <h4 class="text-center">Help us Plant more Green Bubbles on the Map !</h4>
       <p class="text-center">
-        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.34.4</small>
+        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.34.5</small>
       </p>
       <p class="text-left font-weight-normal">
         Technical Instructions<br/>
@@ -37,11 +37,19 @@
         b. For Technical problems, suggestion & privacy concern: <a href='#' onclick='window.open(`mailto:contact@pay-a-vegan.com`, `_self`);'>contact@pay-a-vegan.com</a>
       </p>
       <div class="row justify-content-center">
-        <button type="button" class="btn btn-primary" disabled>
+        <button type="button" class="btn btn-outline-primary" disabled>
           Coins Balance
           <span id="accountBalance" class="badge badge-light">
           </span>
         </button>
+        <div class="input-group col-sm-3">
+          <div class="input-group-append">
+            <input id="search-coins-input" type="text" class="form-control" placeholder="username">
+            <button id="search-coins-button" type="button" class="btn btn-primary">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
