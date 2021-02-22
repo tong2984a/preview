@@ -1943,6 +1943,20 @@
       "DIST": "",
       "lat": 22.284731,
       "lng": 114.15098
+    },
+    {
+      "SS": "Pici Pasta Bar",
+      "ADR": "G/F, No. 16 St. Francis Yard, Wanchai, Hong Kong",
+      "DIST": "",
+      "lat": 22.276109,
+      "lng": 114.168952
+    },
+    {
+      "SS": "Hands-On Coffee",
+      "ADR": "3/F, CMHK Flagship Store, No.1L & 1M, Sai Yeung Choi Street South, Mong Kok, Hong Kong",
+      "DIST": "",
+      "lat": 22.316548,
+      "lng": 114.170433
     }
 
 ]
