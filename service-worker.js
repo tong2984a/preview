@@ -1,4 +1,4 @@
-var CACHE_NAME = 'v1.34.6';
+var CACHE_NAME = 'v1.35.1';
 var urlsToCache = [
   '.',
   'data/sort-veggie.json',

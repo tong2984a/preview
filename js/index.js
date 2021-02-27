@@ -55,6 +55,8 @@ $(document).ready(function(){
     trigger: 'focus'
   });
 
+  $('#adModal').modal('show');
+
   $('#accountBalance').text('...');
   if (storageAvailable('localStorage')) {
     if (localStorage.getItem("accountLoginId")) {
