@@ -1945,7 +1945,7 @@
       "lng": 114.15098
     },
     {
-      "SS": "Pici Pasta Bar",
+      "SS": "Pici",
       "ADR": "G/F, No. 16 St. Francis Yard, Wanchai, Hong Kong",
       "DIST": "",
       "lat": 22.276109,
@@ -1957,6 +1957,55 @@
       "DIST": "",
       "lat": 22.316548,
       "lng": 114.170433
+    },
+    {
+      "SS": "Emerald",
+      "ADR": "6/F, M88, WELLINGTON PLACE, 2-8 WELLINGTON STREET, CENTRAL",
+      "DIST": "",
+      "lat": 22.2807553,
+      "lng": 114.156032
+    },
+    {
+      "SS": "Zero One Coffee & Roastery",
+      "ADR": "UG/F, 83 WELLINGTON STREET, CENTRAL",
+      "DIST": "",
+      "lat": 22.2832731,
+      "lng": 114.1544754
+    },
+    {
+      "SS": "Bagels Alley",
+      "ADR": "SHOP A1, G/F, HALESON BUILDING, 1 JUBILEE STREET, CENTRAL",
+      "DIST": "",
+      "lat": 22.284142,
+      "lng": 114.1548569
+    },
+    {
+      "SS": "Numerous Cups",
+      "ADR": "SHOP 4, G/F, KAR WAN BUILDING, 10-16 YUET YUEN STREET, NORTH POINT, HONG KONG",
+      "DIST": "",
+      "lat": 22.2909331,
+      "lng": 114.1960233
+    },
+    {
+      "SS": "Spice of Indian",
+      "ADR": "SHOP M, G/F, HUNG KWONG BUILDING, 2A TUNG CHOI STREET, MONGKOK, KOWLOON",
+      "DIST": "",
+      "lat": 22.3161467,
+      "lng": 114.1713126
+    },
+    {
+      "SS": "Bow Coffee",
+      "ADR": "G/F, QUEEN'S CENTRE, 58-64 QUEEN'S ROAD EAST, WANCHAI",
+      "DIST": "",
+      "lat": 22.2768381,
+      "lng": 114.1692718
+    },
+    {
+      "SS": "Sweetpea Cafe",
+      "ADR": "G/F, 4 SHIN HING STREET, CENTRAL",
+      "DIST": "",
+      "lat": 22.2840864,
+      "lng": 114.1522056
     }
 
 ]
