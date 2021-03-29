@@ -1,7 +1,8 @@
-var CACHE_NAME = 'v1.35.5';
+var CACHE_NAME = 'v1.36.1';
 var urlsToCache = [
   '.',
   'data/sort-veggie.json',
+  'data/sort-grocery.json',
   'pages/offline.html',
   'pages/404.html'
 ];

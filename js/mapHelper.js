@@ -46,6 +46,18 @@ const CUISINE_CATEGORIES = {
   "Mexican": [],
   "Fusion": []
 };
+const GROCERY_ORIGIN_CATEGORIES = {
+  "Chinese": [],
+  "International": [],
+  "Japanese": [],
+  "Taiwanese": [],
+  "Sri Lankan": [],
+  "Indian": [],
+  "Pakistan": [],
+  "South East Asia": [],
+  "Thailand": [],
+  "Italian": []
+};
 const CATEGORY_INGREDIENTS = {
   "Alcohol":["Vegan","Gluten Free", "Organic"],
   "Appetizer": ["Dairy Free", "Egg Free", "No Animal Extract", "Plant-Based Meat", "Garlic Free", "Gluten Free", "Soy Free", "Nut Free", "MSG free"],
@@ -64,6 +76,18 @@ const CATEGORY_INGREDIENTS = {
   "Soup & Salad": ["Vegan", "Dairy Free", "Egg Free", "Plant-Based Meat", "Nuts Free", "Soy Free", "Garlic Free", "MSG Free", "Organic"],
   "Sushi": ["Dairy Free", "Egg Free", "Plant-Based Seafood", "Konjac", "Wasabi", "Soy Free", "No Animal Extract"]
 };
+const GROCERY_CATEGORY_INGREDIENTS = {
+  "Noodles": ["Vegetable Protein"],
+  "Sauce": ["Vegetable Protein"],
+  "Plant-Based Meat": ["Vegetable Protein"],
+  "Plant-Based Egg": ["Vegetable Protein"],
+  "Plant-Based Milk": ["Vegetable Protein"],
+  "Snack": ["Vegetable Protein"],
+  "Ice Cream": ["Vegetable Protein"],
+  "Yogurt": ["Vegetable Protein"],
+  "Cheese": ["Vegetable Protein"],
+  "Alcohol": ["Vegetable Protein"]
+};
 
 var itemsArray;
 
@@ -80,6 +104,12 @@ var itemsArray;
 
       (function() {
         console.log('categories ready');
+        if (document.getElementById('groceryOrigins')) {
+          document.getElementById('groceryOrigins').onchange = filterGroceryCategories;
+        }
+        if (document.getElementById('groceryCategories')) {
+          document.getElementById('groceryCategories').onchange = filterGroceryIngredients;
+        }
         if (document.getElementById('indexCuisines')) {
           document.getElementById('indexCuisines').onchange = filterIndexCategories;
         }
@@ -107,10 +137,20 @@ var itemsArray;
           }
 
           const st = document.getElementById('selectTags'); //search.html only
+          const gcats = document.getElementById('groceryCategories'); //grocery.html only
           const cats = document.getElementById('indexCategories'); //index.html only
           const scats = document.getElementById('selectCategories'); //search.html only
+          const gorigins = document.getElementById('groceryOrigins'); //grocery.html only
           const icuisines = document.getElementById('indexCuisines'); //index.html only
           const scuisines = document.getElementById('selectCuisines'); //search.html only
+
+          if (gorigins) {
+            $('#groceryOrigins').select2({
+              placeholder: 'Select anything',
+              data: Object.keys(GROCERY_ORIGIN_CATEGORIES),
+              closeOnSelect: true
+            });
+          }
 
           if (icuisines) {
             $('#indexCuisines').select2({
@@ -629,12 +669,43 @@ function addRestMarker(restaurant) {
 
     //index.html only
     function uploadTags() {
-      tagList = $('#indexIngredients').val();
-      $('#indexCategories').val().forEach(category => {
-        db.collection('categories').doc(category).update({
-          tags: firebase.firestore.FieldValue.arrayUnion(...tagList)
+      if (document.getElementById('indexIngredients')) {
+        tagList = $('#indexIngredients').val();
+        $('#indexCategories').val().forEach(category => {
+          db.collection('categories').doc(category).update({
+            tags: firebase.firestore.FieldValue.arrayUnion(...tagList)
+          })
         })
-      })
+      }
+      if (document.getElementById('groceryIngredients')) {
+        tagList = $('#groceryIngredients').val();
+        $('#groceryCategories').val().forEach(category => {
+          db.collection('grocery_categories').doc(category).update({
+            tags: firebase.firestore.FieldValue.arrayUnion(...tagList)
+          })
+        })
+      }
+    }
+
+    //grocery.html Only
+    function filterGroceryCategories() {
+      $('#groceryCategories').empty().trigger('change');
+
+      let newCategories = [];
+      for (var key of Object.keys(GROCERY_CATEGORY_INGREDIENTS)) {
+        newCategories.push(key);
+      }
+      $('#groceryCategories').select2({
+        placeholder: 'Select anything',
+        data: newCategories,
+        closeOnSelect: true
+      });
+
+      if ($('#groceryOrigins').val().length > 0) {
+        document.querySelector('#groceryCategoryBlock').style.display = 'block';
+      } else {
+        document.querySelector('#groceryCategoryBlock').style.display = 'none';
+      }
     }
 
     //index.html Only
@@ -655,6 +726,29 @@ function addRestMarker(restaurant) {
         document.querySelector('#indexCategoryBlock').style.display = 'block';
       } else {
         document.querySelector('#indexCategoryBlock').style.display = 'none';
+      }
+    }
+
+    //grocery.html Only
+    function filterGroceryIngredients() {
+      $('#groceryIngredients').empty().trigger('change');
+
+      let newIngredients = [];
+      $('#groceryCategories').val().forEach(indexCategory => {
+        newIngredients.push(...(GROCERY_CATEGORY_INGREDIENTS[indexCategory] || []));
+      });
+      newIngredients = [...(new Set(newIngredients))].sort();
+      $('#groceryIngredients').select2({
+        placeholder: 'Select anything',
+        data: newIngredients,
+        tags: true,
+        closeOnSelect: false
+      });
+
+      if ($('#groceryCategories').val().length > 0) {
+        document.querySelector('#groceryIngredientBlock').style.display = 'block';
+      } else {
+        document.querySelector('#groceryIngredientBlock').style.display = 'none';
       }
     }
 

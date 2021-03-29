@@ -1,0 +1,23 @@
+[
+    {
+      "SS": "Oliver's",
+      "ADR": "2/F Landmark Prince's Building, 10 Chater Road, Central",
+      "DIST": "",
+      "lat": 22.281196,
+      "lng": 114.159212
+    },
+    {
+      "SS": "Green Common",
+      "ADR": "Great Food Hall, LG1, 88 Queensway, Pacific Place, Admiralty",
+      "DIST": "",
+      "lat": 22.277152,
+      "lng": 114.164887
+    },
+    {
+      "SS": "So Market",
+      "ADR": "1 Tong Tak St, Tseung Kwan O, Hong Kong",
+      "DIST": "",
+      "lat": 22.308295,
+      "lng": 114.26277
+    }
+]

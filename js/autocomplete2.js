@@ -18,15 +18,16 @@ function autocomplete2(inp, arr) {
       let displayCount = 0;
       for (i = 0; i < arr.length; i++) {
         /*check if the item starts with the same letters as the text field value:*/
-        if ((displayCount < 10) && (arr[i].substr(0, val.length).toUpperCase() === val.toUpperCase())) {
+        let arr_i = arr[i] || '';
+        if ((displayCount < 10) && (arr_i.substr(0, val.length).toUpperCase() === val.toUpperCase())) {
           displayCount++;
           /*create a DIV element for each matching element:*/
           b = document.createElement("DIV");
           /*make the matching letters bold:*/
-          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-          b.innerHTML += arr[i].substr(val.length);
+          b.innerHTML = "<strong>" + arr_i.substr(0, val.length) + "</strong>";
+          b.innerHTML += arr_i.substr(val.length);
           /*insert a input field that will hold the current array item's value:*/
-          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          b.innerHTML += "<input type='hidden' value='" + arr_i + "'>";
           /*execute a function when someone clicks on the item value (DIV element):*/
               b.addEventListener("click", function(e) {
               /*insert the value for the autocomplete text field:*/
@@ -55,20 +56,21 @@ function autocomplete2(inp, arr) {
       /*for each item in the array...*/
       for (i = 0; i < arr.length; i++) {
         /*check if the item starts with the same letters as the text field value:*/
-        if ((val.length > 0) && (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase())) {
+        let arr_i = arr[i] || '';
+        if ((val.length > 0) && (arr_i.substr(0, val.length).toUpperCase() == val.toUpperCase())) {
           /*create a DIV element for each matching element:*/
-          let prefix = arr[i].substr(0, val.length);
-          let suffix = arr[i].substr(val.length);
+          let prefix = arr_i.substr(0, val.length);
+          let suffix = arr_i.substr(val.length);
           if (!val) {
             prefix = '';
-            suffix = arr[i];
+            suffix = arr_i;
           }
           b = document.createElement("DIV");
           /*make the matching letters bold:*/
           b.innerHTML = "<strong>" + prefix + "</strong>";
           b.innerHTML += suffix;
           /*insert a input field that will hold the current array item's value:*/
-          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          b.innerHTML += "<input type='hidden' value='" + arr_i + "'>";
           /*execute a function when someone clicks on the item value (DIV element):*/
           b.addEventListener("click", function(e) {
               /*insert the value for the autocomplete text field:*/

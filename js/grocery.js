@@ -290,7 +290,7 @@ function jumpTo(location) {
       }
   }
 
-
+var groceryArray;
 const db = firebase.firestore();
 var storageRef = firebase.storage().ref();
 var storage = firebase.storage();
@@ -361,51 +361,51 @@ function srcToFile(src, fileName, mimeType) {
     .then(function(buf){return new File([buf], fileName, {type:mimeType});})
   );
 }
-
-function loadExportDB() {
-    console.log("initializing export markers");
-    let dishArray = [];
-    fetch('/data/db-export.json').then(function(response) {
-      return response.json();
-    }).then(function(data) {
-      console.log("*****db export", data);
-      data.forEach(restaurantData => {
-        let dbAdr = restaurantData.adr;
-        let dbName = restaurantData.name;
-        if ((dbAdr === "") && dbName.includes(",")) {
-          restaurantData.adr = dbName.substring(dbName.indexOf(",") + 1);
-          restaurantData.name = dbName.substring(0, dbName.indexOf(","));
-        }
-        let marker = addRestMarker(restaurantData);
-        marker.addTo(mymap);
-        let restaurantDishes = restaurantHash[restaurantData.name];
-        restaurantDishes = restaurantDishes || [];
-        restaurantData.dishes.forEach(data => {
-          dishArray.push(data.dish);
-          restaurantDishes.push(data.dish);
-        });
-        restaurantHash[restaurantData.name] = [...(new Set(restaurantDishes))].sort();
-        let existing = itemsArray.find(item => (`${dbName}, ${dbAdr}` === `${item.name}, ${item.adr}`));
-        if (!existing) {
-          let newItem = { "name": dbName, "dist": "", "adr": dbAdr, "lat": restaurantData.location[0], "lng": restaurantData.location[1] };
-          itemsArray.push(newItem);
-        };
-      })
-
-      dishArray = [...(new Set(dishArray))].sort();
-      //index.html only
-      autocomplete(document.getElementById("restaurantInput"), itemsArray);
-      autocomplete2(document.getElementById("dishInput"), dishArray);
-    });
-}
+//
+// function loadExportDB() {
+//     console.log("initializing export markers");
+//     let dishArray = [];
+//     fetch('/data/db-export.json').then(function(response) {
+//       return response.json();
+//     }).then(function(data) {
+//       console.log("*****db export", data);
+//       data.forEach(restaurantData => {
+//         let dbAdr = restaurantData.adr;
+//         let dbName = restaurantData.name;
+//         if ((dbAdr === "") && dbName.includes(",")) {
+//           restaurantData.adr = dbName.substring(dbName.indexOf(",") + 1);
+//           restaurantData.name = dbName.substring(0, dbName.indexOf(","));
+//         }
+//         let marker = addRestMarker(restaurantData);
+//         marker.addTo(mymap);
+//         let restaurantDishes = restaurantHash[restaurantData.name];
+//         restaurantDishes = restaurantDishes || [];
+//         restaurantData.dishes.forEach(data => {
+//           dishArray.push(data.dish);
+//           restaurantDishes.push(data.dish);
+//         });
+//         restaurantHash[restaurantData.name] = [...(new Set(restaurantDishes))].sort();
+//         let existing = groceryArray.find(item => (`${dbName}, ${dbAdr}` === `${item.name}, ${item.adr}`));
+//         if (!existing) {
+//           let newItem = { "name": dbName, "dist": "", "adr": dbAdr, "lat": restaurantData.location[0], "lng": restaurantData.location[1] };
+//           groceryArray.push(newItem);
+//         };
+//       })
+//
+//       dishArray = [...(new Set(dishArray))].sort();
+//       //index.html only
+//       autocomplete(document.getElementById("restaurantInput"), groceryArray);
+//       autocomplete2(document.getElementById("dishInput"), dishArray);
+//     });
+// }
 
 //create the map
 function initMap() {
   console.log("initializing from file");
-  fetch('/data/sort-veggie.json').then(function(response) {
+  fetch('/data/sort-grocery.json').then(function(response) {
     return response.json();
   }).then(function(data) {
-    itemsArray = data.map(item => {
+    groceryArray = data.map(item => {
       return { "name": item.SS, "dist": item.DIST, "adr": item.ADR, "lat": item.lat, "lng": item.lng }
     })
     loadOnlineDB();
@@ -416,7 +416,7 @@ function initMap() {
 function loadOnlineDB() {
   console.log('initializing online markers');
   var dishArray = [];
-  db.collection('restaurants').get().then((snapshot) => {
+  db.collection('grocery_stores').get().then((snapshot) => {
     snapshot.docs.forEach(doc => {
       var restaurantData = doc.data();
       //split name and adr in popup if new db restaurant
@@ -427,33 +427,33 @@ function loadOnlineDB() {
         restaurantData.name = dbName.substring(0, dbName.indexOf(","));
       }
       //console.log("***restaurantData", restaurantData);
-      let marker = addRestMarker(restaurantData);
-      marker.addTo(mymap);
+      //let marker = addRestMarker(restaurantData);
+      //marker.addTo(mymap);
       let restaurantDishes = restaurantHash[restaurantData.name];
       restaurantDishes = restaurantDishes || [];
-      restaurantData.dishes.forEach(data => {
-        dishArray.push(data.dish);
-        restaurantDishes.push(data.dish);
+      restaurantData.products.forEach(data => {
+        dishArray.push(data.product);
+        restaurantDishes.push(data.product);
       });
       restaurantHash[restaurantData.name] = [...(new Set(restaurantDishes))].sort();
 
-      //console.log("****itemsArray", itemsArray);
+      //console.log("****groceryArray", groceryArray);
       //restaurantData may have been changed above
       //if new db restaurant, check if dbAdr is empty instead
-      //if (! itemsArray.some(item => ((restaurantData.name === item.name) && (restaurantData.adr === item.adr)))) {
-      //design assumption new restaurant not on file has empty adr in db, in-memory itemsArray, and input field
-      let existing = itemsArray.find(item => (`${dbName}, ${dbAdr}` === `${item.name}, ${item.adr}`));
+      //if (! groceryArray.some(item => ((restaurantData.name === item.name) && (restaurantData.adr === item.adr)))) {
+      //design assumption new restaurant not on file has empty adr in db, in-memory groceryArray, and input field
+      let existing = groceryArray.find(item => (`${dbName}, ${dbAdr}` === `${item.name}, ${item.adr}`));
         //console.log("***existing", existing);
       if (!existing) {
         let newItem = { "name": dbName, "dist": "", "adr": dbAdr, "lat": restaurantData.location[0], "lng": restaurantData.location[1] };
         //console.log("newItem", newItem);
-        itemsArray.push(newItem);
+        groceryArray.push(newItem);
       };
     });
   }).then(() => {
     dishArray = [...(new Set(dishArray))].sort();
     //index.html only
-    autocomplete(document.getElementById("restaurantInput"), itemsArray);
+    autocomplete(document.getElementById("restaurantInput"), groceryArray);
     autocomplete2(document.getElementById("dishInput"), dishArray);
   });
 }
@@ -461,13 +461,13 @@ function loadOnlineDB() {
 function initNewMarker(restaurantData) {
   console.log("****initNewMarker", restaurantData);
   let dishArray = [];
-  let marker = addRestMarker(restaurantData);
-  marker.addTo(mymap);
+  //let marker = addRestMarker(restaurantData);
+  //marker.addTo(mymap);
   let restaurantDishes = restaurantHash[restaurantData.name];
   restaurantDishes = restaurantDishes || [];
-  restaurantData.dishes.forEach(data => {
-    dishArray.push(data.dish);
-    restaurantDishes.push(data.dish);
+  restaurantData.products.forEach(data => {
+    dishArray.push(data.product);
+    restaurantDishes.push(data.product);
   });
   restaurantHash[restaurantData.name] = [...(new Set(restaurantDishes))].sort();
   dishArray = [...(new Set(dishArray))].sort();
@@ -548,13 +548,13 @@ function upload() {
                 (position) => {
                   console.log("navigator.geolocation.getCurrentPosition failed");
                   currentLocation = [position.coords.latitude, position.coords.longitude];
-                  addRestaurantToDB(imagePaths['dish'] || "");
+                  addGroceryToDB(imagePaths['dish'] || "");
                   addReceiptToDB(imagePaths);
                 },
                 (error) => {
                   console.log("navigator.geolocation.getCurrentPosition failed");
                   currentLocation = [mymap.getCenter().lat, mymap.getCenter().lng];
-                  addRestaurantToDB(imagePaths['dish'] || "");
+                  addGroceryToDB(imagePaths['dish'] || "");
                   addReceiptToDB(imagePaths);
                 },
                 {maximumAge: 70000, timeout: 4000, enableHighAccuracy: true}
@@ -562,25 +562,11 @@ function upload() {
             } else {
               console.log("navigator.geolocation not accessible");
               currentLocation = [mymap.getCenter().lat, mymap.getCenter().lng];
-              addRestaurantToDB(imagePaths['dish'] || "");
+              addGroceryToDB(imagePaths['dish'] || "");
               addReceiptToDB(imagePaths);
             }
             $('#staticProgressBackdrop').modal('hide');
             $('#staticBackdrop').modal('show');
-            //addRestaurantToDB(imagePaths['dish'] || "");
-            //add receipt must follow add restaurant
-            //use whatever currentLocation resulting from it
-            //addReceiptToDB(imagePaths);
-            //
-            // if (storageAvailable('localStorage')) {
-            //   localStorage.removeItem("dish");
-            //   localStorage.removeItem("receipt");
-            // }
-            //
-            // delete miniFiles["dish"];
-            // delete miniFiles["receipt"];
-            // document.getElementById('dishPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder.jpg";
-            // document.getElementById('receiptPicturePreview').src = "https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg";
           }
         });
       }
@@ -589,26 +575,26 @@ function upload() {
 }
 
 //only called from upload()
-function addRestaurantToDB(dishImgURL) {
+function addGroceryToDB(dishImgURL) {
   let restaurantInputValue = restaurantInput.value.trim();
-  let uploadCuisines = $('#indexCuisines').val();
-  let categories = $('#indexCategories').val().join(',');
-  let dishes = {
-    dish: dishInput.value,
+  let uploadOrigins = $('#groceryOrigins').val();
+  let categories = $('#groceryCategories').val().join(',');
+  let products = {
+    product: dishInput.value,
     fileURL: dishImgURL,
     category: categories,
-    tags: $('#indexIngredients').val()
+    tags: $('#groceryIngredients').val()
   };
   let newRestaurant = {
     name: restaurantInputValue,
     adr: "",
     location: currentLocation,
-    dishes: [dishes],
+    products: [products],
     coupon:  10,
-    cuisines: uploadCuisines
+    origins: uploadOrigins
   };
-  //design assumption new restaurant not on file has empty adr in db, in-memory itemsArray, and input field
-  let existing = itemsArray.find(item => {
+  //design assumption new restaurant not on file has empty adr in db, in-memory groceryArray, and input field
+  let existing = groceryArray.find(item => {
     if (item.adr === "") {
       return restaurantInputValue === item.name;
     } else {
@@ -631,11 +617,11 @@ function addRestaurantToDB(dishImgURL) {
     //   itemName = restaurantInputValue.substring(0, restaurantInputValue.indexOf(","));
     // }
     let newItem = { "name": restaurantInputValue, "dist": "", "adr": "", "lat": currentLocation[0], "lng": currentLocation[1] };
-    itemsArray.push(newItem);
-    autocomplete(document.getElementById("restaurantInput"), itemsArray);
+    groceryArray.push(newItem);
+    autocomplete(document.getElementById("restaurantInput"), groceryArray);
   }
 
-  db.collection("restaurants")
+  db.collection("grocery_stores")
   .where("name", "==", newRestaurant.name)
   .where("adr", "==", newRestaurant.adr)
   .get().then(querySnapshot => {
@@ -649,10 +635,10 @@ function addRestaurantToDB(dishImgURL) {
           couponRemains -= 1;
           getCoupon = true;
         }
-        db.collection("restaurants").doc(doc.id).update({
-          dishes: firebase.firestore.FieldValue.arrayUnion(dishes),
+        db.collection("grocery_stores").doc(doc.id).update({
+          products: firebase.firestore.FieldValue.arrayUnion(products),
           coupon:  couponRemains,
-          cuisines: firebase.firestore.FieldValue.arrayUnion(...uploadCuisines)
+          origins: firebase.firestore.FieldValue.arrayUnion(...uploadOrigins)
         });
       })
     } else {
@@ -661,9 +647,9 @@ function addRestaurantToDB(dishImgURL) {
       //currentLeaflet should already be defined from either keydown or clicking on active options
       //currentLocation = [currentLeaflet.getLatLng().lat, currentLeaflet.getLatLng().lng];
       //newRestaurant.location = currentLocation;
-      db.collection("restaurants").add(newRestaurant)
+      db.collection("grocery_stores").add(newRestaurant)
       .then(function(docRef) {
-        console.log("Adding restaurant on file:", docRef.id);
+        console.log("Adding grocery store on file:", docRef.id);
         initNewMarker(newRestaurant);
       })
       .catch(function(error) {
@@ -674,31 +660,31 @@ function addRestaurantToDB(dishImgURL) {
 }
 
 function addReceiptToDB(imagePaths) {
-  let uploadCuisine = $('#indexCuisines').val().join(',');
+  let uploadOrigin = $('#groceryOrigins').val().join(',');
   let restaurantInputValue = restaurantInput.value.trim();
   let receiptImgURL = imagePaths["receipt"] || "";
   let dishImgURL = imagePaths["dish"] || "";
-  let categories = $('#indexCategories').val().join(',');
+  let categories = $('#groceryCategories').val().join(',');
   let accountLoginId = $('#accountLoginId').val() || "";
   $('#accountId').val(accountLoginId);
   if (storageAvailable('localStorage')) {
     localStorage.setItem("accountLoginId", accountLoginId);
   }
 
-  db.collection("receipts").add({
+  db.collection("grocery_receipts").add({
     account: accountLoginId,
     helloMessage: helloMessage,
     fileURL: dishImgURL,
     receiptImgURL: receiptImgURL,
-    dish: dishInput.value,
+    product: dishInput.value,
     location: currentLocation,
-    restaurant: restaurantInputValue,
-    dishImageName: dishImageFileName,
+    groceryStore: restaurantInputValue,
+    productImageName: dishImageFileName,
     receiptImageName: receiptImageFileName,
-    tags: $('#indexIngredients').val(),
+    tags: $('#groceryIngredients').val(),
     approved: false,
     category: categories,
-    cuisine: uploadCuisine
+    origin: uploadOrigin
   })
   .then(function(docRef) {
     console.log("Receipt written with ID: ", docRef.id);
