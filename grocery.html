@@ -27,11 +27,9 @@
         </a>
       </p>
       <h4 class="text-center">Plant forward. </h4>
-      <p class="text-center">
-        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.36.2</small>
-      </p>
-      <p class="text-left font-weight-normal">
-        For Technical problems, suggestion & privacy concern: <a href='#' onclick='window.open(`mailto:contact@pay-a-vegan.com`, `_self`);'>contact@pay-a-vegan.com</a>
+      <p class="text-center font-weight-normal">
+        <a href='#' onclick='window.open(`mailto:contact@pay-a-vegan.com`, `_self`);'>contact@pay-a-vegan.com</a>
+        <small>v1.36.3</small>
       </p>
       <div class="row justify-content-center">
         <button type="button" class="btn btn-outline-primary" disabled>
@@ -82,7 +80,7 @@
           <input type="text" maxlength="999"
           class="form-control input-lg"
           id="restaurantInput"
-          placeholder="What is the store?"
+          placeholder="Name of Store"
           >
         </div>
       </div>
@@ -93,7 +91,7 @@
         <input type="text"
         class="form-control input-lg"
         id="dishInput"
-        placeholder="What is the product?">
+        placeholder="Name of Product">
       </div>
     </div>
 
@@ -154,17 +152,17 @@
         <div id="selectbox-container">
           <form>
             <div class="form-group">
-              <label for="name">Origin:</label>
+              <label for="name">Type of Store:</label>
               <select id="groceryOrigins" multiple data-placeholder="Choose anything" data-allow-clear="1">
               </select>
             </div>
 
             <div class="form-group" id="groceryCategoryBlock">
-              <label for="name">Category:</label>
+              <label for="name">Category of Product:</label>
               <select id="groceryCategories" multiple data-placeholder="Choose anything" data-allow-clear="1">
               </select>
 
-              <label for="name">Brand:</label>
+              <label for="name">Brand of Product:</label>
               <input type="text"
                 class="form-control input-lg"
                 id="groceryBrand"
@@ -173,8 +171,10 @@
 
             <div class="form-group" id="groceryIngredientBlock">
               <label for="name">Ingredient:</label>
-              <select id="groceryIngredients" multiple data-placeholder="Choose anything" data-allow-clear="1">
-              </select>
+              <input type="text"
+                class="form-control input-lg"
+                id="groceryIngredients"
+                placeholder="What is the main Ingredient?">
             </div>
           </form>
         </div>

@@ -112,9 +112,9 @@ var itemsArray;
         if (document.getElementById('groceryOrigins')) {
           document.getElementById('groceryOrigins').onchange = filterGroceryCategories;
         }
-        if (document.getElementById('groceryCategories')) {
-          document.getElementById('groceryCategories').onchange = filterGroceryIngredients;
-        }
+        // if (document.getElementById('groceryCategories')) {
+        //   document.getElementById('groceryCategories').onchange = filterGroceryIngredients;
+        // }
         if (document.getElementById('indexCuisines')) {
           document.getElementById('indexCuisines').onchange = filterIndexCategories;
         }
@@ -735,27 +735,27 @@ function addRestMarker(restaurant) {
     }
 
     //grocery.html Only
-    function filterGroceryIngredients() {
-      $('#groceryIngredients').empty().trigger('change');
-
-      let newIngredients = [];
-      $('#groceryCategories').val().forEach(indexCategory => {
-        newIngredients.push(...(GROCERY_CATEGORY_INGREDIENTS[indexCategory] || []));
-      });
-      newIngredients = [...(new Set(newIngredients))].sort();
-      $('#groceryIngredients').select2({
-        placeholder: 'Select anything',
-        data: newIngredients,
-        tags: true,
-        closeOnSelect: false
-      });
-
-      if ($('#groceryCategories').val().length > 0) {
-        document.querySelector('#groceryIngredientBlock').style.display = 'block';
-      } else {
-        document.querySelector('#groceryIngredientBlock').style.display = 'none';
-      }
-    }
+    // function filterGroceryIngredients() {
+    //   $('#groceryIngredients').empty().trigger('change');
+    //
+    //   let newIngredients = [];
+    //   $('#groceryCategories').val().forEach(indexCategory => {
+    //     newIngredients.push(...(GROCERY_CATEGORY_INGREDIENTS[indexCategory] || []));
+    //   });
+    //   newIngredients = [...(new Set(newIngredients))].sort();
+    //   $('#groceryIngredients').select2({
+    //     placeholder: 'Select anything',
+    //     data: newIngredients,
+    //     tags: true,
+    //     closeOnSelect: false
+    //   });
+    //
+    //   if ($('#groceryCategories').val().length > 0) {
+    //     document.querySelector('#groceryIngredientBlock').style.display = 'block';
+    //   } else {
+    //     document.querySelector('#groceryIngredientBlock').style.display = 'none';
+    //   }
+    // }
 
     //index.html Only
     function filterIndexIngredients() {
