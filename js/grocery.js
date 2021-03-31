@@ -211,59 +211,7 @@ var zoom = 11;
   }
 
 var mymap = L.map('mapid', {zoom: zoom, worldCopyJump: true});
-mymap.on('moveend', function(ev) {
-  if (storageAvailable('localStorage')) {
-    localStorage.setItem("mapZoom", mymap.getZoom());
-  }
-});
-L.tileLayer('https://b.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxNativeZoom: 18,
-    maxZoom: 20,
-    attribution: '&copy; <a target="_blank" rel="noopener" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(mymap);
-var browserGeolocationSuccess = function(position) {
-  currentLocation = [position.coords.latitude, position.coords.longitude];
-  onLocationFound("You are here.");
-};
 
-var browserGeolocationFail = function(error) {
-  onLocationFound("Refresh to find your location");
-}
-
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(
-    browserGeolocationSuccess, browserGeolocationFail,
-    {maximumAge: 70000, timeout: 4000, enableHighAccuracy: true}
-  );
-} else {
-  onLocationFound("Cannot find your location");
-}
-
-function onMapClick(e) {
-  var popup = L.popup();
-    popup
-        .setLatLng(e.latlng)
-        .setContent("You clicked the map at " + e.latlng.toString())
-        .openOn(mymap);
-}
-
-function jumpTo(location) {
-  currentLocation = location;
-  onLocationFound("You are here.");
-}
-
-	function onLocationFound(message) {
-    mymap.setView(currentLocation, zoom);
-    var radius = 1;
-    circle = L.circle(currentLocation, {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.5,
-        radius: 5
-    }).addTo(mymap);
-    let p = circle.bindPopup(message).openPopup();
-    mymap.on('click', onMapClick);
-	}
 
   function storageAvailable(type) {
       var storage;
@@ -445,7 +393,7 @@ function loadOnlineDB() {
       let existing = groceryArray.find(item => (`${dbName}, ${dbAdr}` === `${item.name}, ${item.adr}`));
         //console.log("***existing", existing);
       if (!existing) {
-        let newItem = { "name": dbName, "dist": "", "adr": dbAdr, "lat": restaurantData.location[0], "lng": restaurantData.location[1] };
+        let newItem = { "name": dbName, "dist": "", "adr": dbAdr };
         //console.log("newItem", newItem);
         groceryArray.push(newItem);
       };
@@ -453,7 +401,7 @@ function loadOnlineDB() {
   }).then(() => {
     dishArray = [...(new Set(dishArray))].sort();
     //index.html only
-    autocomplete(document.getElementById("restaurantInput"), groceryArray);
+    autocomplete2(document.getElementById("restaurantInput"), groceryArray.map(x => x.name));
     autocomplete2(document.getElementById("dishInput"), dishArray);
   });
 }
@@ -476,6 +424,7 @@ function initNewMarker(restaurantData) {
 
 function initializeRestaurantsOnLoad() {
   console.log("window load");
+  $('#mapid').hide();
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js')
     .then(function(registration) {
@@ -543,28 +492,10 @@ function upload() {
           if (Object.keys(imagePaths).length == Object.keys(miniFiles).length) {
             //current location is by default set to map center
             //currentLeaflet is undefined if start typing new restaurant without selecting
-            if (navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition(
-                (position) => {
-                  console.log("navigator.geolocation.getCurrentPosition failed");
-                  currentLocation = [position.coords.latitude, position.coords.longitude];
-                  addGroceryToDB(imagePaths['dish'] || "");
-                  addReceiptToDB(imagePaths);
-                },
-                (error) => {
-                  console.log("navigator.geolocation.getCurrentPosition failed");
-                  currentLocation = [mymap.getCenter().lat, mymap.getCenter().lng];
-                  addGroceryToDB(imagePaths['dish'] || "");
-                  addReceiptToDB(imagePaths);
-                },
-                {maximumAge: 70000, timeout: 4000, enableHighAccuracy: true}
-              );
-            } else {
-              console.log("navigator.geolocation not accessible");
-              currentLocation = [mymap.getCenter().lat, mymap.getCenter().lng];
-              addGroceryToDB(imagePaths['dish'] || "");
-              addReceiptToDB(imagePaths);
-            }
+            console.log("skip navigator.geolocation");
+            addGroceryToDB(imagePaths['dish'] || "");
+            addReceiptToDB(imagePaths);
+
             $('#staticProgressBackdrop').modal('hide');
             $('#staticBackdrop').modal('show');
           }
@@ -588,7 +519,6 @@ function addGroceryToDB(dishImgURL) {
   let newRestaurant = {
     name: restaurantInputValue,
     adr: "",
-    location: currentLocation,
     products: [products],
     coupon:  10,
     origins: uploadOrigins
@@ -602,10 +532,8 @@ function addGroceryToDB(dishImgURL) {
     }
   });
   if (existing) {
-    currentLocation = [existing.lat, existing.lng];
     newRestaurant.name = existing.name;
     newRestaurant.adr = existing.adr;
-    newRestaurant.location = currentLocation;
   } else {
     //currentLocation was updated to either device or map center previously
 
@@ -616,9 +544,9 @@ function addGroceryToDB(dishImgURL) {
     //   itemAdr = restaurantInputValue.substring(restaurantInputValue.indexOf(",") + 1);
     //   itemName = restaurantInputValue.substring(0, restaurantInputValue.indexOf(","));
     // }
-    let newItem = { "name": restaurantInputValue, "dist": "", "adr": "", "lat": currentLocation[0], "lng": currentLocation[1] };
+    let newItem = { "name": restaurantInputValue, "dist": "", "adr": "" };
     groceryArray.push(newItem);
-    autocomplete(document.getElementById("restaurantInput"), groceryArray);
+    autocomplete2(document.getElementById("restaurantInput"), groceryArray.map(x => x.name));
   }
 
   db.collection("grocery_stores")
@@ -677,10 +605,10 @@ function addReceiptToDB(imagePaths) {
     fileURL: dishImgURL,
     receiptImgURL: receiptImgURL,
     product: dishInput.value,
-    location: currentLocation,
     groceryStore: restaurantInputValue,
     productImageName: dishImageFileName,
     receiptImageName: receiptImageFileName,
+    brands: $('#groceryBrand').val(),
     tags: $('#groceryIngredients').val(),
     approved: false,
     category: categories,

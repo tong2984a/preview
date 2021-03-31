@@ -56,7 +56,9 @@ const GROCERY_ORIGIN_CATEGORIES = {
   "Pakistan": [],
   "South East Asia": [],
   "Thailand": [],
-  "Italian": []
+  "Italian": [],
+  "Western": [],
+  "Local": []
 };
 const CATEGORY_INGREDIENTS = {
   "Alcohol":["Vegan","Gluten Free", "Organic"],
@@ -79,13 +81,16 @@ const CATEGORY_INGREDIENTS = {
 const GROCERY_CATEGORY_INGREDIENTS = {
   "Noodles": ["Vegetable Protein"],
   "Sauce": ["Vegetable Protein"],
+  "Herbs": ["Vegetable Protein"],
   "Plant-Based Meat": ["Vegetable Protein"],
   "Plant-Based Egg": ["Vegetable Protein"],
   "Plant-Based Milk": ["Vegetable Protein"],
-  "Snack": ["Vegetable Protein"],
+  "Chocolate": ["Vegetable Protein"],
   "Ice Cream": ["Vegetable Protein"],
   "Yogurt": ["Vegetable Protein"],
   "Cheese": ["Vegetable Protein"],
+  "Cake": ["Vegetable Protein"],
+  "Bread": ["Vegetable Protein"],
   "Alcohol": ["Vegetable Protein"]
 };
 
@@ -667,7 +672,7 @@ function addRestMarker(restaurant) {
       })
     }
 
-    //index.html only
+    //index.html and grocery.html only
     function uploadTags() {
       if (document.getElementById('indexIngredients')) {
         tagList = $('#indexIngredients').val();
