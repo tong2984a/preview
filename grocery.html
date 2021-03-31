@@ -29,7 +29,7 @@
       <h4 class="text-center">Plant forward. </h4>
       <p class="text-center font-weight-normal">
         <a href='#' onclick='window.open(`mailto:contact@pay-a-vegan.com`, `_self`);'>contact@pay-a-vegan.com</a>
-        <small>v1.36.3</small>
+        <small>v1.36.4</small>
       </p>
       <div class="row justify-content-center">
         <button type="button" class="btn btn-outline-primary" disabled>
@@ -171,10 +171,8 @@
 
             <div class="form-group" id="groceryIngredientBlock">
               <label for="name">Ingredient:</label>
-              <input type="text"
-                class="form-control input-lg"
-                id="groceryIngredients"
-                placeholder="What is the main Ingredient?">
+              <select id="groceryIngredients" multiple data-placeholder="Choose anything" data-allow-clear="1">
+              </select>
             </div>
           </form>
         </div>

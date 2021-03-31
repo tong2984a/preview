@@ -770,7 +770,7 @@ function addRestMarker(restaurant) {
         placeholder: 'Select anything',
         data: newIngredients,
         tags: true,
-        closeOnSelect: false
+        closeOnSelect: true
       });
 
       if ($('#indexCategories').val().length > 0) {

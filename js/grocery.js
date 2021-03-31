@@ -425,6 +425,9 @@ function initNewMarker(restaurantData) {
 function initializeRestaurantsOnLoad() {
   console.log("window load");
   $('#mapid').hide();
+  $('#groceryIngredients').select2({
+    tags: true
+  });
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js')
     .then(function(registration) {
