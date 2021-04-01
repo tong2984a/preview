@@ -243,6 +243,9 @@ const db = firebase.firestore();
 var storageRef = firebase.storage().ref();
 var storage = firebase.storage();
 initMap();
+$('#groceryIngredients').select2({
+  tags: true
+});
 // DOM element shortcuts.
 var helloMessageInput = document.getElementById('helloMessageInput');
 var helloMessageOutput= document.getElementById('helloMessageOutput');
