@@ -96,6 +96,16 @@ const GROCERY_CATEGORY_INGREDIENTS = {
 
 var itemsArray;
 
+      let newCategories = [];
+      for (var key of Object.keys(GROCERY_CATEGORY_INGREDIENTS)) {
+        newCategories.push(key);
+      }
+      $('#groceryCategories').select2({
+        placeholder: 'Select anything',
+        data: newCategories,
+        closeOnSelect: true
+      });
+
   var options = {
       enableHighAccuracy: true,
       timeout: 5000,
@@ -109,9 +119,9 @@ var itemsArray;
 
       (function() {
         console.log('categories ready');
-        if (document.getElementById('groceryOrigins')) {
-          document.getElementById('groceryOrigins').onchange = filterGroceryCategories;
-        }
+        // if (document.getElementById('groceryOrigins')) {
+        //   document.getElementById('groceryOrigins').onchange = filterGroceryCategories;
+        // }
         // if (document.getElementById('groceryCategories')) {
         //   document.getElementById('groceryCategories').onchange = filterGroceryIngredients;
         // }
@@ -693,25 +703,25 @@ function addRestMarker(restaurant) {
     }
 
     //grocery.html Only
-    function filterGroceryCategories() {
-      $('#groceryCategories').empty().trigger('change');
-
-      let newCategories = [];
-      for (var key of Object.keys(GROCERY_CATEGORY_INGREDIENTS)) {
-        newCategories.push(key);
-      }
-      $('#groceryCategories').select2({
-        placeholder: 'Select anything',
-        data: newCategories,
-        closeOnSelect: true
-      });
-
-      if ($('#groceryOrigins').val().length > 0) {
-        document.querySelector('#groceryCategoryBlock').style.display = 'block';
-      } else {
-        document.querySelector('#groceryCategoryBlock').style.display = 'none';
-      }
-    }
+    // function filterGroceryCategories() {
+    //   $('#groceryCategories').empty().trigger('change');
+    //
+    //   let newCategories = [];
+    //   for (var key of Object.keys(GROCERY_CATEGORY_INGREDIENTS)) {
+    //     newCategories.push(key);
+    //   }
+    //   $('#groceryCategories').select2({
+    //     placeholder: 'Select anything',
+    //     data: newCategories,
+    //     closeOnSelect: true
+    //   });
+    //
+    //   if ($('#groceryOrigins').val().length > 0) {
+    //     document.querySelector('#groceryCategoryBlock').style.display = 'block';
+    //   } else {
+    //     document.querySelector('#groceryCategoryBlock').style.display = 'none';
+    //   }
+    // }
 
     //index.html Only
     function filterIndexCategories() {
