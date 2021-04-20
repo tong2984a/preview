@@ -105,7 +105,9 @@ var itemsArray;
         data: newCategories,
         closeOnSelect: true
       });
-
+        $('#groceryIngredients').select2({
+          tags: true
+        });
   var options = {
       enableHighAccuracy: true,
       timeout: 5000,
