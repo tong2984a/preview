@@ -2006,6 +2006,41 @@
       "DIST": "",
       "lat": 22.2840864,
       "lng": 114.1522056
+    },
+    {
+      "SS": "404 Plant",
+      "ADR": "G/F, 109 JERVOIS STREET, SHEUNG WAN",
+      "DIST": "",
+      "lat": 22.2857691,
+      "lng": 114.1504438
+    },
+    {
+      "SS": "天寶閣",
+      "ADR": "2/F, SHERATON HONG KONG HOTEL & TOWERS, 20 NATHAN ROAD, TSIM SHA TSUI",
+      "DIST": "",
+      "lat": 22.295164,
+      "lng": 114.1726391
+    },
+    {
+      "SS": "Baofanji",
+      "ADR": "G/F, 254 TUNG CHOI STREET, PRINCE EDWARD, KOWLOON",
+      "DIST": "",
+      "lat": 22.32613,
+      "lng": 114.169317
+    },
+    {
+      "SS": "龍門樓",
+      "ADR": "G/F - 2/F, LONG MEN LOU, NAN LIAN GARDEN, 60 FUNG TAK ROAD, DIAMOND HILL, KOWLOON",
+      "DIST": "",
+      "lat": 22.3388786,
+      "lng": 114.2058944
+    },
+    {
+      "SS": "阿彌陀佛素心園",
+      "ADR": "SHOP 7-17, LG/F, KWAI CHUNG FA YUEN SHOPPING ARCADE, 50-56 WO YI HOP ROAD, KWAI CHUNG, NEW TERRITORIES",
+      "DIST": "",
+      "lat": 22.3670515,
+      "lng": 114.138992
     }
 
 ]
