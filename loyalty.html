@@ -82,7 +82,7 @@
     <div class="jumbotron bg-info text-white">
       <div class="container">
         <h1 class="display-4">Query Account</h1>
-        <p class="lead">Check balance and status of an account.</p>
+        <p class="lead">Check account balance and status.</p>
         <div style="display: none;" id="alert-query" class="alert alert-success alert-dismissible fade show" role="alert">
         </div>
         <div style="display: none;" id="error-query" class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -93,6 +93,23 @@
           <small id="aliasHelp" class="form-text text-muted">.</small>
         </div>
         <button id="btn-query" type="button" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+
+    <div class="jumbotron">
+      <div class="container">
+        <h1 class="display-4">Query BTC Account</h1>
+        <p class="lead">Check account status and balance in BTC.</p>
+        <div style="display: none;" id="alert-btc" class="alert alert-success alert-dismissible fade show" role="alert">
+        </div>
+        <div style="display: none;" id="error-btc" class="alert alert-danger alert-dismissible fade show" role="alert">
+        </div>
+        <div class="form-group">
+          <label for="alias5">Alias</label>
+          <input type="text" class="form-control" id="alias5" aria-describedby="aliasHelp" placeholder="Enter alias">
+          <small id="aliasHelp" class="form-text text-muted">.</small>
+        </div>
+        <button id="btn-btc" type="button" class="btn btn-primary">Submit</button>
       </div>
     </div>
   </div>
@@ -230,9 +247,9 @@
           var account = doc.id;
           var balance = doc.data().balance;
           var alertHtml = `Successfully found account
-            <strong>alias</strong>:${aliasValue}
-            <strong>id</strong>:${account},
-            <strong>balance</strong>:${balance}`
+            <strong>ALIAS</strong>:${aliasValue}
+            <strong>ID</strong>:${account},
+            <strong>BALANCE</strong>:${balance}`
           $('#alert-query').html(alertHtml);
           document.getElementById('alert-query').style.display = "block";
           document.getElementById('error-query').style.display = "none";
@@ -242,6 +259,36 @@
         $('#error-query').html(alertHtml);
         document.getElementById('error-query').style.display = "block";
         document.getElementById('alert-query').style.display = "none";
+      }
+    })
+  });
+
+  const btcButton = document.getElementById('btn-btc');
+  const btcAliasInput = document.getElementById('alias5');
+  btcButton.addEventListener('click', () => {
+    const aliasValue = btcAliasInput.value;
+    db.collection("coins")
+    .where("account", "==", aliasValue)
+    .get().then(querySnapshot => {
+      if (querySnapshot.docs.length) {
+        querySnapshot.forEach(function(doc) {
+          var account = doc.id;
+          var balance = doc.data().balance;
+          $.post('https://cex.io/api/convert/BTC/USD', {"amnt":balance}, function(data, status) {
+            let amnt = (Math.round(data['amnt'] * 100) / 100).toFixed(2);
+            var alertHtml = `Successfully found account
+              <strong>ALIAS</strong>:${aliasValue}
+              <strong>BALANCE</strong>:BTC ${balance} / USD $${amnt}`
+            $('#alert-btc').html(alertHtml);
+            document.getElementById('alert-btc').style.display = "block";
+            document.getElementById('error-btc').style.display = "none";
+          })
+        })
+      } else {
+        var alertHtml = `Unable to find account: ${aliasValue}`
+        $('#error-btc').html(alertHtml);
+        document.getElementById('error-btc').style.display = "block";
+        document.getElementById('alert-btc').style.display = "none";
       }
     })
   });
