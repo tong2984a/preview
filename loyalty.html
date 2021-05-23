@@ -27,7 +27,7 @@
         <div class="form-group">
           <label for="alias1">Alias</label>
           <input type="text" class="form-control" id="alias1" aria-describedby="aliasHelp" placeholder="Enter alias">
-          <small id="aliasHelp" class="form-text text-muted">.</small>
+          <small id="aliasHelp" class="form-text text-muted"></small>
         </div>
         <div class="form-group">
           <label for="balance1">Beginning Balance</label>
@@ -48,17 +48,44 @@
         <div class="form-group">
           <label for="alias2">Alias</label>
           <input type="text" class="form-control" id="alias2" aria-describedby="aliasHelp" placeholder="Enter alias">
-          <small id="aliasHelp" class="form-text text-muted">.</small>
+          <small id="aliasHelp" class="form-text text-muted"></small>
         </div>
         <div class="form-group">
           <label for="points2">Points</label>
           <input type="text" class="form-control" id="points2" placeholder="Enter points">
+          <small id="aliasHelp" class="form-text text-muted"></small>
+        </div>
+        <div class="form-group">
+          <label for="fiat2">Fiat Money (HKD)</label>
+          <input type="text" class="form-control" id="fiat2" placeholder="Enter fiat money">
         </div>
         <button id="btn-earn" type="button" class="btn btn-primary">Submit</button>
       </div>
     </div>
 
     <div class="jumbotron">
+      <div class="container">
+        <h1 class="display-4">Earn Fiat Money</h1>
+        <p class="lead">Add points converted from fiat money to an account.</p>
+        <div style="display: none;" id="alert-earn2-1" class="alert alert-success alert-dismissible fade show" role="alert">
+        </div>
+        <div style="display: none;" id="error-earn2-1" class="alert alert-danger alert-dismissible fade show" role="alert">
+        </div>
+        <div class="form-group">
+          <label for="alias2-1">Alias</label>
+          <input type="text" class="form-control" id="alias2-1" aria-describedby="aliasHelp" placeholder="Enter alias">
+          <small id="aliasHelp" class="form-text text-muted"></small>
+        </div>
+        <div class="form-group">
+          <label for="fiat2-1">Fiat Money</label>
+          <input type="text" class="form-control" id="fiat2-1" placeholder="Enter fiat money">
+          <small id="aliasHelp" class="form-text text-muted"></small>
+        </div>
+        <button id="btn-earn2-1" type="button" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+
+    <div class="jumbotron bg-info text-white">
       <div class="container">
         <h1 class="display-4">Redeem Points</h1>
         <p class="lead">Redeem points of an account.</p>
@@ -69,7 +96,7 @@
         <div class="form-group">
           <label for="alias3">Alias</label>
           <input type="text" class="form-control" id="alias3" aria-describedby="aliasHelp" placeholder="Enter alias">
-          <small id="aliasHelp" class="form-text text-muted">.</small>
+          <small id="aliasHelp" class="form-text text-muted"></small>
         </div>
         <div class="form-group">
           <label for="points3">Points</label>
@@ -79,7 +106,7 @@
       </div>
     </div>
 
-    <div class="jumbotron bg-info text-white">
+    <div class="jumbotron">
       <div class="container">
         <h1 class="display-4">Query Account</h1>
         <p class="lead">Check account balance and status.</p>
@@ -90,13 +117,13 @@
         <div class="form-group">
           <label for="alias4">Alias</label>
           <input type="text" class="form-control" id="alias4" aria-describedby="aliasHelp" placeholder="Enter alias">
-          <small id="aliasHelp" class="form-text text-muted">.</small>
+          <small id="aliasHelp" class="form-text text-muted"></small>
         </div>
         <button id="btn-query" type="button" class="btn btn-primary">Submit</button>
       </div>
     </div>
 
-    <div class="jumbotron">
+    <div class="jumbotron bg-info text-white">
       <div class="container">
         <h1 class="display-4">Query BTC Account</h1>
         <p class="lead">Check account status and balance in BTC.</p>
@@ -107,7 +134,7 @@
         <div class="form-group">
           <label for="alias5">Alias</label>
           <input type="text" class="form-control" id="alias5" aria-describedby="aliasHelp" placeholder="Enter alias">
-          <small id="aliasHelp" class="form-text text-muted">.</small>
+          <small id="aliasHelp" class="form-text text-muted"></small>
         </div>
         <button id="btn-btc" type="button" class="btn btn-primary">Submit</button>
       </div>
@@ -195,6 +222,50 @@
             document.getElementById('alert-earn').style.display = "none";
           });
         })
+      }
+    })
+  });
+
+  const earn21Button = document.getElementById('btn-earn2-1');
+  const earn21AliasInput = document.getElementById('alias2-1');
+  const earn21FiatInput = document.getElementById('fiat2-1');
+  earn21Button.addEventListener('click', () => {
+    const alias21Value = earn21AliasInput.value;
+    const fiat21Value = earn21FiatInput.value;
+    db.collection("coins")
+    .where("account", "==", alias21Value)
+    .get().then(querySnapshot => {
+      if (querySnapshot.docs.length) {
+        querySnapshot.forEach(function(doc) {
+          var balance = doc.data().balance;
+          var parseOne = parseFloat(balance),
+              parseTwo = parseFloat(fiat21Value);
+          if (isNaN(parseOne)) parseOne = 0;
+          if (isNaN(parseTwo)) parseTwo = 0;
+          $.get(`https://blockchain.info/tobtc?currency=HKD&value=${parseTwo}`, function(data) {
+            var parseThree = parseFloat(data);
+            db.collection("coins").doc(doc.id).update({
+              balance: parseOne + parseThree
+            })
+            .then(function(docRef) {
+              var alertHtml = `Successfully converted ${fiat21Value} to ${data}.`
+              $('#alert-earn2-1').html(alertHtml);
+              document.getElementById('alert-earn2-1').style.display = "block";
+              document.getElementById('error-earn2-1').style.display = "none";
+            })
+            .catch(function(error) {
+              var alertHtml = `Error earning points: ${error}`
+              $('#error-earn2-1').html(alertHtml);
+              document.getElementById('error-earn2-1').style.display = "block";
+              document.getElementById('alert-earn2-1').style.display = "none";
+            })
+          })
+        })
+      } else {
+        var alertHtml = `Unable to find account: ${alias21Value}`
+        $('#error-earn2-1').html(alertHtml);
+        document.getElementById('error-earn2-1').style.display = "block";
+        document.getElementById('alert-earn2-1').style.display = "none";
       }
     })
   });
