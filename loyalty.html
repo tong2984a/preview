@@ -80,9 +80,18 @@
           <input type="text" class="form-control" id="alias3" aria-describedby="aliasHelp" placeholder="Enter alias">
           <small id="aliasHelp" class="form-text text-muted"></small>
         </div>
-        <div class="form-group">
-          <label for="points3">Points</label>
-          <input type="text" class="form-control" id="points3" placeholder="Enter points">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="amount3">Amount</label>
+            <input type="text" class="form-control" id="amount3" aria-describedby="amountHelp" placeholder="Enter amount">
+          </div>
+          <div class="form-group col-md-4">
+            <label for="currencyCode3">Unit</label>
+            <select id="currencyCode3" class="form-control">
+              <option selected>BTC</option>
+              <option>HKD</option>
+            </select>
+          </div>
         </div>
         <button id="btn-redeem" type="button" class="btn btn-primary">Submit</button>
       </div>
@@ -102,23 +111,6 @@
           <small id="aliasHelp" class="form-text text-muted"></small>
         </div>
         <button id="btn-query" type="button" class="btn btn-primary">Submit</button>
-      </div>
-    </div>
-
-    <div class="jumbotron">
-      <div class="container">
-        <h1 class="display-4">Query BTC Account</h1>
-        <p class="lead">Check account status and balance in BTC.</p>
-        <div style="display: none;" id="alert-btc" class="alert alert-success alert-dismissible fade show" role="alert">
-        </div>
-        <div style="display: none;" id="error-btc" class="alert alert-danger alert-dismissible fade show" role="alert">
-        </div>
-        <div class="form-group">
-          <label for="alias5">Alias</label>
-          <input type="text" class="form-control" id="alias5" aria-describedby="aliasHelp" placeholder="Enter alias">
-          <small id="aliasHelp" class="form-text text-muted"></small>
-        </div>
-        <button id="btn-btc" type="button" class="btn btn-primary">Submit</button>
       </div>
     </div>
   </div>
@@ -150,8 +142,10 @@
   const registerAliasInput = document.getElementById('alias1');
   const registerBalanceInput = document.getElementById('balance1');
   registerButton.addEventListener('click', () => {
-    const aliasValue = registerAliasInput.value;
-    const balanceValue = registerBalanceInput.value || 10;
+    document.getElementById('alert-register-new-account').style.display = "none";
+    document.getElementById('error-register-new-account').style.display = "none";
+    var aliasValue = registerAliasInput.value;
+    var balanceValue = registerBalanceInput.value || 10;
     let account = {
       account: aliasValue,
       address: "",
@@ -159,16 +153,14 @@
     };
     db.collection("coins").add(account)
     .then(function(docRef) {
-      var alertHtml = `Successfully created new account id: ${docRef.id}.`
+      var alertHtml = `Successfully created new account <strong>ID</strong>: ${docRef.id}.`
       $('#alert-register-new-account').html(alertHtml);
       document.getElementById('alert-register-new-account').style.display = "block";
-      document.getElementById('error-register-new-account').style.display = "none";
     })
     .catch(function(error) {
       var alertHtml = `Error creating account: ${error}`
       $('#error-register-new-account').html(alertHtml);
       document.getElementById('error-register-new-account').style.display = "block";
-      document.getElementById('alert-register-new-account').style.display = "none";
     });
   });
 
@@ -177,9 +169,11 @@
   const earnAmountInput = document.getElementById('amount2');
   const earnCurrencyCodeInput = document.getElementById('currencyCode2');
   earnButton.addEventListener('click', () => {
-    const aliasValue = earnAliasInput.value;
-    const amountValue = earnAmountInput.value;
-    const currencyCodeValue = earnCurrencyCodeInput.value;
+    document.getElementById('alert-earn').style.display = "none";
+    document.getElementById('error-earn').style.display = "none";
+    var aliasValue = earnAliasInput.value;
+    var amountValue = earnAmountInput.value;
+    var currencyCodeValue = earnCurrencyCodeInput.value;
     db.collection("coins")
     .where("account", "==", aliasValue)
     .get().then(querySnapshot => {
@@ -194,21 +188,18 @@
             $.get(`https://blockchain.info/tobtc?currency=HKD&value=${parseTwo}`, function(data) {
               var parseThree = parseFloat(data);
               if (isNaN(parseThree)) parseThree = 0;
-              parseTwo = parseThree;
               db.collection("coins").doc(doc.id).update({
-                balance: parseOne + parseTwo
+                balance: parseOne + parseThree
               })
               .then(function(docRef) {
                 var alertHtml = `Successfully added ${amountValue} HKD / ${parseThree} BTC.`
                 $('#alert-earn').html(alertHtml);
                 document.getElementById('alert-earn').style.display = "block";
-                document.getElementById('error-earn').style.display = "none";
               })
               .catch(function(error) {
                 var alertHtml = `Error earning points: ${error}`
                 $('#error-earn').html(alertHtml);
                 document.getElementById('error-earn').style.display = "block";
-                document.getElementById('alert-earn').style.display = "none";
               })
             })
           } else {
@@ -219,13 +210,11 @@
               var alertHtml = `Successfully added ${amountValue} ${currencyCodeValue}.`
               $('#alert-earn').html(alertHtml);
               document.getElementById('alert-earn').style.display = "block";
-              document.getElementById('error-earn').style.display = "none";
             })
             .catch(function(error) {
               var alertHtml = `Error earning points: ${error}`
               $('#error-earn').html(alertHtml);
               document.getElementById('error-earn').style.display = "block";
-              document.getElementById('alert-earn').style.display = "none";
             })
           }
         })
@@ -233,17 +222,20 @@
         var alertHtml = `Unable to find account: ${aliasValue}`
         $('#error-earn').html(alertHtml);
         document.getElementById('error-earn').style.display = "block";
-        document.getElementById('alert-earn').style.display = "none";
       }
     })
   });
 
   const redeemButton = document.getElementById('btn-redeem');
   const redeemAliasInput = document.getElementById('alias3');
-  const redeemPointsInput = document.getElementById('points3');
+  const redeemAmountInput = document.getElementById('amount3');
+  const redeemCurrencyCodeInput = document.getElementById('currencyCode3');
   redeemButton.addEventListener('click', () => {
-    const aliasValue = redeemAliasInput.value;
-    const pointsValue = redeemPointsInput.value || 0;
+    document.getElementById('alert-redeem').style.display = "none";
+    document.getElementById('error-redeem').style.display = "none";
+    var aliasValue = redeemAliasInput.value;
+    var amountValue = redeemAmountInput.value;
+    var currencyCodeValue = redeemCurrencyCodeInput.value;
     db.collection("coins")
     .where("account", "==", aliasValue)
     .get().then(querySnapshot => {
@@ -251,30 +243,47 @@
         querySnapshot.forEach(function(doc) {
           var balance = doc.data().balance;
           var parseOne = parseFloat(balance),
-              parseTwo = parseFloat(pointsValue);
+              parseTwo = parseFloat(amountValue);
           if (isNaN(parseOne)) parseOne = 0;
           if (isNaN(parseTwo)) parseTwo = 0;
-          db.collection("coins").doc(doc.id).update({
-            balance: parseOne - parseTwo
-          })
-          .then(function(docRef) {
-            var alertHtml = `Successfully redeemed ${pointsValue} points.`
-            $('#alert-redeem').html(alertHtml);
-            document.getElementById('alert-redeem').style.display = "block";
-            document.getElementById('error-redeem').style.display = "none";
-          })
-          .catch(function(error) {
-            var alertHtml = `Error redeeming points: ${error}`
-            $('#error-redeem').html(alertHtml);
-            document.getElementById('error-redeem').style.display = "block";
-            document.getElementById('alert-redeem').style.display = "none";
-          });
+          if (currencyCodeValue === "HKD") {
+            $.get(`https://blockchain.info/tobtc?currency=HKD&value=${parseTwo}`, function(data) {
+              var parseThree = parseFloat(data);
+              if (isNaN(parseThree)) parseThree = 0;
+              db.collection("coins").doc(doc.id).update({
+                balance: parseOne - parseThree
+              })
+              .then(function(docRef) {
+                var alertHtml = `Successfully redeemed ${amountValue} HKD / ${parseThree} BTC.`
+                $('#alert-redeem').html(alertHtml);
+                document.getElementById('alert-redeem').style.display = "block";
+              })
+              .catch(function(error) {
+                var alertHtml = `Error redeeming points: ${error}`
+                $('#error-redeem').html(alertHtml);
+                document.getElementById('error-redeem').style.display = "block";
+              })
+            })
+          } else {
+            db.collection("coins").doc(doc.id).update({
+              balance: parseOne - parseTwo
+            })
+            .then(function(docRef) {
+              var alertHtml = `Successfully redeemed ${amountValue} ${currencyCodeValue}.`
+              $('#alert-redeem').html(alertHtml);
+              document.getElementById('alert-redeem').style.display = "block";
+            })
+            .catch(function(error) {
+              var alertHtml = `Error redeeming points: ${error}`
+              $('#error-redeem').html(alertHtml);
+              document.getElementById('error-redeem').style.display = "block";
+            })
+          }
         })
       } else {
         var alertHtml = `Unable to find account: ${aliasValue}`
         $('#error-redeem').html(alertHtml);
         document.getElementById('error-redeem').style.display = "block";
-        document.getElementById('alert-redeem').style.display = "none";
       }
     })
   });
@@ -282,35 +291,9 @@
   const queryButton = document.getElementById('btn-query');
   const queryAliasInput = document.getElementById('alias4');
   queryButton.addEventListener('click', () => {
-    const aliasValue = queryAliasInput.value;
-    db.collection("coins")
-    .where("account", "==", aliasValue)
-    .get().then(querySnapshot => {
-      if (querySnapshot.docs.length) {
-        querySnapshot.forEach(function(doc) {
-          var account = doc.id;
-          var balance = doc.data().balance;
-          var alertHtml = `Successfully found account
-            <strong>ALIAS</strong>:${aliasValue}
-            <strong>ID</strong>:${account},
-            <strong>BALANCE</strong>:${balance}`
-          $('#alert-query').html(alertHtml);
-          document.getElementById('alert-query').style.display = "block";
-          document.getElementById('error-query').style.display = "none";
-        })
-      } else {
-        var alertHtml = `Unable to find account: ${aliasValue}`
-        $('#error-query').html(alertHtml);
-        document.getElementById('error-query').style.display = "block";
-        document.getElementById('alert-query').style.display = "none";
-      }
-    })
-  });
-
-  const btcButton = document.getElementById('btn-btc');
-  const btcAliasInput = document.getElementById('alias5');
-  btcButton.addEventListener('click', () => {
-    const aliasValue = btcAliasInput.value;
+    document.getElementById('alert-query').style.display = "none";
+    document.getElementById('error-query').style.display = "none";
+    var aliasValue = queryAliasInput.value;
     db.collection("coins")
     .where("account", "==", aliasValue)
     .get().then(querySnapshot => {
@@ -323,16 +306,14 @@
             var alertHtml = `Successfully found account
               <strong>ALIAS</strong>:${aliasValue}
               <strong>BALANCE</strong>:BTC ${balance} / USD $${amnt}`
-            $('#alert-btc').html(alertHtml);
-            document.getElementById('alert-btc').style.display = "block";
-            document.getElementById('error-btc').style.display = "none";
+            $('#alert-query').html(alertHtml);
+            document.getElementById('alert-query').style.display = "block";
           })
         })
       } else {
         var alertHtml = `Unable to find account: ${aliasValue}`
-        $('#error-btc').html(alertHtml);
-        document.getElementById('error-btc').style.display = "block";
-        document.getElementById('alert-btc').style.display = "none";
+        $('#error-query').html(alertHtml);
+        document.getElementById('error-query').style.display = "block";
       }
     })
   });
