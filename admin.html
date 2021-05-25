@@ -11,40 +11,42 @@
   <script src="js/jquery-3.5.1.min.js"></script>
 </head>
 <body>
-    <h1>administration Page</h1>
-    <div>
-        <h3>Please type the number of coupon you want to publish</h3>
-        <label for="coupon">number of Coupon: </label>
-        <input type="number" name="" id="coupon">
-        <button onclick="publish()">Publish Coupon</button>
-        <div id="infoTable">
-            <h3>Current publish ID: <h3 id="publishId"></h3></h3>
+  <div class="container">
+    <p class="text-center">
+      <a href="loyalty.html">
+        <img src="images/scott-webb-GQD3Av_9A88-unsplash.jpg" class="img-responsive" style="margin:0 auto;" alt="Responsive image">
+      </a>
+    </p>
 
-            <h3>Coupon Remaining: <h3 id="couponRemaining"></h3></h3>
-
-            <h3>Coupon Claiming Log</h3>
-            <div id="log">
-
-            </div>
+    <div class="jumbotron">
+      <div class="container">
+        <h1 class="display-4">Query Loyalty Accounts</h1>
+        <p class="lead">Return a list of all accounts.</p>
+        <div style="display: none;" id="alert-query" class="alert alert-success alert-dismissible fade show" role="alert">
         </div>
+        <div style="display: none;" id="error-query" class="alert alert-danger alert-dismissible fade show" role="alert">
+        </div>
+        <button id="btn-query" type="button" class="btn btn-primary">Submit</button>
+      </div>
     </div>
-    <br><br><br>
-    <div>
-        <h3>The button below will OVERWRITE all the data in firebase, just for setting up the firebase, </h3>
-        <button onclick="setUpDatabase()">Reset Database</button>
+
+    <div class="jumbotron">
+      <div class="container">
+        <h1 class="display-4">Query Receipts</h1>
+        <p class="lead">Return a list of all receipts.</p>
+        <div style="display: none;" id="alert-receipt" class="alert alert-success alert-dismissible fade show" role="alert">
+        </div>
+        <div style="display: none;" id="error-receipt" class="alert alert-danger alert-dismissible fade show" role="alert">
+        </div>
+        <button id="btn-receipt" type="button" class="btn btn-primary">Submit</button>
+      </div>
     </div>
-    <br><br><br>
-    <div>
-        <h3>The button below will MERGE all the restaurants in firebase, just for cleaning data, </h3>
-        <button onclick="mergeRestaurants()">Merge Restaurants</button>
-    </div>
-    <div id="myData"></div>
-    <div id="newDbRestaurants"></div>
-    <div class="download-wrapper" onClick="download()">
-      <p><i class="material-icons">file_download</i></p>
-      <p>Download Demo CSV File</p>
-    </div>
-    <script src="js/rawjson_to_csv.js"></script>
+  </div>
+
+
+
+
+
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-storage.js"></script>
@@ -69,6 +71,109 @@
         const storage = firebase.storage();
         const idRef = db.collection('coupon').doc('counter');
 
+        //*** new
+        const queryButton = document.getElementById('btn-query');
+        queryButton.addEventListener('click', () => {
+          document.getElementById('alert-query').style.display = "none";
+          document.getElementById('error-query').style.display = "none";
+          db.collection("coins")
+          .get().then(querySnapshot => {
+            if (querySnapshot.docs.length) {
+              var accounts = [];
+              querySnapshot.forEach(function(doc) {
+                var account = doc.data().account;
+                var balance = doc.data().balance;
+                var alertHtml = `
+                  <strong>ALIAS</strong>:${account}
+                  <strong>BALANCE</strong>:BTC ${balance}`;
+                accounts.push([`<tr>`, `<td>${account}</td>`, `<td>${balance}</td>`, `</tr>`]);
+              })
+              var html = `
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">ALIAS</th>
+                    <th scope="col">BALANCE</th>
+                  </tr>
+                </thead>
+                <tbody>`
+                + accounts.join()
+                + `</tbody>
+              </table>`;
+              $('#alert-query').html(html);
+              document.getElementById('alert-query').style.display = "block";
+            } else {
+              var alertHtml = `Unable to find accounts.`
+              $('#error-query').html(alertHtml);
+              document.getElementById('error-query').style.display = "block";
+            }
+          })
+        });
+
+        const receiptButton = document.getElementById('btn-receipt');
+        receiptButton.addEventListener('click', () => {
+          document.getElementById('alert-receipt').style.display = "none";
+          document.getElementById('error-receipt').style.display = "none";
+
+          initItemsArray().then(() => {
+            db.collection('receipts')
+            .where("receiptImageName", ">", "")
+            .get().then((snapshot) => {
+              var arrayContent = [];
+
+              snapshot.docs.forEach(doc => {
+                var receiptData = doc.data();
+                let category = receiptData.category;
+                let cuisine = receiptData.cuisine;
+                let location = receiptData.location;
+                let restaurant = receiptData.restaurant;
+                let tags = receiptData.tags;
+                let dishImageName = receiptData.dishImageName;
+                let fileURL = receiptData.fileURL;
+                let helloMessage = receiptData.helloMessage;
+                let receiptImageName = receiptData.receiptImageName;
+                let receiptImgURL = receiptData.receiptImgURL;
+                let index = receiptImageName.indexOf(' ', receiptImageName.indexOf(' ') + 1);
+                let index1 = receiptImageName.indexOf(' ', index + 1);
+                let index2 = receiptImageName.indexOf(' ', index1 + 1);
+                let receiptDayMonth = receiptImageName.substr(receiptImageName.indexOf(' '), index);
+                let receiptYear = receiptImageName.substr(index1, index2 - index1);
+                let receiptDate = `${receiptDayMonth},${receiptYear}`;
+                if (receiptDate === ',') {
+                  receiptDate =  '';
+                }
+                let account = receiptData.account;
+                arrayContent.push([`<tr>`, `<td>${account}</td>`, `<td>${restaurant}</td><td>`, receiptDate, `</td></tr>`]);
+              })
+              var sortedArray = arrayContent.sort(function(a, b) {
+                if (a[1] < b[1]) return -1;
+                if (a[1] > b[1]) return 1;
+                return 0;
+              });
+              sortedArray = sortedArray.sort(function(a, b) {
+                if (a[1] === b[1]) {
+                  var date1 = new Date(a[3]);
+                  var date2 = new Date(b[3]);
+                  if (date1 < date2) return -1;
+                  if (date1 > date2) return 1;
+                  return 0;
+                }
+                return 0;
+              });
+              var html = `
+              <table class="table">
+                <tbody>`
+                + sortedArray.join()
+                + `</tbody>
+              </table>`;
+
+              $('#alert-receipt').html(html);
+              document.getElementById('alert-receipt').style.display = "block";
+            })
+          })
+        })
+
+        //*** old
         function publish() {
             var coupon = parseInt(document.getElementById('coupon').value);
             if(coupon > 0){
@@ -602,12 +707,13 @@
           })
         };
 
-        function reportReceipts() {
+        function reportReceiptCSV() {
           initItemsArray().then(() => {
             db.collection('receipts').get().then((snapshot) => {
-              var arrayContent = [["id", "name", "tags", "comment", "datetime", "receipt", "dish"]];
+              var arrayContent = [["account", "id", "name", "tags", "comment", "datetime", "receipt", "dish"]];
 
               snapshot.docs.forEach(doc => {
+                console.log("**receipt", doc.id);
                 var receiptData = doc.data();
                 let category = receiptData.category;
                 let cuisine = receiptData.cuisine;
@@ -619,9 +725,18 @@
                 let helloMessage = receiptData.helloMessage;
                 let receiptImageName = receiptData.receiptImageName;
                 let receiptImgURL = receiptData.receiptImgURL;
+                let index = receiptImageName.indexOf(' ', receiptImageName.indexOf(' ') + 1);
+                let index1 = receiptImageName.indexOf(' ', index + 1);
+                let index2 = receiptImageName.indexOf(' ', index1 + 1);
+                let receiptDayMonth = receiptImageName.substr(receiptImageName.indexOf(' '), index);
+                let receiptYear = receiptImageName.substr(index1, index2 - index1);
+                let receiptDate = `${receiptDayMonth},${receiptYear}`;
+                if (receiptDate === ',') {
+                  receiptDate =  '';
+                }
+                let account = receiptData.account;
 
-                console.log("**receipt", doc.id);
-                arrayContent.push([doc.id, `"${restaurant}"`, `"${tags}"`, `"${helloMessage}"`, `"${receiptImageName}"`, `"${receiptImgURL}"`, `"${fileURL}"`])
+                arrayContent.push([`"${account}"`, doc.id, `"${restaurant}"`, `"${tags}"`, `"${helloMessage}"`, `"${receiptDate}"`, `"${receiptImgURL}"`, `"${fileURL}"`])
               });
 
               var csvContent = arrayContent.join("\n");
@@ -636,13 +751,13 @@
         }
 
         // $(document).ready(fixReceipt());
-        //  $(document).ready(inspectReceipts());
-          $(document).ready(reportReceipts());
+      //    $(document).ready(inspectReceipts());
+      //    $(document).ready(reportReceiptCSV());
 
       //    $(document).ready(inspectRestaurants());
       //    $(document).ready(inspectCategories());
 
-      //$(document).ready(reportRestaurants());
+    //   $(document).ready(reportRestaurants());
     //    $(document).ready(fixRestaurant());
     </script>
 </body>
