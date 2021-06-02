@@ -1,6 +1,6 @@
 $('#btnGroupAddon').click(function() {
   document.getElementById('coins').style.display = "none";
-  let accountId = $('#accountId').val();
+  let accountId = $('#accountId').val().trim();
   let coinBalance = 0;
   // $.post(`https://block.io/api/v2/get_address_balance/?api_key=dbcb-9043-142a-1280&labels=${accountId}`, function(data, status) {
   //   console.log(`${data['amnt']} and status is ${status}`);
@@ -31,7 +31,7 @@ $('#viewCoinProfile').click(function() {
 const searchCoinsButton = document.getElementById('search-coins-button');
 const searchCoinsInput = document.getElementById('search-coins-input');
 searchCoinsButton.addEventListener('click', () => {
-  const inputValue = searchCoinsInput.value;
+  const inputValue = searchCoinsInput.value.trim();
 
   $.get(`https://ancient-eyrie-93473.herokuapp.com/users/${inputValue}`, function(data) {
     if (data.length > 0) {
