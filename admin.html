@@ -20,18 +20,6 @@
 
     <div class="jumbotron bg-secondary text-white">
       <div class="container">
-        <h1 class="display-4">Query Loyalty Accounts</h1>
-        <p class="lead">Return a list of all accounts.</p>
-        <div style="display: none;" id="alert-query" class="alert alert-success alert-dismissible fade show" role="alert">
-        </div>
-        <div style="display: none;" id="error-query" class="alert alert-danger alert-dismissible fade show" role="alert">
-        </div>
-        <button id="btn-query" type="button" class="btn btn-primary">Submit</button>
-      </div>
-    </div>
-
-    <div class="jumbotron bg-secondary text-white">
-      <div class="container">
         <h1 class="display-4">Query Receipts</h1>
         <p class="lead">Return a list of all receipts.</p>
         <div style="display: none;" id="alert-receipt" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -42,10 +30,6 @@
       </div>
     </div>
   </div>
-
-
-
-
 
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
@@ -72,44 +56,6 @@
         const idRef = db.collection('coupon').doc('counter');
 
         //*** new
-        const queryButton = document.getElementById('btn-query');
-        queryButton.addEventListener('click', () => {
-          document.getElementById('alert-query').style.display = "none";
-          document.getElementById('error-query').style.display = "none";
-          db.collection("coins")
-          .get().then(querySnapshot => {
-            if (querySnapshot.docs.length) {
-              var accounts = [];
-              querySnapshot.forEach(function(doc) {
-                var account = doc.data().account;
-                var balance = doc.data().balance;
-                var alertHtml = `
-                  <strong>ALIAS</strong>:${account}
-                  <strong>BALANCE</strong>:BTC ${balance}`;
-                accounts.push([`<tr>`, `<td>${account}</td>`, `<td>${balance}</td>`, `</tr>`]);
-              })
-              var html = `
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">ALIAS</th>
-                    <th scope="col">BALANCE</th>
-                  </tr>
-                </thead>
-                <tbody>`
-                + accounts.join()
-                + `</tbody>
-              </table>`;
-              $('#alert-query').html(html);
-              document.getElementById('alert-query').style.display = "block";
-            } else {
-              var alertHtml = `Unable to find accounts.`
-              $('#error-query').html(alertHtml);
-              document.getElementById('error-query').style.display = "block";
-            }
-          })
-        });
-
         const receiptButton = document.getElementById('btn-receipt');
         receiptButton.addEventListener('click', () => {
           document.getElementById('alert-receipt').style.display = "none";
