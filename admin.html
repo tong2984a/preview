@@ -17,7 +17,9 @@
         <img src="images/elisabeth-joly-vinGM9Xe_sU-unsplash.jpg" class="rounded" alt="">
       </a>
     </p>
-
+    <p class="text-center">
+      <small>v1.37.0</small>
+    </p>
     <div class="jumbotron bg-secondary text-white">
       <div class="container">
         <h1 class="display-4">Query Receipts</h1>
@@ -27,6 +29,7 @@
         <div style="display: none;" id="error-receipt" class="alert alert-danger alert-dismissible fade show" role="alert">
         </div>
         <button id="btn-receipt" type="button" class="btn btn-primary">Submit</button>
+        <button id="btn-csv" type="button" class="btn btn-primary">Download</button>
       </div>
     </div>
   </div>
@@ -56,17 +59,20 @@
         const idRef = db.collection('coupon').doc('counter');
 
         //*** new
+        const csvButton = document.getElementById('btn-csv');
+        csvButton.addEventListener('click', () => {
+          reportReceiptCSV()
+        });
+
         const receiptButton = document.getElementById('btn-receipt');
         receiptButton.addEventListener('click', () => {
           document.getElementById('alert-receipt').style.display = "none";
           document.getElementById('error-receipt').style.display = "none";
-
           initItemsArray().then(() => {
             db.collection('receipts')
             .where("receiptImageName", ">", "")
             .get().then((snapshot) => {
               var arrayContent = [];
-
               snapshot.docs.forEach(doc => {
                 var receiptData = doc.data();
                 let category = receiptData.category;
