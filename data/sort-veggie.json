@@ -2058,10 +2058,59 @@
     },
     {
       "SS": "NUTTEA 堅果奶茶",
+      "ADR": "SHOP 2, G/F, 36 HOI KWONG STREET, QUARRY BAY",
+      "DIST": "",
+      "lat": 22.287612,
+      "lng": 114.2107564
+    },
+    {
+      "SS": "NUTTEA 堅果奶茶",
+      "ADR": "SHOP F52, 1/F, ARGYLE CENTRE, 688 NATHAN ROAD, MONG KOK",
+      "DIST": "",
+      "lat": 22.319924,
+      "lng": 114.169594
+    },
+    {
+      "SS": "NUTTEA 堅果奶茶",
+      "ADR": "SHOP B1B1, G/F, BLOCK B, PROFICIENT INDUSTRIAL CENTRE, 6 WANG KWUN ROAD, KOWLOON BAY",
+      "DIST": "",
+      "lat": 22.3225587,
+      "lng": 114.2086015
+    },
+    {
+      "SS": "NUTTEA 堅果奶茶",
+      "ADR": "3 Tai Yau St, San Po Kong",
+      "DIST": "",
+      "lat": 22.3383933,
+      "lng": 114.1990453
+    },
+    {
+      "SS": "NUTTEA 堅果奶茶",
       "ADR": "151-155 Queen's Road Central, Central, Hong Kong",
       "DIST": "",
-      "lat": 22.284585,
-      "lng": 114.153854
+      "lat": 22.2846989,
+      "lng": 114.1537014
+    },
+    {
+      "SS": "NUTTEA 堅果奶茶",
+      "ADR": "SHOP 9, 1/F, MANULIFE FINANCIAL CENTRE, 223-231 WAI YIP STREET, KWUN TONG",
+      "DIST": "",
+      "lat": 22.3078829,
+      "lng": 114.2235394
+    },
+    {
+      "SS": "NUTTEA 堅果奶茶",
+      "ADR": "SHOP 221, B1/F, TIMES SQUARE, 1 MATHESON STREET, CAUSEWAY BAY",
+      "DIST": "",
+      "lat": 22.278301,
+      "lng": 114.182009
+    },
+    {
+      "SS": "NUTTEA 堅果奶茶",
+      "ADR": "SHOP B, 1/F, KWAI CHUNG PLAZA, 7 KWAI FOO ROAD, KWAI FONG",
+      "DIST": "",
+      "lat": 22.3583483,
+      "lng": 114.1276509
     },
     {
       "SS": "Vibes the place",
@@ -2076,6 +2125,12 @@
       "DIST": "",
       "lat": 22.315984,
       "lng": 114.171385
+    },
+    {
+      "SS": "樂園素食",
+      "ADR": "SHOP B04, BASEMENT, TOWER 535, 535 JAFFE ROAD, CAUSEWAY BAY",
+      "DIST": "",
+      "lat": 22.2813791,
+      "lng": 114.1839726
     }
-
 ]

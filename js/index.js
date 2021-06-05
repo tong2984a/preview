@@ -7,7 +7,7 @@ $('#btnGroupAddon').click(function() {
   //   balance = data['amnt'];
   // });
 
-  $.get(`https://ancient-eyrie-93473.herokuapp.com/users/${accountId}`, function(data) {
+  $.get(`https://ancient-eyrie-93473.herokuapp.com/users/${accountId}?`, function(data) {
     if (data.length > 0) {
       var coinBalance = data[0].balance;
       let coinAddress = data[0].address;
@@ -33,7 +33,7 @@ const searchCoinsInput = document.getElementById('search-coins-input');
 searchCoinsButton.addEventListener('click', () => {
   const inputValue = searchCoinsInput.value.trim();
 
-  $.get(`https://ancient-eyrie-93473.herokuapp.com/users/${inputValue}`, function(data) {
+  $.get(`https://ancient-eyrie-93473.herokuapp.com/users/${inputValue}?`, function(data) {
     if (data.length > 0) {
       var coinBalance = data[0].balance;
       let coinAddress = data[0].address;
