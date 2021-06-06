@@ -12,7 +12,6 @@ $('#btnGroupAddon').click(function() {
       var coinBalance = data[0].balance;
       let coinAddress = data[0].address;
       $.post('https://cex.io/api/convert/BTC/USD', {"amnt":coinBalance}, function(data, status) {
-        //console.log(`${data['amnt']} and status is ${status}`);
         $('#coinAddress').text(coinAddress);
         let amnt = (Math.round(data['amnt'] * 100) / 100).toFixed(2);
         $('#coinBalance').text(`BTC ${coinBalance} / USD $${amnt}`);
@@ -58,16 +57,13 @@ $(document).ready(function(){
       $('#accountLoginId').val(accountLoginId);
       $('#accountId').val(accountLoginId);
       $('#search-coins-input').val(accountLoginId);
-      db.collection("coins")
-      .where("account", "==", accountLoginId)
-      .get().then(querySnapshot => {
-        if (querySnapshot.docs.length) {
-          querySnapshot.forEach(function(doc) {
-            var accountData = doc.data();
-            let coinAddress = accountData.address;
-            let coinBalance = accountData.balance;
-            $('#accountBalance').text(coinBalance);
-          })
+      $.get(`https://ancient-eyrie-93473.herokuapp.com/users/${accountLoginId}?`, function(data) {
+        if (data.length > 0) {
+          var coinBalance = data[0].balance;
+          let coinAddress = data[0].address;
+          $('#accountBalance').text(coinBalance);
+        } else {
+          $('#accountBalance').text("...");
         }
       })
     }
@@ -633,7 +629,6 @@ function addRestaurantToDB(dishImgURL) {
   .where("name", "==", newRestaurant.name)
   .where("adr", "==", newRestaurant.adr)
   .get().then(querySnapshot => {
-    console.log("***querySnapshot", querySnapshot.docs.length);
     if (querySnapshot.docs.length) {
       querySnapshot.forEach(function(doc) {
         var restaurantData = doc.data();

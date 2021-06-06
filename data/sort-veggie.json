@@ -24,6 +24,13 @@
       "lng": 114.11299
   },
   {
+    "SS": "AHIMSA BUFFET",
+    "ADR": "G/F, 8 TAK HING STREET, JORDAN, KOWLOON",
+    "DIST": "",
+    "lat": 22.3046533,
+    "lng": 114.172314
+  },
+  {
     "SS": "Bookworm Café",
     "ADR": "79 YUNG SHUE WAN MAIN STREET, YUNG SHUE WAN, LAMMA ISLAND, NEW TERRITORIES",
     "DIST": "",
@@ -389,13 +396,6 @@
       "DIST": "",
       "lat": 22.2830392,
       "lng": 114.1589302
-    },
-    {
-      "SS": "AHIMSA BUFFET",
-      "ADR": "G/F, 8 TAK HING STREET, JORDAN,  KOWLOON",
-      "DIST": "",
-      "lat": 22.3046533,
-      "lng": 114.172314
     },
     {
       "SS": "Fivelements Habitat - Sakti Elixir",
@@ -1096,13 +1096,6 @@
       "DIST": "",
       "lat": 22.2866245,
       "lng": 114.2119789
-    },
-    {
-      "SS": "Ahimsa buffet",
-      "ADR": "SHOP UNITS 8A, 8B AND 8C, G/F, LAI YUEN BUILDING, NOS. 7-8 TAK HING STREET, JORDAN, KOWLOON",
-      "DIST": "",
-      "lat": 22.3046533,
-      "lng": 114.172314
     },
     {
       "SS": "寶光齋",
@@ -2116,15 +2109,15 @@
       "SS": "Vibes the place",
       "ADR": "G/F, 112 First St, Sai Ying Pun",
       "DIST": "",
-      "lat": 22.286465,
-      "lng": 114.140491
+      "lat": 22.2865065,
+      "lng": 114.1404919
     },
     {
       "SS": "一日三餐",
       "ADR": "G/F, Hung Fai Building, 2Q-2Z Tung Choi Street, Mong Kok",
       "DIST": "",
-      "lat": 22.315984,
-      "lng": 114.171385
+      "lat": 22.3159758,
+      "lng": 114.1713399
     },
     {
       "SS": "樂園素食",

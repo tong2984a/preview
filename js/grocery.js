@@ -6,24 +6,19 @@ $('#btnGroupAddon').click(function() {
   //   console.log(`${data['amnt']} and status is ${status}`);
   //   balance = data['amnt'];
   // });
-  db.collection("coins")
-  .where("account", "==", accountId)
-  .get().then(querySnapshot => {
-    if (querySnapshot.docs.length) {
-      querySnapshot.forEach(function(doc) {
-        var accountData = doc.data();
-        let coinAddress = accountData.address;
-        let coinBalance = accountData.balance;
-        $.post('https://cex.io/api/convert/BTC/USD', {"amnt":coinBalance}, function(data, status) {
-          console.log(`${data['amnt']} and status is ${status}`);
-          $('#coinAddress').text(coinAddress);
-          let amnt = (Math.round(data['amnt'] * 100) / 100).toFixed(2);
-          $('#coinBalance').text(`BTC ${coinBalance} / USD $${amnt}`);
-        })
-        $('#coinProfile').text(`Visit https://www.blockchain.com/btc-testnet/address/${coinAddress}`);
-        document.getElementById('coinProfile').style.display = "none";
-        document.getElementById('coins').style.display = "block";
+
+  $.get(`https://ancient-eyrie-93473.herokuapp.com/users/${accountId}?`, function(data) {
+    if (data.length > 0) {
+      var coinBalance = data[0].balance;
+      let coinAddress = data[0].address;
+      $.post('https://cex.io/api/convert/BTC/USD', {"amnt":coinBalance}, function(data, status) {
+        $('#coinAddress').text(coinAddress);
+        let amnt = (Math.round(data['amnt'] * 100) / 100).toFixed(2);
+        $('#coinBalance').text(`BTC ${coinBalance} / USD $${amnt}`);
       })
+      $('#coinProfile').text(`Visit https://www.blockchain.com/btc-testnet/address/${coinAddress}`);
+      document.getElementById('coinProfile').style.display = "none";
+      document.getElementById('coins').style.display = "block";
     }
   })
 })
@@ -35,17 +30,15 @@ $('#viewCoinProfile').click(function() {
 const searchCoinsButton = document.getElementById('search-coins-button');
 const searchCoinsInput = document.getElementById('search-coins-input');
 searchCoinsButton.addEventListener('click', () => {
-  const inputValue = searchCoinsInput.value;
-  db.collection("coins")
-  .where("account", "==", inputValue)
-  .get().then(querySnapshot => {
-    if (querySnapshot.docs.length) {
-      querySnapshot.forEach(function(doc) {
-        var accountData = doc.data();
-        let coinAddress = accountData.address;
-        let coinBalance = accountData.balance;
-        $('#accountBalance').text(coinBalance);
-      })
+  const inputValue = searchCoinsInput.value.trim();
+
+  $.get(`https://ancient-eyrie-93473.herokuapp.com/users/${inputValue}?`, function(data) {
+    if (data.length > 0) {
+      var coinBalance = data[0].balance;
+      let coinAddress = data[0].address;
+      $('#accountBalance').text(coinBalance);
+    } else {
+      $('#accountBalance').text("...");
     }
   })
 });
@@ -64,16 +57,13 @@ $(document).ready(function(){
       $('#accountLoginId').val(accountLoginId);
       $('#accountId').val(accountLoginId);
       $('#search-coins-input').val(accountLoginId);
-      db.collection("coins")
-      .where("account", "==", accountLoginId)
-      .get().then(querySnapshot => {
-        if (querySnapshot.docs.length) {
-          querySnapshot.forEach(function(doc) {
-            var accountData = doc.data();
-            let coinAddress = accountData.address;
-            let coinBalance = accountData.balance;
-            $('#accountBalance').text(coinBalance);
-          })
+      $.get(`https://ancient-eyrie-93473.herokuapp.com/users/${accountLoginId}?`, function(data) {
+        if (data.length > 0) {
+          var coinBalance = data[0].balance;
+          let coinAddress = data[0].address;
+          $('#accountBalance').text(coinBalance);
+        } else {
+          $('#accountBalance').text("...");
         }
       })
     }
