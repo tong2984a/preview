@@ -100,14 +100,7 @@ var itemsArray;
       for (var key of Object.keys(GROCERY_CATEGORY_INGREDIENTS)) {
         newCategories.push(key);
       }
-      $('#groceryCategories').select2({
-        placeholder: 'Select anything',
-        data: newCategories,
-        closeOnSelect: true
-      });
-        $('#groceryIngredients').select2({
-          tags: true
-        });
+
   var options = {
       enableHighAccuracy: true,
       timeout: 5000,
@@ -705,6 +698,19 @@ function addRestMarker(restaurant) {
     }
 
     //grocery.html Only
+    $(document).ready(function(){
+      $('#groceryCategories').select2({
+        placeholder: 'Select anything',
+        data: newCategories,
+        tags: true,
+        closeOnSelect: true
+      });
+      $('#groceryIngredients').select2({
+        placeholder: 'Select anything',
+        tags: true,
+        closeOnSelect: true
+      });
+    })
     // function filterGroceryCategories() {
     //   $('#groceryCategories').empty().trigger('change');
     //
