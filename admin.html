@@ -69,20 +69,14 @@
           document.getElementById('alert-receipt').style.display = "none";
           document.getElementById('error-receipt').style.display = "none";
           initItemsArray().then(() => {
-            db.collection('receipts')
-            .where("receiptImageName", ">", "")
-            .get().then((snapshot) => {
-              var arrayContent = [];
+            var arrayContent = [];
+            db.collection('grocery_receipts').get().then((snapshot) => {
               snapshot.docs.forEach(doc => {
-                var receiptData = doc.data();
-                let category = receiptData.category;
-                let cuisine = receiptData.cuisine;
-                let location = receiptData.location;
-                let restaurant = receiptData.restaurant;
-                let tags = receiptData.tags;
-                let dishImageName = receiptData.dishImageName;
+                let receiptData = doc.data();
+                let groceryStore = receiptData.groceryStore;
                 let fileURL = receiptData.fileURL;
                 let helloMessage = receiptData.helloMessage;
+                let tags = receiptData.tags;
                 let receiptImageName = receiptData.receiptImageName;
                 let receiptImgURL = receiptData.receiptImgURL;
                 let index = receiptImageName.indexOf(' ', receiptImageName.indexOf(' ') + 1);
@@ -95,33 +89,67 @@
                   receiptDate =  '';
                 }
                 let account = receiptData.account;
-                arrayContent.push([`<tr>`, `<td>${account}</td>`, `<td>${restaurant}</td><td>`, receiptDate, `</td></tr>`]);
-              })
-              var sortedArray = arrayContent.sort(function(a, b) {
-                if (a[1] < b[1]) return -1;
-                if (a[1] > b[1]) return 1;
-                return 0;
+                arrayContent.push([`<tr><td>grocery</td>`, `<td>${account}</td>`, `<td>${groceryStore}</td><td>`, receiptDate, `</td></tr>`]);
               });
-              sortedArray = sortedArray.sort(function(a, b) {
-                if (a[1] === b[1]) {
-                  var date1 = new Date(a[3]);
-                  var date2 = new Date(b[3]);
-                  if (date1 < date2) return -1;
-                  if (date1 > date2) return 1;
+
+              db.collection('receipts')
+              .where("receiptImageName", ">", "")
+              .get().then((snapshot) => {
+                snapshot.docs.forEach(doc => {
+                  var receiptData = doc.data();
+                  let category = receiptData.category;
+                  let cuisine = receiptData.cuisine;
+                  let location = receiptData.location;
+                  let restaurant = receiptData.restaurant;
+                  let tags = receiptData.tags;
+                  let dishImageName = receiptData.dishImageName;
+                  let fileURL = receiptData.fileURL;
+                  let helloMessage = receiptData.helloMessage;
+                  let receiptImageName = receiptData.receiptImageName;
+                  let receiptImgURL = receiptData.receiptImgURL;
+                  let index = receiptImageName.indexOf(' ', receiptImageName.indexOf(' ') + 1);
+                  let index1 = receiptImageName.indexOf(' ', index + 1);
+                  let index2 = receiptImageName.indexOf(' ', index1 + 1);
+                  let receiptDayMonth = receiptImageName.substr(receiptImageName.indexOf(' '), index);
+                  let receiptYear = receiptImageName.substr(index1, index2 - index1);
+                  let receiptDate = `${receiptDayMonth},${receiptYear}`;
+                  if (receiptDate === ',') {
+                    receiptDate =  '';
+                  }
+                  let account = receiptData.account;
+                  arrayContent.push([`<tr><td>restaurant</td>`, `<td>${account}</td>`, `<td>${restaurant}</td><td>`, receiptDate, `</td></tr>`]);
+                })
+
+                var sortedArray = arrayContent.sort(function(a, b) {
+                  if (a[1] < b[1]) return -1;
+                  if (a[1] > b[1]) return 1;
                   return 0;
-                }
-                return 0;
-              });
-              var html = `
-              <table class="table">
+                });
+                sortedArray = sortedArray.sort(function(a, b) {
+                  if (a[1] === b[1]) {
+                    var date1 = new Date(a[3]);
+                    var date2 = new Date(b[3]);
+                    if (date1 < date2) return -1;
+                    if (date1 > date2) return 1;
+                    return 0;
+                  }
+                  return 0;
+                });
+                var html = `
+                <table class="table">
                 <tbody>`
                 + sortedArray.join()
                 + `</tbody>
-              </table>`;
+                </table>`;
 
-              $('#alert-receipt').html(html);
-              document.getElementById('alert-receipt').style.display = "block";
-            })
+                $('#alert-receipt').html(html);
+                document.getElementById('alert-receipt').style.display = "block";
+              }).catch(function(error) {
+                console.log("Error getting cached restaurant document:", error);
+              });
+            }).catch(function(error) {
+              console.log("Error getting cached grocery document:", error);
+            });
           })
         })
 
@@ -661,12 +689,37 @@
 
         function reportReceiptCSV() {
           initItemsArray().then(() => {
-            db.collection('receipts').get().then((snapshot) => {
-              var arrayContent = [["account", "id", "name", "tags", "comment", "datetime", "receipt", "dish"]];
+            var arrayContent = [["type", "account", "datetime", "name", "id", "tags", "comment", "receipt", "dish"]];
+            db.collection('grocery_receipts').get().then((snapshot) => {
+              snapshot.docs.forEach(doc => {
+                console.log("**grocery_receipt", doc.id);
+                let receiptData = doc.data();
+                let groceryStore = receiptData.groceryStore;
+                let fileURL = receiptData.fileURL;
+                let helloMessage = receiptData.helloMessage;
+                let tags = receiptData.tags;
+                let receiptImageName = receiptData.receiptImageName;
+                let receiptImgURL = receiptData.receiptImgURL;
+                let index = receiptImageName.indexOf(' ', receiptImageName.indexOf(' ') + 1);
+                let index1 = receiptImageName.indexOf(' ', index + 1);
+                let index2 = receiptImageName.indexOf(' ', index1 + 1);
+                let receiptDayMonth = receiptImageName.substr(receiptImageName.indexOf(' '), index);
+                let receiptYear = receiptImageName.substr(index1, index2 - index1);
+                let receiptDate = `${receiptDayMonth},${receiptYear}`;
+                if (receiptDate === ',') {
+                  receiptDate =  '';
+                }
+                let account = receiptData.account;
+                arrayContent.push(["grocery", `"${account}"`, `"${receiptDate}"`, `"${groceryStore}"`, doc.id, `"${tags}"`, `"${helloMessage}"`, `"${receiptImgURL}"`, `"${fileURL}"`])
+              });
+            }).catch(function(error) {
+              console.log("Error getting cached grocery document:", error);
+            });
 
+            db.collection('receipts').get().then((snapshot) => {
               snapshot.docs.forEach(doc => {
                 console.log("**receipt", doc.id);
-                var receiptData = doc.data();
+                let receiptData = doc.data();
                 let category = receiptData.category;
                 let cuisine = receiptData.cuisine;
                 let location = receiptData.location;
@@ -687,8 +740,7 @@
                   receiptDate =  '';
                 }
                 let account = receiptData.account;
-
-                arrayContent.push([`"${account}"`, doc.id, `"${restaurant}"`, `"${tags}"`, `"${helloMessage}"`, `"${receiptDate}"`, `"${receiptImgURL}"`, `"${fileURL}"`])
+                arrayContent.push(["restaurant", `"${account}"`, `"${receiptDate}"`, `"${restaurant}"`, doc.id, `"${tags}"`, `"${helloMessage}"`, `"${receiptImgURL}"`, `"${fileURL}"`])
               });
 
               var csvContent = arrayContent.join("\n");
@@ -697,7 +749,7 @@
               link.setAttribute("download", "receipts.csv");
               link.click();
             }).catch(function(error) {
-              console.log("Error getting cached document:", error);
+              console.log("Error getting cached restaurant document:", error);
             });
           })
         }
