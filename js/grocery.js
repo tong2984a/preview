@@ -608,7 +608,8 @@ function addReceiptToDB(imagePaths) {
     tags: $('#groceryIngredients').val(),
     approved: false,
     category: categories,
-    origin: uploadOrigin
+    origin: uploadOrigin,
+    hidden: false
   })
   .then(function(docRef) {
     console.log("Receipt written with ID: ", docRef.id);

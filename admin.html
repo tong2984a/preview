@@ -689,7 +689,7 @@
 
         function reportReceiptCSV() {
           initItemsArray().then(() => {
-            var arrayContent = [["type", "account", "datetime", "name", "id", "tags", "comment", "receipt", "dish"]];
+            var arrayContent = [["type", "account", "datetime", "name", "product", "brands", "id", "tags", "comment", "receipt", "dish"]];
             db.collection('grocery_receipts').get().then((snapshot) => {
               snapshot.docs.forEach(doc => {
                 console.log("**grocery_receipt", doc.id);
@@ -698,6 +698,8 @@
                 let fileURL = receiptData.fileURL;
                 let helloMessage = receiptData.helloMessage;
                 let tags = receiptData.tags;
+                let brands = receiptData.brands;
+                let product = receiptData.product;
                 let receiptImageName = receiptData.receiptImageName;
                 let receiptImgURL = receiptData.receiptImgURL;
                 let index = receiptImageName.indexOf(' ', receiptImageName.indexOf(' ') + 1);
@@ -710,7 +712,7 @@
                   receiptDate =  '';
                 }
                 let account = receiptData.account;
-                arrayContent.push(["grocery", `"${account}"`, `"${receiptDate}"`, `"${groceryStore}"`, doc.id, `"${tags}"`, `"${helloMessage}"`, `"${receiptImgURL}"`, `"${fileURL}"`])
+                arrayContent.push(["grocery", `"${account}"`, `"${receiptDate}"`, `"${groceryStore}"`, `"${product}"`, `"${brands}"`, doc.id, `"${tags}"`, `"${helloMessage}"`, `"${receiptImgURL}"`, `"${fileURL}"`])
               });
             }).catch(function(error) {
               console.log("Error getting cached grocery document:", error);
@@ -725,6 +727,7 @@
                 let location = receiptData.location;
                 let restaurant = receiptData.restaurant;
                 let tags = receiptData.tags;
+                let dish = receiptData.dish;
                 let dishImageName = receiptData.dishImageName;
                 let fileURL = receiptData.fileURL;
                 let helloMessage = receiptData.helloMessage;
@@ -740,7 +743,7 @@
                   receiptDate =  '';
                 }
                 let account = receiptData.account;
-                arrayContent.push(["restaurant", `"${account}"`, `"${receiptDate}"`, `"${restaurant}"`, doc.id, `"${tags}"`, `"${helloMessage}"`, `"${receiptImgURL}"`, `"${fileURL}"`])
+                arrayContent.push(["restaurant", `"${account}"`, `"${receiptDate}"`, `"${restaurant}"`, `"${dish}"`, '', doc.id, `"${tags}"`, `"${helloMessage}"`, `"${receiptImgURL}"`, `"${fileURL}"`])
               });
 
               var csvContent = arrayContent.join("\n");

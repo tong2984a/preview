@@ -449,7 +449,9 @@
 const showCoffees = () => {
   const container = document.querySelector(".gcards");
   var output = ""
-  db.collection('grocery_receipts').get().then((snapshot) => {
+  db.collection('grocery_receipts')
+  .where("hide", "==", false)
+  .get().then((snapshot) => {
     snapshot.docs.forEach(doc => {
       var groceryData = doc.data();
       var groceryStore = groceryData.groceryStore;
