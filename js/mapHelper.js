@@ -521,10 +521,13 @@ function addRestMarker(restaurant) {
     var images = restaurant.dishes;
     var slideshowContent = '';
     for(var i = 0; i < images.length; i++) {
-      var img = images[i];
+      var img = images[images.length - 1 - i];
       let tags = img.tags.map(tag => `<mark>${tag}</mark>`).join(',');
-      slideshowContent += '<div class="image' + (i === 0 ? ' ' : '') + '">' +
+      let dateSubstring = img.fileURL.split('%20');
+      let fileDate = dateSubstring.slice(1, 4).join(' ');
+      slideshowContent += '<div class="image' + (i === 0 ? ' active' : '') + '">' +
       '<img src="' + img.fileURL + '" />' +
+      '<div>' + fileDate + '</div>' +
       '<div class="caption">' + img.dish + '</div>' +
       '<div>' + tags + '</div>' +
       '</div>';
