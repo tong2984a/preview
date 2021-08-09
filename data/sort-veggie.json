@@ -1199,8 +1199,8 @@
       "SS": "THE CAKERY",
       "ADR": "SHOP 303, 3/F, THE LANDMARK, 15 QUEEN'S ROAD CENTRAL, CENTRAL",
       "DIST": "",
-      "lat": 22.2807611,
-      "lng": 114.1570154
+      "lat": 22.280676,
+      "lng": 114.157692
     },
     {
       "SS": "The Missing Piece",
@@ -1294,7 +1294,7 @@
       "lng": 114.1722495
     },
     {
-      "SS": "Le Pain Quotidien",
+      "SS": "LE PAIN QUOTIDIEN",
       "ADR": "SHOP G40, G40A, G41, G/F., THE AVENUE, 200 QUEEN'S ROAD EAST, WAN CHAI, HONG KONG",
       "DIST": "",
       "lat": 22.2762753,
@@ -2132,5 +2132,54 @@
       "DIST": "",
       "lat": 22.3245964,
       "lng": 114.1709311
+    },
+    {
+      "SS": "Matchali",
+      "ADR": "Shop 106, 1/F, K11 Musea, Victoria Dockside, 18 Salisbury Road, Tsim Sha Tsui",
+      "DIST": "",
+      "lat": 22.2944247,
+      "lng": 114.1745779
+    },
+    {
+      "SS": "Matchali",
+      "ADR": "Shop LA2, 1/F, IFC, 1 Harbour View Street, Central",
+      "DIST": "",
+      "lat": 22.2851589,
+      "lng": 114.1588412
+    },
+    {
+      "SS": "Matchali",
+      "ADR": "Shop 200D, 2/F, Pacific Place, 88 Queensway, Admiralty",
+      "DIST": "",
+      "lat": 22.277905,
+      "lng": 114.165435
+    },
+    {
+      "SS": "Moono",
+      "ADR": "尖沙咀梳士巴利道18號 K11 Musea 123舖",
+      "DIST": "",
+      "lat": 22.294356,
+      "lng": 114.174582
+    },
+    {
+      "SS": "Moono",
+      "ADR": "G/F, no.2 Chung Ching Street, Sai Ying Pun, Hong Kong",
+      "DIST": "",
+      "lat": 22.287288,
+      "lng": 114.141129
+    },
+    {
+      "SS": "Moono",
+      "ADR": "中環荷李活道52號1/F",
+      "DIST": "",
+      "lat": 22.282559,
+      "lng": 114.152935
+    },
+    {
+      "SS": "Moono",
+      "ADR": "香港 黄竹坑 黄竹坑道42號利美中心15樓07室",
+      "DIST": "",
+      "lat": 22.248575,
+      "lng": 114.166751
     }
 ]

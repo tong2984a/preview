@@ -1,4 +1,4 @@
-1.37.8<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -18,7 +18,7 @@
       </a>
     </p>
     <p class="text-center">
-      <small>v1.37.8</small>
+      <small>v1.37.9</small>
     </p>
     <div class="jumbotron bg-secondary text-white">
       <div class="container">
@@ -733,12 +733,15 @@
                 let helloMessage = receiptData.helloMessage;
                 let receiptImageName = receiptData.receiptImageName;
                 let receiptImgURL = receiptData.receiptImgURL;
-                let index = receiptImageName.indexOf(' ', receiptImageName.indexOf(' ') + 1);
-                let index1 = receiptImageName.indexOf(' ', index + 1);
-                let index2 = receiptImageName.indexOf(' ', index1 + 1);
-                let receiptDayMonth = receiptImageName.substr(receiptImageName.indexOf(' '), index);
-                let receiptYear = receiptImageName.substr(index1, index2 - index1);
-                let receiptDate = `${receiptDayMonth},${receiptYear}`;
+                let receiptDate = '';
+                if (receiptImageName) {
+                  let index = receiptImageName.indexOf(' ', receiptImageName.indexOf(' ') + 1);
+                  let index1 = receiptImageName.indexOf(' ', index + 1);
+                  let index2 = receiptImageName.indexOf(' ', index1 + 1);
+                  let receiptDayMonth = receiptImageName.substr(receiptImageName.indexOf(' '), index);
+                  let receiptYear = receiptImageName.substr(index1, index2 - index1);
+                  receiptDate = `${receiptDayMonth},${receiptYear}`;
+                }
                 if (receiptDate === ',') {
                   receiptDate =  '';
                 }
@@ -759,7 +762,7 @@
 
         // $(document).ready(fixReceipt());
       //    $(document).ready(inspectReceipts());
-      //    $(document).ready(reportReceiptCSV());
+          $(document).ready(reportReceiptCSV());
 
       //    $(document).ready(inspectRestaurants());
       //    $(document).ready(inspectCategories());
