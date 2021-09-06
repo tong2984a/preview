@@ -2188,5 +2188,54 @@
       "DIST": "",
       "lat": 22.29073,
       "lng": 114.2000072
+    },
+    {
+      "SS": "雲泉仙館",
+      "ADR": "Lot. 1561, Ping Che Road, Fanling, Hong Kong",
+      "DIST": "",
+      "lat": 22.5301081,
+      "lng": 114.1556981
+    },
+    {
+      "SS": "Chart Coffee",
+      "ADR": "香港中環皇后大道中93號及德輔道中80號",
+      "DIST": "",
+      "lat": 22.283944,
+      "lng": 114.155548
+    },
+    {
+      "SS": "Dough Bros - Pizza & Doughnuts",
+      "ADR": "G/F 25 Queen's Rd E, Wan Chai, Hong Kong",
+      "DIST": "",
+      "lat": 22.276939,
+      "lng": 114.168564
+    },
+    {
+      "SS": "Five Guys",
+      "ADR": "Shop C-2, 創紀之城五期, 418 Kwun Tong Rd, Kwun Tong",
+      "DIST": "",
+      "lat": 22.312175,
+      "lng": 114.225128
+    },
+    {
+      "SS": "Pizzaveg常嚐素",
+      "ADR": "屯門井財街青棉徑5號金寶大廈7D號舖",
+      "DIST": "",
+      "lat": 22.403728,
+      "lng": 113.978518
+    },
+    {
+      "SS": "Root Vegan",
+      "ADR": "1/F, Sun Wise Building, 112-114 Wellington Street, Central, Hong Kong",
+      "DIST": "",
+      "lat": 22.283269,
+      "lng": 114.154177
+    },
+    {
+      "SS": "So Coco",
+      "ADR": "Shop 241, 中環街市 Des Voeux Rd Central, Central",
+      "DIST": "",
+      "lat": 22.283933,
+      "lng": 114.155361
     }
 ]
