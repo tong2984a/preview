@@ -18,7 +18,7 @@
       </a>
     </p>
     <p class="text-center">
-      <small>v1.37.11</small>
+      <small>v1.37.12</small>
     </p>
     <div class="jumbotron bg-secondary text-white">
       <div class="container">
@@ -710,6 +710,17 @@
                 let receiptDate = `${receiptDayMonth},${receiptYear}`;
                 if (receiptDate === ',') {
                   receiptDate =  '';
+
+                  let productImageName = receiptData.receiptImageName;
+                  index = productImageName.indexOf(' ', productImageName.indexOf(' ') + 1);
+                  index1 = productImageName.indexOf(' ', index + 1);
+                  index2 = productImageName.indexOf(' ', index1 + 1);
+                  let productDayMonth = productImageName.substr(productImageName.indexOf(' '), index);
+                  let productYear = productImageName.substr(index1, index2 - index1);
+                  let productDate = `${productDayMonth},${productYear}`;
+                  if (productDate !== ',') {
+                    receiptDate = productDate;
+                  }
                 }
                 let account = receiptData.account;
                 arrayContent.push(["grocery", `"${account}"`, `"${receiptDate}"`, `"${groceryStore}"`, `"${product}"`, `"${brands}"`, doc.id, `"${tags}"`, `"${helloMessage}"`, `"${receiptImgURL}"`, `"${fileURL}"`])

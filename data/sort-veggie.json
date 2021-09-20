@@ -2237,5 +2237,19 @@
       "DIST": "",
       "lat": 22.283933,
       "lng": 114.155361
+    },
+    {
+      "SS": "Barista by Givres",
+      "ADR": "G/F, 7 Staunton Street, Central",
+      "DIST": "",
+      "lat": 22.2818092,
+      "lng": 114.153086
+    },
+    {
+      "SS": "北京樓",
+      "ADR": "Shop 005, LG1/F, Pacific Place, 88 Queensway, Admiralty",
+      "DIST": "",
+      "lat": 22.27775,
+      "lng": 114.1662998
     }
 ]
