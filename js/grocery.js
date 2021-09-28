@@ -38,7 +38,7 @@ searchCoinsButton.addEventListener('click', () => {
       let coinAddress = data[0].address;
       $.post('https://cex.io/api/convert/BTC/USD', {"amnt":coinBalance}, function(data, status) {
         let amnt = (Math.round(data['amnt'] * 100) / 100).toFixed(2);
-        $('#accountBalance').text(`BTC ${coinBalance} / USD $${amnt}`);
+        $('#accountBalance').text(`BTC ${Number(coinBalance).toExponential(3)} / USD $${amnt}`);
       })
     } else {
       $('#accountBalance').text("...");
