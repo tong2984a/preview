@@ -20,22 +20,18 @@
 </head>
 <body>
   <div class="container">
-    <div class="jumbotron">
+    <div class="jumbotron card">
+      <div class="card-img-overlay h-100 d-flex flex-column justify-content-end">
+        <p class="text-center">
+          <small>v1.37.13</small>
+        </p>
+      </div>
       <p class="text-center">
-        <a href="main.html">
-          <img src="images/i128x128.png" class="img-responsive" style="margin:0 auto;" alt="Responsive image">
-        </a>
+          <a href="main.html">
+            <img src="images/i128x128.png" class="img-responsive" style="margin:0 auto;" alt="Responsive image">
+          </a>
       </p>
-      <h4 class="text-center">Plant forward. </h4>
-      <h4 class="text-center">Help us Plant more Green Bubbles on the Map !</h4>
-      <p class="text-center">
-        <a href="https://linktr.ee/PAY_A_VEGAN">https://linktr.ee/PAY_A_VEGAN</a> <small>v1.37.12</small>
-      </p>
-      <p class="text-left font-weight-normal">
-        Technical Instructions<br/>
-        a. Allow Browser to use GPS<br/>
-        b. For Technical problems, suggestion & privacy concern: <a href='#' onclick='window.open(`mailto:contact@pay-a-vegan.com`, `_self`);'>contact@pay-a-vegan.com</a>
-      </p>
+      <h4 class="text-center">Plant forward. Earn Vegan Coin!</h4>
       <div class="row justify-content-center">
         <button type="button" class="btn btn-outline-primary" disabled>
           Coins Balance
@@ -46,15 +42,20 @@
           <div class="input-group-append">
             <input id="search-coins-input" type="text" class="form-control" placeholder="username">
             <button id="search-coins-button" type="button" class="btn btn-primary">
-              <i class="fas fa-search"></i>
+              <i class="fas fa-search"></i>Enter
             </button>
           </div>
         </div>
       </div>
+      <p class="text-left font-weight-normal">
+        Technical Instructions<br/>
+        a. Allow Browser to use GPS<br/>
+        b. <a href='#' onclick='window.open(`mailto:contact@pay-a-vegan.com`, `_self`);'>contact@pay-a-vegan.com</a> for help and questions.
+      </p>
     </div>
 
     <div class="row justify-content-center">
-      <a href="#" class="badge badge-primary" onclick="jumpTo([22.276, 114.173])">HK</a>
+      <a href="#" class="badge badge-primary" onclick="jumpTo([10.823099, 106.629664])">Ho Chi Minh City</a>
       <a href="#" class="badge badge-warning" onclick="jumpTo([22.276, 114.173])">香港</a>
       <a href="#" class="badge badge-info" onclick="jumpTo([-33.8722041, 151.213429])">Sydney</a>
     </div>

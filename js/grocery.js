@@ -36,11 +36,23 @@ searchCoinsButton.addEventListener('click', () => {
     if (data.length > 0) {
       var coinBalance = data[0].balance;
       let coinAddress = data[0].address;
-      $('#accountBalance').text(coinBalance);
+      $.post('https://cex.io/api/convert/BTC/USD', {"amnt":coinBalance}, function(data, status) {
+        let amnt = (Math.round(data['amnt'] * 100) / 100).toFixed(2);
+        $('#accountBalance').text(`BTC ${coinBalance} / USD $${amnt}`);
+      })
     } else {
       $('#accountBalance').text("...");
     }
   })
+});
+searchCoinsInput.addEventListener("keyup", function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Trigger the button element with a click
+    searchCoinsButton.click();
+  }
 });
 
 $(document).ready(function(){
