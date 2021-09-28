@@ -14,7 +14,7 @@ $('#btnGroupAddon').click(function() {
       $.post('https://cex.io/api/convert/BTC/USD', {"amnt":coinBalance}, function(data, status) {
         $('#coinAddress').text(coinAddress);
         let amnt = (Math.round(data['amnt'] * 100) / 100).toFixed(2);
-        $('#coinBalance').text(`BTC ${coinBalance} / USD $${amnt}`);
+        $('#coinBalance').text(`BTC ${Number(coinBalance).toExponential(3)} / USD $${amnt}`);
       })
       $('#coinProfile').text(`Visit https://www.blockchain.com/btc-testnet/address/${coinAddress}`);
       document.getElementById('coinProfile').style.display = "none";
@@ -38,7 +38,7 @@ searchCoinsButton.addEventListener('click', () => {
       let coinAddress = data[0].address;
       $.post('https://cex.io/api/convert/BTC/USD', {"amnt":coinBalance}, function(data, status) {
         let amnt = (Math.round(data['amnt'] * 100) / 100).toFixed(2);
-        $('#accountBalance').text(`BTC ${coinBalance} / USD $${amnt}`);
+        $('#accountBalance').text(`BTC ${Number(coinBalance).toExponential(3)} / USD $${amnt}`);
       })
     } else {
       $('#accountBalance').text("...");
