@@ -6,7 +6,7 @@ function autocomplete2(inp, arr) {
   inp.addEventListener("input", function(e) {
       var a, b, i, val = this.value;
       /*close any already open lists of autocompleted values*/
-      //closeAllLists();
+      closeAllLists();
       if (!val) { return false;}
       currentFocus = -1;
       /*create a DIV element that will contain the items (values):*/
@@ -37,7 +37,7 @@ function autocomplete2(inp, arr) {
               //closeAllLists();
           });
           a.appendChild(b);
-          console.log("***appendChild");
+          //console.log("***appendChild");
         }
       }
   });

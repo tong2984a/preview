@@ -54,10 +54,10 @@ function autocomplete(inp, cachedRestaurants) {
           /*close the list of autocompleted values,
           (or any other open lists of autocompleted values:*/
           closeAllLists();
-          console.log("****b click***", inp.value);
+          //console.log("****b click***", inp.value);
           let restaurantDishes = restaurantHash[inp.value] || [];
-          console.log("restaurantHash", restaurantHash);
-          console.log("restaurantDishes:", restaurantDishes);
+          //console.log("restaurantHash", restaurantHash);
+          //console.log("restaurantDishes:", restaurantDishes);
           autocomplete2(document.getElementById("dishInput"), restaurantDishes);
 
           let activeLeafletLocation = [ri.lat, ri.lng];
@@ -124,25 +124,25 @@ function autocomplete(inp, cachedRestaurants) {
             mymap.removeLayer(activeLeaflet);
           }, 9000);
           mymap.panTo(new L.LatLng(ri.lat, ri.lng));
-          console.log("getLatLng");
-          console.log(activeLeaflet.getLatLng());
+          //console.log("getLatLng");
+          //console.log(activeLeaflet.getLatLng());
         }
         /*create a DIV element for each matching element:*/
         b = document.createElement("DIV");
         /*make the matching letters bold:*/
-        console.log("before substr", arr[i]),
+        //console.log("before substr", arr[i]),
         b.innerHTML = "<strong>" + arr[i].substr(0, valLength) + "</strong>";
         b.innerHTML += arr[i].substr(valLength);
         /*insert a input field that will hold the current array item's value:*/
         b.innerHTML += "<input type='hidden' value='" + arr[i].replace(/'/g,'&#x27;') + "'>";
-        console.log("after substr", arr[i]),
+        //console.log("after substr", arr[i]),
         /*execute a function when someone clicks on the item value (DIV element):*/
 
         b.addEventListener("click", function(e) {
           inp.value = this.getElementsByTagName("input")[0].value;
           closeAllLists();
-          console.log("******click on dropdown", inp.value);
-          console.log(this.getElementsByTagName("input"));
+          //console.log("******click on dropdown", inp.value);
+          //console.log(this.getElementsByTagName("input"));
           let activeLeafletLocation = [ri.lat, ri.lng];
           let activeLeaflet = L.marker(activeLeafletLocation, {icon:
             new L.Icon({
@@ -174,7 +174,7 @@ function autocomplete(inp, cachedRestaurants) {
       if (e.keyCode == 40) {
         /*If the arrow DOWN key is pressed,
         increase the currentFocus variable:*/
-        console.log("keyCode 40");
+        //console.log("keyCode 40");
         //console.log(currentFocus);
         currentFocus++;
         /*and and make the current item more visible:*/
@@ -182,7 +182,7 @@ function autocomplete(inp, cachedRestaurants) {
       } else if (e.keyCode == 38) { //up
         /*If the arrow UP key is pressed,
         decrease the currentFocus variable:*/
-        console.log("keyCode 38");
+        //console.log("keyCode 38");
         //console.log(currentFocus);
         currentFocus--;
         /*and and make the current item more visible:*/
